@@ -23,17 +23,10 @@ scene.add(camera);
 // 1.3 创建物体
 const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const parentCubeMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-
 // 2.1 物体位移
 cube.position.x = 2;
-// 2.2 创建cube的父元素
-const parentCube = new THREE.Mesh(cubeGeometry, parentCubeMaterial);
-parentCube.add(cube);
-parentCube.position.x = -2;
-
-scene.add(parentCube);
+scene.add(cube);
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer();

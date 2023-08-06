@@ -1,4 +1,4 @@
-<!-- 3.物体缩放与旋转 -->
+<!-- 2.物体位移与父子元素 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -32,16 +32,6 @@ cube.position.x = 2;
 const parentCube = new THREE.Mesh(cubeGeometry, parentCubeMaterial);
 parentCube.add(cube);
 parentCube.position.x = -2;
-
-// 3.1 物体缩放
-cube.scale.set(2, 2, 2);
-// 3.2 父元素缩放
-parentCube.scale.set(2, 2, 2);
-
-// 3.3 物体旋转
-cube.rotation.x = Math.PI / 4;
-// 3.4 父元素旋转
-parentCube.rotation.x = Math.PI / 4;
 
 scene.add(parentCube);
 

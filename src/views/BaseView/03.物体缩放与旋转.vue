@@ -1,4 +1,4 @@
-<!-- 4.响应式控制与全屏控制 -->
+<!-- 3.物体缩放与旋转 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -59,7 +59,7 @@ function createControls() {
   container.value.appendChild(renderer.domElement);
 }
 
-// 1.7 添加坐标轴辅助器
+// 1.7添加坐标轴辅助器
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
 
@@ -71,26 +71,6 @@ function render() {
   requestAnimationFrame(render);
 };
 
-// 4.1 监听视口变化
-window.addEventListener('resize', () => {
-  const innerWidth = window.innerWidth;
-  const innerHeight = window.innerHeight;
-  // 更新渲染器大小
-  renderer.setSize(innerWidth, innerHeight);
-  // 更新摄像头宽高比
-  camera.aspect = innerWidth / innerHeight;
-  // 更新摄像头投影矩阵
-  camera.updateProjectionMatrix();
-});
-
-// 4.2 监听双击事件，实现全屏切换
-window.addEventListener('dblclick', () => {
-  if (!document.fullscreenElement) {
-    renderer.domElement.requestFullscreen();
-  } else {
-    document.exitFullscreen();
-  }
-});
 
 onMounted(() => {
   createControls();

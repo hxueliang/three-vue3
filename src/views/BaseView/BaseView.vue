@@ -1,4 +1,4 @@
-<!-- 11.纹理的颜色空间 -->
+<!-- 12.雾 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -22,62 +22,21 @@ const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 10
 camera.position.set(2, 5, 10);
 scene.add(camera);
 
-// 8.2 创建纹理加载器
-const textureLoader = new THREE.TextureLoader();
-// 8.3 加载纹理
-const texture = textureLoader.load('./texture/watercover/CityNewYork002_COL_VAR1_1K.png');
-const aoTexture = textureLoader.load('./texture/watercover/CityNewYork002_AO_1K.jpg');
-const alphaTexture = textureLoader.load('./texture/door/alpha.jpg');
-const lightTexture = textureLoader.load('./texture/colors.png');
-const specularTexture = textureLoader.load('./texture/watercover/CityNewYork002_GLOSS_1K.jpg');
-// 11.1 修改纹理的颜色空间
-texture.colorSpace = THREE.SRGBColorSpace;
-// 10.1 创建RGBELoader
-const rgbeLoader = new RGBELoader();
-// 10.2 加载hdr图
-rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
-  // 10.3 设置球形映射
-  envMap.mapping = THREE.EquirectangularReflectionMapping;
-  // 10.4 给场景设置背景
-  scene.background = envMap;
-  // 10.5 给场景设置环境贴图
-  scene.environment = envMap;
-  // 10.5 给plane设置环境贴图
-  planeMaterial.envMap = envMap;
+// 12.1 创建物体
+const boxGeometry = new THREE.BoxGeometry(1, 1, 50);
+const boxMaterial = new THREE.MeshBasicMaterial({
+  color: 0x00ff00,
 });
-// 8.1 创建平面
-const planeGeometry = new THREE.PlaneGeometry(5, 5);
-const planeMaterial = new THREE.MeshBasicMaterial({
-  color: 0xffffff,
-  transparent: true,
-  // 10.6 反射强度
-  reflectivity: 0.5,
-  // 8.4 加载颜色贴图
-  map: texture,
-  // 8.5 加载环境遮挡贴图
-  // aoMap: aoTexture,
-  // 9.1 加载透明度贴图
-  // alphaMap: alphaTexture,
-  // 9.2 加载光照贴图
-  // lightMap: lightTexture,
-  // 10.7 加载高光贴图
-  specularMap: specularTexture,
-});
-const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-scene.add(plane);
+const box = new THREE.Mesh(boxGeometry, boxMaterial);
+scene.add(box);
+// 12.2 创建线性雾
+// scene.fog = new THREE.Fog(0x999999, 0.1, 50);
+// 12.3 创建指数雾
+scene.fog = new THREE.FogExp2(0x999999, 0.1);
+// 12.4 设置场景背景与雾同色
+scene.background = new THREE.Color(0x999999);
 
 const gui = new GUI();
-gui.add(planeMaterial, 'aoMapIntensity', 0, 1).name('ao贴图强度');
-gui
-  .add(texture, 'colorSpace', {
-    sRGB: THREE.SRGBColorSpace,
-    Linear: THREE.LinearSRGBColorSpace,
-  })
-  .name('颜色空间')
-  .onChange(() => {
-    // 11.2 设置纹理需要更新
-    texture.needsUpdate = true;
-  });
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer();

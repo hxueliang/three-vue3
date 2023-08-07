@@ -1,4 +1,4 @@
-<!-- 5.应用lil-Gui调试 -->
+<!-- 6.顶点_索引_面-->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -18,33 +18,45 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.set(5, 5, 10);
+camera.position.set(2, 5, 10);
 scene.add(camera);
 
-// 1.3 创建物体
-const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const parentCubeMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+// 6.1 创建几何体
+const geometry = new THREE.BufferGeometry();
+/*
+// 6.2 创建顶点数据（逆时针为正面）
+const vertices = new Float32Array([
+  -1, -1, 1,
+  1, -1, 1,
+  1, 1, 1,
 
-// 2.1 物体位移
-cube.position.x = 2;
-// 2.2 创建cube的父元素
-const parentCube = new THREE.Mesh(cubeGeometry, parentCubeMaterial);
-parentCube.add(cube);
-parentCube.position.x = -2;
-
-// 3.1 物体缩放
-cube.scale.set(2, 2, 2);
-// 3.2 父元素缩放
-parentCube.scale.set(2, 2, 2);
-
-// 3.3 物体旋转
-cube.rotation.x = Math.PI / 4;
-// 3.4 父元素旋转
-parentCube.rotation.x = Math.PI / 4;
-
-scene.add(parentCube);
+  1, 1, 1,
+  -1, 1, 1,
+  -1, -1, 1
+]);
+// 6.3 创建顶点属性
+geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+*/
+// 6.4 创建顶点数据，使用索引共用重合顶点，只需4个顶点
+const vertices = new Float32Array([
+  -1, -1, 1,
+  1, -1, 1,
+  1, 1, 1,
+  -1, 1, 1
+]);
+// 6.5 创建顶点属性
+geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+// 6.6 创建索引
+const indices = new Uint16Array([0, 1, 2, 2, 3, 0]);
+// 6.7 创建索引属性
+geometry.setIndex(new THREE.BufferAttribute(indices, 1));
+const material = new THREE.MeshBasicMaterial({
+  color: 0x00ff00,
+  // side: THREE.DoubleSide,
+  // wireframe: true
+});
+const cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer();
@@ -83,49 +95,6 @@ window.addEventListener('resize', () => {
   // 更新摄像头投影矩阵
   camera.updateProjectionMatrix();
 });
-
-// 4.2 监听双击事件，实现全屏切换
-window.addEventListener('dblclick', () => {
-  if (!document.fullscreenElement) {
-    renderer.domElement.requestFullscreen();
-  } else {
-    document.exitFullscreen();
-  }
-});
-
-// 5.1 创建gui
-const gui = new GUI();
-// 5.2 滑块
-gui
-  .add(parentCube.position, 'x')
-  .min(-2).max(5)
-  .step(0.01)
-  .name('parentCube')
-  .onChange(value => console.log(value))// 类似input事件
-  .onFinishChange(value => console.log(value)); // 类似chage事件
-// 5.3 复选框
-gui.add(cube, 'visible').name('cube显隐');
-gui.add(cube.material, 'wireframe').name('线框显示');
-// 5.4 参数
-const params = {
-  color: '#00ff00',
-  goLeft() { cube.position.x -= 0.2; }
-};
-// 5.5 颜色选择
-gui
-  .addColor(params, 'color')
-  .name('cube颜色')
-  .onChange(value => {
-    console.log(value);
-    cube.material.color.set(value);
-  });
-// 5.6 点击触发事件
-gui.add(params, 'goLeft').name('cule左移动');
-// 5.7 添加文件夹
-const folder = gui.addFolder('设置cule的位置');
-folder.add(cube.position, 'x').name('设置cule的x').min(0).max(5);
-folder.add(cube.position, 'y').name('设置cule的y').min(0).max(5);
-folder.add(cube.position, 'z').name('设置cule的z').min(0).max(5);
 
 onMounted(() => {
   createControls();

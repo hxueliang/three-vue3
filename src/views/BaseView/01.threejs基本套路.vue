@@ -1,4 +1,4 @@
-<!-- 2.物体位移与父子元素 -->
+<!-- 1.threejs基本套路 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -24,8 +24,6 @@ scene.add(camera);
 const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-// 2.1 物体位移
-cube.position.x = 2;
 scene.add(cube);
 
 // 1.4 创建渲染器

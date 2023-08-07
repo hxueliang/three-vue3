@@ -1,4 +1,4 @@
-<!-- 7.不同的面设置不同材质 -->
+<!-- 6.顶点_索引_面-->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -23,6 +23,20 @@ scene.add(camera);
 
 // 6.1 创建几何体
 const geometry = new THREE.BufferGeometry();
+/*
+// 6.2 创建顶点数据（逆时针为正面）
+const vertices = new Float32Array([
+  -1, -1, 1,
+  1, -1, 1,
+  1, 1, 1,
+
+  1, 1, 1,
+  -1, 1, 1,
+  -1, -1, 1
+]);
+// 6.3 创建顶点属性
+geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+*/
 // 6.4 创建顶点数据，使用索引共用重合顶点，只需4个顶点
 const vertices = new Float32Array([
   -1, -1, 1,
@@ -34,18 +48,14 @@ const vertices = new Float32Array([
 geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
 // 6.6 创建索引
 const indices = new Uint16Array([0, 1, 2, 2, 3, 0]);
-// 7.1 设2个顶点组，形成2个材质
-geometry.addGroup(0, 3, 0); // 索引0开始，3个一组，下标为0的材质
-geometry.addGroup(3, 3, 1); // 索引3开始，3个一组，下标为1的材质
 // 6.7 创建索引属性
 geometry.setIndex(new THREE.BufferAttribute(indices, 1));
 const material = new THREE.MeshBasicMaterial({
   color: 0x00ff00,
+  // side: THREE.DoubleSide,
+  // wireframe: true
 });
-const material1 = new THREE.MeshBasicMaterial({
-  color: 0xff0000,
-});
-const cube = new THREE.Mesh(geometry, [material, material1]); // 材质传数组
+const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
 // 1.4 创建渲染器

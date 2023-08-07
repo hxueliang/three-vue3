@@ -1,4 +1,4 @@
-<!-- 5.应用lil-Gui调试 -->
+<!-- 4.响应式控制与全屏控制 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -7,7 +7,6 @@
 import { ref, onMounted } from 'vue';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -92,40 +91,6 @@ window.addEventListener('dblclick', () => {
     document.exitFullscreen();
   }
 });
-
-// 5.1 创建gui
-const gui = new GUI();
-// 5.2 滑块
-gui
-  .add(parentCube.position, 'x')
-  .min(-2).max(5)
-  .step(0.01)
-  .name('parentCube')
-  .onChange(value => console.log(value))// 类似input事件
-  .onFinishChange(value => console.log(value)); // 类似chage事件
-// 5.3 复选框
-gui.add(cube, 'visible').name('cube显隐');
-gui.add(cube.material, 'wireframe').name('线框显示');
-// 5.4 参数
-const params = {
-  color: '#00ff00',
-  goLeft() { cube.position.x -= 0.2; }
-};
-// 5.5 颜色选择
-gui
-  .addColor(params, 'color')
-  .name('cube颜色')
-  .onChange(value => {
-    console.log(value);
-    cube.material.color.set(value);
-  });
-// 5.6 点击触发事件
-gui.add(params, 'goLeft').name('cule左移动');
-// 5.7 添加文件夹
-const folder = gui.addFolder('设置cule的位置');
-folder.add(cube.position, 'x').name('设置cule的x').min(0).max(5);
-folder.add(cube.position, 'y').name('设置cule的y').min(0).max(5);
-folder.add(cube.position, 'z').name('设置cule的z').min(0).max(5);
 
 onMounted(() => {
   createControls();

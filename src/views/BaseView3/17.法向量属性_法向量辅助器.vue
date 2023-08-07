@@ -1,4 +1,4 @@
-<!-- 18.顶点操作_位移_旋转_缩放 -->
+<!-- 17.法向量属性_法向量辅助器 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -80,21 +80,9 @@ const normals = new Float32Array([
   0, 0, 1
 ]);
 geometry.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
-// 18.1 移动顶点（修改：Mesh.geometry.attributes.position.x）// 对比移动物体（修改：Mesh.position.x）
-geometry.translate(4, 0, 0);
-// 18.2 旋转（修改：Mesh.geometry.attributes.position.y）// 对比旋转物体（修改：Mesh.rotation.x）
-// geometry.rotateX(Math.PI / 2);
-// 18.3 缩放（修改：Mesh.geometry.attributes.position.x）// 对比缩放物体（修改：Mesh.scale.x）
-// 总结：
-// 1.对顶点的操作直接修改顶点数据，不如直接对物体操作修改物体的属性直观。
-// 2.所以大部分情况都使用对物体操作，不使用对顶点操作
-// 3.除非后端返回的顶点数据不便于使用，才会使用对顶点操作，使用顶点回到好操作的位置，再使用对物体操作
-// geometry.scale(3, 1, 1);
 const material = new THREE.MeshBasicMaterial({ map: uvTexture });
 const cube = new THREE.Mesh(geometry, material);
-// cube.position.x = 2;
-// cube.rotation.x = Math.PI / 2;
-// cube.scale.x = 3;
+cube.position.x = 2;
 // 17.3 创建法向量辅助器
 const helper = new VertexNormalsHelper(cube, 0.5, 0xff0000);
 scene.add(helper);

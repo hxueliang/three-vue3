@@ -1,4 +1,4 @@
-<!-- 10.hdr加载器_环境贴图_高光贴图 -->
+<!-- 9.透明度贴图_光照贴图 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -8,7 +8,6 @@ import { ref, onMounted } from 'vue';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -29,43 +28,25 @@ const texture = textureLoader.load('./texture/watercover/CityNewYork002_COL_VAR1
 const aoTexture = textureLoader.load('./texture/watercover/CityNewYork002_AO_1K.jpg');
 const alphaTexture = textureLoader.load('./texture/door/alpha.jpg');
 const lightTexture = textureLoader.load('./texture/colors.png');
-const specularTexture = textureLoader.load('./texture/watercover/CityNewYork002_GLOSS_1K.jpg');
-// 10.1 创建RGBELoader
-const rgbeLoader = new RGBELoader();
-// 10.2 加载hdr图
-rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
-  // 10.3 设置球形映射
-  envMap.mapping = THREE.EquirectangularReflectionMapping;
-  // 10.4 给场景设置背景
-  scene.background = envMap;
-  // 10.5 给场景设置环境贴图
-  scene.environment = envMap;
-  // 10.5 给plane设置环境贴图
-  planeMaterial.envMap = envMap;
-});
 // 8.1 创建平面
 const planeGeometry = new THREE.PlaneGeometry(5, 5);
-const planeMaterial = new THREE.MeshBasicMaterial({
+const PlaneMaterial = new THREE.MeshBasicMaterial({
   color: 0xffffff,
   transparent: true,
-  // 10.6 反射强度
-  reflectivity: 0.5,
   // 8.4 加载颜色贴图
   map: texture,
   // 8.5 加载环境遮挡贴图
-  // aoMap: aoTexture,
+  aoMap: aoTexture,
   // 9.1 加载透明度贴图
   // alphaMap: alphaTexture,
   // 9.2 加载光照贴图
-  // lightMap: lightTexture,
-  // 10.7 加载高光贴图
-  specularMap: specularTexture,
+  lightMap: lightTexture,
 });
-const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+const plane = new THREE.Mesh(planeGeometry, PlaneMaterial);
 scene.add(plane);
 
 const gui = new GUI();
-gui.add(planeMaterial, 'aoMapIntensity', 0, 1).name('ao贴图强度');
+gui.add(PlaneMaterial, 'aoMapIntensity', 0, 1).name('ao贴图强度');
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer();

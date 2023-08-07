@@ -1,4 +1,4 @@
-<!-- 17.法向量属性_法向量辅助器 -->
+<!-- 16.uv与应用 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -11,7 +11,6 @@ import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js';
-import { VertexNormalsHelper } from 'three/examples/jsm/helpers/VertexNormalsHelper';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -24,23 +23,6 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
 camera.position.set(1, 2, 15);
 scene.add(camera);
-
-
-// 17.1 添加环境贴图【10.1 创建RGBELoader】
-const rgbeLoader = new RGBELoader();
-// 10.2 加载hdr图
-rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
-  // 10.3 设置球形映射
-  envMap.mapping = THREE.EquirectangularReflectionMapping;
-  // 10.4 给场景设置背景
-  scene.background = envMap;
-  // 10.5 给场景设置环境贴图
-  scene.environment = envMap;
-  // 10.5 给planeMaterial设置环境贴图
-  planeMaterial.envMap = envMap;
-  // 17.3 给material设置环境贴图
-  material.envMap = envMap;
-});
 
 // 16.2 加载uv纹理
 const uvTexture = new THREE.TextureLoader().load('./texture/uv_grid_opengl.jpg');
@@ -70,22 +52,9 @@ const uv = new Float32Array([
 ]);
 // 16.3.2 创建uv属性
 geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); // 二个一组
-// 17.2.1 自动计算出法向量
-// geometry.computeVertexNormals();
-// 17.2.2 手动设置法向量
-const normals = new Float32Array([
-  0, 0, 1,
-  0, 0, 1,
-  0, 0, 1,
-  0, 0, 1
-]);
-geometry.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
 const material = new THREE.MeshBasicMaterial({ map: uvTexture });
 const cube = new THREE.Mesh(geometry, material);
 cube.position.x = 2;
-// 17.3 创建法向量辅助器
-const helper = new VertexNormalsHelper(cube, 0.5, 0xff0000);
-scene.add(helper);
 scene.add(cube);
 
 // 1.4 创建渲染器

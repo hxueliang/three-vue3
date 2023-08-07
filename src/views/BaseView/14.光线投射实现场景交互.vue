@@ -1,4 +1,4 @@
-<!-- 15.补间动画Tween -->
+<!-- 14.光线投射实现场景交互 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -10,7 +10,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import * as TWEEN from 'three/examples/jsm/libs/tween.module.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -33,45 +33,43 @@ function createSphere(color) {
     })
   ));
 }
-const sphere = createSphere(0x00ff00);
-scene.add(sphere);
+const sphere1 = createSphere(0x00ff00);
+const sphere2 = createSphere(0x0000ff);
+const sphere3 = createSphere(0xff00ff);
+sphere1.position.x = -4;
+sphere2.position.x = 0;
+sphere3.position.x = 4;
+scene.add(sphere1);
+scene.add(sphere2);
+scene.add(sphere3);
+// 14.2 创建射线
+const raycaster = new THREE.Raycaster();
+// 14.3 创建鼠标向量，用来保存鼠标点在画面哪里
+const mouse = new THREE.Vector2();
+// 14.4 监听点击事件
+document.addEventListener('click', event => {
+  // 14.4.1 设置鼠标向量经x,y的值
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  // console.log(mouse.x, mouse.y);
+  // 14.4.2 通过摄像机和鼠标位置更新射线
+  raycaster.setFromCamera(mouse, camera);
+  // 14.4.3 检测射线有没与物体相交
+  const intersects = raycaster.intersectObjects([sphere1, sphere2, sphere3]);
+  // 14.4.4 如果有相交的物体，取最近的一个，改变其颜色
+  if (intersects.length > 0) {
+    const [firstSphere] = intersects;
+    if (firstSphere.object._isSelect) {
+      firstSphere.object.material.color.set(firstSphere.object._originColor);
+    } else {
+      firstSphere.object._originColor = firstSphere.object.material.color.getHex();
+      firstSphere.object.material.color.set(0xff0000);
+    }
+    firstSphere.object._isSelect = !firstSphere.object._isSelect;
+  }
+});
 
-// 15.1 创建tween实例
-const tween = new TWEEN.Tween(sphere.position);
-// 15.2 设置动画
-tween
-  .to({ x: 4 }, 2000) // 设置移动终点，时间
-  // .repeat(Infinity)
-  // .yoyo(true)
-  // .delay(500)
-  .easing(TWEEN.Easing.Quadratic.InOut) // https://tweenjs.github.io/tween.js/examples/03_graphs.html
-  .start()
-  .onStart(_ => console.log('开始'))
-  .onComplete(_ => console.log('结束'))
-  // .onUpdate(_ => console.log('更新'))
-  .onStop((_ => console.log('停止')));
-
-// 15.4 设置第二个tween
-const tween2 = new TWEEN.Tween(sphere.position);
-tween2
-  .to({ y: -4 }, 2000)
-  .easing(TWEEN.Easing.Quadratic.InOut);
-// 15.5 设置第一个补间动画完成后，接着进行第二次补间动画
-tween.chain(tween2);
-console.log(tween);
-// 15.6 使用gui设置暂停/开始
 const gui = new GUI();
-const params = {
-  stop() { tween.stop(); },
-  start() { tween.start(); },
-  pause() { tween.pause(); },
-  resume() { tween.resume(); }
-};
-gui.add(params, 'stop');
-gui.add(params, 'start');
-gui.add(params, 'pause');
-gui.add(params, 'resume');
-
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer();
@@ -97,9 +95,6 @@ function render() {
 
   renderer.render(scene, camera);
   requestAnimationFrame(render);
-
-  // 15.3 更新tween
-  TWEEN.update(); // tween.update();
 };
 
 // 4.1 监听视口变化

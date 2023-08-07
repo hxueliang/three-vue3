@@ -1,4 +1,4 @@
-<!-- 8.颜色贴图_环境遮蔽贴图 -->
+<!-- 7.不同的面设置不同材质 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -21,26 +21,32 @@ const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 10
 camera.position.set(2, 5, 10);
 scene.add(camera);
 
-// 8.2 创建纹理加载器
-const textureLoader = new THREE.TextureLoader();
-// 8.3 加载纹理
-const texture = textureLoader.load('./texture/watercover/CityNewYork002_COL_VAR1_1K.png');
-const aoTexture = textureLoader.load('./texture/watercover/CityNewYork002_AO_1K.jpg');
-// 8.1 创建平面
-const planeGeometry = new THREE.PlaneGeometry(5, 5);
-const PlaneMaterial = new THREE.MeshBasicMaterial({
-  color: 0xffffff,
-  transparent: true,
-  // 8.3.1 加载颜色贴图
-  map: texture,
-  // 8.3.1 加载环境遮挡贴图
-  aoMap: aoTexture,
+// 6.1 创建几何体
+const geometry = new THREE.BufferGeometry();
+// 6.4 创建顶点数据，使用索引共用重合顶点，只需4个顶点
+const vertices = new Float32Array([
+  -1, -1, 1,
+  1, -1, 1,
+  1, 1, 1,
+  -1, 1, 1
+]);
+// 6.5 创建顶点属性
+geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+// 6.6 创建索引
+const indices = new Uint16Array([0, 1, 2, 2, 3, 0]);
+// 7.1 设2个顶点组，形成2个材质
+geometry.addGroup(0, 3, 0); // 索引0开始，3个一组，下标为0的材质
+geometry.addGroup(3, 3, 1); // 索引3开始，3个一组，下标为1的材质
+// 6.7 创建索引属性
+geometry.setIndex(new THREE.BufferAttribute(indices, 1));
+const material = new THREE.MeshBasicMaterial({
+  color: 0x00ff00,
 });
-const plane = new THREE.Mesh(planeGeometry, PlaneMaterial);
-scene.add(plane);
-
-const gui = new GUI();
-gui.add(PlaneMaterial, 'aoMapIntensity', 0, 1).name('ao贴图强度');
+const material1 = new THREE.MeshBasicMaterial({
+  color: 0xff0000,
+});
+const cube = new THREE.Mesh(geometry, [material, material1]); // 材质传数组
+scene.add(cube);
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer();

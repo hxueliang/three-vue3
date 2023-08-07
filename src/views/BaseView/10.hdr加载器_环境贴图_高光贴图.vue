@@ -1,4 +1,4 @@
-<!-- 11.纹理的颜色空间 -->
+<!-- 10.hdr加载器_环境贴图_高光贴图 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -30,8 +30,6 @@ const aoTexture = textureLoader.load('./texture/watercover/CityNewYork002_AO_1K.
 const alphaTexture = textureLoader.load('./texture/door/alpha.jpg');
 const lightTexture = textureLoader.load('./texture/colors.png');
 const specularTexture = textureLoader.load('./texture/watercover/CityNewYork002_GLOSS_1K.jpg');
-// 11.1 修改纹理的颜色空间
-texture.colorSpace = THREE.SRGBColorSpace;
 // 10.1 创建RGBELoader
 const rgbeLoader = new RGBELoader();
 // 10.2 加载hdr图
@@ -68,16 +66,6 @@ scene.add(plane);
 
 const gui = new GUI();
 gui.add(planeMaterial, 'aoMapIntensity', 0, 1).name('ao贴图强度');
-gui
-  .add(texture, 'colorSpace', {
-    sRGB: THREE.SRGBColorSpace,
-    Linear: THREE.LinearSRGBColorSpace,
-  })
-  .name('颜色空间')
-  .onChange(() => {
-    // 11.2 设置纹理需要更新
-    texture.needsUpdate = true;
-  });
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer();

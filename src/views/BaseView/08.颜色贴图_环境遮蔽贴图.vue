@@ -1,4 +1,4 @@
-<!-- 9.透明度贴图_光照贴图 -->
+<!-- 8.颜色贴图_环境遮蔽贴图 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -26,21 +26,15 @@ const textureLoader = new THREE.TextureLoader();
 // 8.3 加载纹理
 const texture = textureLoader.load('./texture/watercover/CityNewYork002_COL_VAR1_1K.png');
 const aoTexture = textureLoader.load('./texture/watercover/CityNewYork002_AO_1K.jpg');
-const alphaTexture = textureLoader.load('./texture/door/alpha.jpg');
-const lightTexture = textureLoader.load('./texture/colors.png');
 // 8.1 创建平面
 const planeGeometry = new THREE.PlaneGeometry(5, 5);
 const PlaneMaterial = new THREE.MeshBasicMaterial({
   color: 0xffffff,
   transparent: true,
-  // 8.4 加载颜色贴图
+  // 8.3.1 加载颜色贴图
   map: texture,
-  // 8.5 加载环境遮挡贴图
+  // 8.3.1 加载环境遮挡贴图
   aoMap: aoTexture,
-  // 9.1 加载透明度贴图
-  // alphaMap: alphaTexture,
-  // 9.2 加载光照贴图
-  lightMap: lightTexture,
 });
 const plane = new THREE.Mesh(planeGeometry, PlaneMaterial);
 scene.add(plane);

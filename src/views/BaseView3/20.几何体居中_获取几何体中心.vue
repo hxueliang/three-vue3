@@ -1,4 +1,4 @@
-<!-- 21.包围球辅助器 -->
+<!-- 20.几何体居中_获取几何体中心 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -50,18 +50,6 @@ gltfLoader.load('./model/Duck.glb', gltf => {
   const boxHelper = new THREE.Box3Helper(duckBox, 0xffff00);
   scene.add(boxHelper);
 
-  // 21.1 拿到包围球
-  const duckSphere = duckGeometry.boundingSphere;
-  duckSphere.applyMatrix4(duckMesh.matrixWorld);
-  // 21.2 创建包围球辅助器
-  const sphereGeometry = new THREE.SphereGeometry(duckSphere.radius, 16, 16);
-  const sphereMaterial = new THREE.MeshBasicMaterial({
-    color: 0xff0000,
-    wireframe: true
-  });
-  const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
-  sphereMesh.position.copy(duckSphere.center);
-  scene.add(sphereMesh);
 });
 
 // 19.2【10.1 创建RGBELoader】

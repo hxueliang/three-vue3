@@ -1,7 +1,4 @@
-<!-- 29.标准材质 -->
-<!-- 一种基于物理的标准材质 -->
-<!-- 使用此材质时应始终指定environment map -->
-<!-- MeshStandardMaterial -->
+<!-- 28.Phong材质玻璃水晶效果 -->
 <template>
   <div class="container" ref="container"></div>
 </template>

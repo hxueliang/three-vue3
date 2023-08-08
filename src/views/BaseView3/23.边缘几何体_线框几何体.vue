@@ -1,4 +1,4 @@
-<!-- 24.模型里所有的物体都转为线框 -->
+<!-- 23.边缘几何体_线框几何体 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -35,36 +35,30 @@ dracoLoader.setDecoderPath('./draco/');
 gltfLoader.setDRACOLoader(dracoLoader);
 rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
   envMap.mapping = THREE.EquirectangularReflectionMapping;
-  // scene.background = envMap;
+  scene.background = envMap;
   scene.environment = envMap;
 });
-gltfLoader.load('./model/city.glb', gltf => {
-  // 24.1 遍历scene
-  gltf.scene.traverse(child => {
-    if (!child.isMesh) {
-      return;
-    }
-    // 23.7 隐藏原物体
-    // scene.add(gltf.scene);
-    const building = child;
-    const geometry = building.geometry;
-    // 23.2.1 创建边缘几何体
-    const edgesGeometry = new THREE.EdgesGeometry(geometry);
-    // 23.2.2 创建线框几何体
-    // const edgesGeometry = new THREE.WireframeGeometry(geometry);
-    // 23.3 创建线段材质
-    const edgesMaterial = new THREE.LineBasicMaterial({
-      color: 0xffffff,
-    });
-    // 23.4 创建线段
-    const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
-    // 23.6 更新建筑世界转换矩阵
-    building.updateWorldMatrix(true, true);
-    edges.matrix.copy(building.matrixWorld);
-    edges.matrix.decompose(edges.position, edges.quaternion, edges.scale);
-    // 23.5 添加进场景
-    scene.add(edges);
+gltfLoader.load('./model/building.glb', gltf => {
+  // 23.7 隐藏原物体
+  // scene.add(gltf.scene);
+  const building = gltf.scene.children[0];
+  const geometry = building.geometry;
+  // 23.2.1 创建边缘几何体
+  const edgesGeometry = new THREE.EdgesGeometry(geometry);
+  // 23.2.2 创建线框几何体
+  // const edgesGeometry = new THREE.WireframeGeometry(geometry);
+  // 23.3 创建线段材质
+  const edgesMaterial = new THREE.LineBasicMaterial({
+    color: 0xffffff,
   });
+  // 23.4 创建线段
+  const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
+  // 23.6 更新建筑世界转换矩阵
+  building.updateWorldMatrix(true, true);
+  edges.matrix.copy(building.matrixWorld);
+  edges.matrix.decompose(edges.position, edges.quaternion, edges.scale);
+  // 23.5 添加进场景
+  scene.add(edges);
 });
 
 // 1.4 创建渲染器

@@ -1,4 +1,4 @@
-<!-- 23.边缘几何体_线框几何体 -->
+<!-- 22.多个物体联合包围盒 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -10,7 +10,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js';
 import { VertexNormalsHelper } from 'three/examples/jsm/helpers/VertexNormalsHelper';
 import TheCar from '../../components/TheCar.vue';
@@ -24,42 +23,50 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.set(1, 2, 35);
+camera.position.set(1, 2, 10);
 scene.add(camera);
 
-// 23.1 加载模型
-const gltfLoader = new GLTFLoader();
-const dracoLoader = new DRACOLoader();
-const rgbeLoader = new RGBELoader();
-dracoLoader.setDecoderPath('./draco/');
-gltfLoader.setDRACOLoader(dracoLoader);
-rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
-  envMap.mapping = THREE.EquirectangularReflectionMapping;
-  scene.background = envMap;
-  scene.environment = envMap;
+// 22.1 创建多个物体【14.1 创建球】
+function createSphere(color) {
+  return (new THREE.Mesh(
+    new THREE.SphereGeometry(1, 32, 32),
+    new THREE.MeshBasicMaterial({
+      color
+    })
+  ));
+}
+const sphere1 = createSphere(0x00ff00);
+const sphere2 = createSphere(0x0000ff);
+const sphere3 = createSphere(0xff00ff);
+sphere1.position.x = -4;
+sphere2.position.x = 0;
+sphere3.position.x = 4;
+scene.add(sphere1);
+scene.add(sphere2);
+scene.add(sphere3);
+// 22.2 实例化包围盒
+let box = new THREE.Box3();
+// 22.3 需要联合创建包围盒的物体
+const sphereArr = [sphere1, sphere2, sphere3];
+sphereArr.forEach(sphere => {
+  /*
+  // 22.4 计算当前物体包围盒
+  sphere.geometry.computeBoundingBox();
+  // 22.5 获取物体包围盒
+  const box3 = sphere.geometry.boundingBox;
+  // 22.6 更新世界矩阵
+  sphere.updateWorldMatrix(true, true);
+  // 22.7 将包围盒转换到世界坐标系
+  box3.applyMatrix4(sphere.matrixWorld);
+  */
+  // 22.10 第二种方式
+  const box3 = new THREE.Box3().setFromObject(sphere);
+  // 22.8 合并包围球
+  box.union(box3);
 });
-gltfLoader.load('./model/building.glb', gltf => {
-  // 23.7 隐藏原物体
-  // scene.add(gltf.scene);
-  const building = gltf.scene.children[0];
-  const geometry = building.geometry;
-  // 23.2.1 创建边缘几何体
-  const edgesGeometry = new THREE.EdgesGeometry(geometry);
-  // 23.2.2 创建线框几何体
-  // const edgesGeometry = new THREE.WireframeGeometry(geometry);
-  // 23.3 创建线段材质
-  const edgesMaterial = new THREE.LineBasicMaterial({
-    color: 0xffffff,
-  });
-  // 23.4 创建线段
-  const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
-  // 23.6 更新建筑世界转换矩阵
-  building.updateWorldMatrix(true, true);
-  edges.matrix.copy(building.matrixWorld);
-  edges.matrix.decompose(edges.position, edges.quaternion, edges.scale);
-  // 23.5 添加进场景
-  scene.add(edges);
-});
+// 22.9 创建包围盒辅助器
+const boxHelper = new THREE.Box3Helper(box, 0xffff00);
+scene.add(boxHelper);
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer();

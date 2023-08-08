@@ -1,4 +1,4 @@
-<!-- 18.顶点操作_位移_旋转_缩放 -->
+<!-- 19.包围盒_世界矩阵转换 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -22,83 +22,40 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.set(1, 2, 15);
+camera.position.set(1, 2, 5);
 scene.add(camera);
 
+// 19.1 导入鸭子模型【13.1 实例化加载器gltf】
+const gltfLoader = new GLTFLoader();
+gltfLoader.load('./model/Duck.glb', gltf => {
+  scene.add(gltf.scene);
+  console.log(gltf);
+  // 19.2 获取鸭子
+  const duckMesh = gltf.scene.getObjectByName('LOD3spShape');
+  // 19.3 获取几何体
+  const duckGeometry = duckMesh.geometry;
+  // 19.4 计算包围盒（当模型不提供包围盒时，需要调用计算包围盒方法）
+  duckGeometry.computeBoundingBox();
+  // 19.5 拿到包围盒
+  const duckBox = duckGeometry.boundingBox;
+  // 19.7 更新世界矩阵
+  duckMesh.updateWorldMatrix(true, true);
+  // 19.8 更新包围盒
+  duckBox.applyMatrix4(duckMesh.matrixWorld);
+  // 19.6 创建包围盒辅助器
+  const boxHelper = new THREE.Box3Helper(duckBox, 0xffff00);
+  scene.add(boxHelper);
 
-// 17.1 添加环境贴图【10.1 创建RGBELoader】
-const rgbeLoader = new RGBELoader();
-// 10.2 加载hdr图
-rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
-  // 10.3 设置球形映射
-  envMap.mapping = THREE.EquirectangularReflectionMapping;
-  // 10.4 给场景设置背景
-  scene.background = envMap;
-  // 10.5 给场景设置环境贴图
-  scene.environment = envMap;
-  // 10.5 给planeMaterial设置环境贴图
-  planeMaterial.envMap = envMap;
-  // 17.3 给material设置环境贴图
-  material.envMap = envMap;
+  console.log(duckMesh);
 });
 
-// 16.2 加载uv纹理
-const uvTexture = new THREE.TextureLoader().load('./texture/uv_grid_opengl.jpg');
-// 16.1 创建平面
-const planeGeometry = new THREE.PlaneGeometry(2, 2);
-const planeMaterial = new THREE.MeshBasicMaterial({ map: uvTexture });
-const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-plane.position.x = -2;
-scene.add(plane);
-// 16.3 手动创建手几何体
-const geometry = new THREE.BufferGeometry();
-const vertices = new Float32Array([
-  -1, -1, 0, // 一个几何体顶点三个坐标
-  1, -1, 0,
-  1, 1, 0,
-  -1, 1, 0
-]);
-geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3)); // 三个一组
-const indices = new Uint16Array([0, 1, 2, 2, 3, 0]);
-geometry.setIndex(new THREE.BufferAttribute(indices, 1));
-// 16.3.1 设置uv坐标
-const uv = new Float32Array([
-  0, 0, // 一个uv顶点二个坐标
-  1, 0,
-  1, 1,
-  0, 1
-]);
-// 16.3.2 创建uv属性
-geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); // 二个一组
-// 17.2.1 自动计算出法向量
-// geometry.computeVertexNormals();
-// 17.2.2 手动设置法向量
-const normals = new Float32Array([
-  0, 0, 1,
-  0, 0, 1,
-  0, 0, 1,
-  0, 0, 1
-]);
-geometry.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
-// 18.1 移动顶点（修改：Mesh.geometry.attributes.position.x）// 对比移动物体（修改：Mesh.position.x）
-geometry.translate(4, 0, 0);
-// 18.2 旋转（修改：Mesh.geometry.attributes.position.y）// 对比旋转物体（修改：Mesh.rotation.x）
-// geometry.rotateX(Math.PI / 2);
-// 18.3 缩放（修改：Mesh.geometry.attributes.position.x）// 对比缩放物体（修改：Mesh.scale.x）
-// 总结：
-// 1.对顶点的操作直接修改顶点数据，不如直接对物体操作修改物体的属性直观。
-// 2.所以大部分情况都使用对物体操作，不使用对顶点操作
-// 3.除非后端返回的顶点数据不便于使用，才会使用对顶点操作，使用顶点回到好操作的位置，再使用对物体操作
-// geometry.scale(3, 1, 1);
-const material = new THREE.MeshBasicMaterial({ map: uvTexture });
-const cube = new THREE.Mesh(geometry, material);
-// cube.position.x = 2;
-// cube.rotation.x = Math.PI / 2;
-// cube.scale.x = 3;
-// 17.3 创建法向量辅助器
-const helper = new VertexNormalsHelper(cube, 0.5, 0xff0000);
-scene.add(helper);
-scene.add(cube);
+// 19.2【10.1 创建RGBELoader】
+const rgbeLoader = new RGBELoader();
+rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
+  envMap.mapping = THREE.EquirectangularReflectionMapping;
+  scene.background = envMap;
+  scene.environment = envMap;
+});
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer();

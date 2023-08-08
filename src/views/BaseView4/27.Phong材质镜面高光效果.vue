@@ -1,4 +1,7 @@
-<!-- 28.Phong材质玻璃水晶效果 -->
+<!-- 27.Phong材质镜面高光效果 -->
+<!-- 一种用于具有镜面高光的光泽表面的材质 -->
+<!-- 例如涂漆木材 -->
+<!-- THREE.MeshPhongMaterial -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -25,42 +28,64 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.set(1, 2, 3);
+camera.position.set(0.5, 1, 0.5);
 scene.add(camera);
 
-// 28.1 加载环境贴图 【10.1 创建RGBELoader】
+// 26.1 加载环境贴图 【10.1 创建RGBELoader】
 const rgbeLoader = new RGBELoader();
 rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
-  // 28.2.5 设置映射为折面映射
-  envMap.mapping = THREE.EquirectangularRefractionMapping;
+  envMap.mapping = THREE.EquirectangularReflectionMapping;
   scene.background = envMap;
   scene.environment = envMap;
-
-  // 28.2 加载物体模型
-  const gltfLoader = new GLTFLoader();
-  gltfLoader.load('./model/Duck.glb', gltf => {
-    scene.add(gltf.scene);
-    // 28.2.4 添加环境光
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
-    scene.add(ambientLight);
-
-    const duckMesh = gltf.scene.getObjectByName('LOD3spShape');
-    const sourceMaterial = duckMesh.material;
-    duckMesh.material = new THREE.MeshPhongMaterial({
-      color: 0xffffff,
-      // 28.2.6 设置原来的贴图
-      map: sourceMaterial.map,
-      // 28.2.1 折射率，不应超过1，默认值为0.98
-      refractionRatio: 0.6,
-      // 28.2.2 环境贴图对表面的影响程度，默认值为1，介于0（无反射）和1（完全反射）之间
-      reflectivity: 0.99,
-      // 28.2.3 设置环境贴图
-      envMap: envMap,
-    });
-  });
+  planeMaterial.envMap = envMap;
 });
 
+// 26.3 添加环境光
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+scene.add(ambientLight);
 
+// 26.4 添加点光源
+const pointLight = new THREE.PointLight(0xffffff, 2);
+pointLight.position.y = 2;
+scene.add(pointLight);
+
+// 26.5 添加纹理贴图
+const textureLoader = new THREE.TextureLoader();
+const colorTexture = textureLoader.load('./texture/watercover/CityNewYork002_COL_VAR1_1K.png');
+colorTexture.colorSpace = THREE.SRGBColorSpace;
+const specularTexture = textureLoader.load('./texture/watercover/CityNewYork002_GLOSS_1K.jpg');
+const normalTexture = textureLoader.load('./texture/watercover/CityNewYork002_NRM_1K.jpg');
+const dispTexture = textureLoader.load('./texture/watercover/CityNewYork002_DISP_1K.jpg');
+const aoTexture = textureLoader.load('./texture/watercover/CityNewYork002_AO_1K.jpg');
+
+// 26.2 创建平面【8.1 创建平面】
+const planeGeometry = new THREE.PlaneGeometry(1, 1, 200, 200); // 26.5.5.1 长宽都设置200个顶点
+const planeMaterial = new THREE.MeshPhongMaterial({
+  transparent: true,
+  // 10.6 反射强度
+  reflectivity: 0.5,
+  // 26.5.1 颜色贴图
+  map: colorTexture,
+  // 26.5.2 高光贴图
+  specularMap: specularTexture,
+  // 26.5.3 法线贴图
+  // normalMap: normalTexture,
+  // 26.5.4 凹凸贴图
+  bumpMap: dispTexture,
+  // 26.5.5 置换贴图
+  displacementMap: dispTexture,
+  // 26.5.5.2 置换程度
+  displacementScale: 0.02,
+  // 26.5.6 环境光遮挡贴图
+  aoMap: aoTexture,
+  // 9.1 加载透明度贴图
+  // alphaMap: alphaTexture,
+  // 9.2 加载光照贴图
+  // lightMap: lightTexture,
+});
+const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+plane.rotation.x = - Math.PI / 2;
+scene.add(plane);
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer({ antialias: true });

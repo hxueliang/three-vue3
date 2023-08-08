@@ -1,4 +1,4 @@
-<!-- 20.几何体居中_获取几何体中心 -->
+<!-- 19.包围盒_世界矩阵转换 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -29,27 +29,24 @@ scene.add(camera);
 const gltfLoader = new GLTFLoader();
 gltfLoader.load('./model/Duck.glb', gltf => {
   scene.add(gltf.scene);
+  console.log(gltf);
   // 19.2 获取鸭子
   const duckMesh = gltf.scene.getObjectByName('LOD3spShape');
   // 19.3 获取几何体
   const duckGeometry = duckMesh.geometry;
   // 19.4 计算包围盒（当模型不提供包围盒时，需要调用计算包围盒方法）
   duckGeometry.computeBoundingBox();
-  // 20.1 设置几何体居中
-  duckGeometry.center();
   // 19.5 拿到包围盒
   const duckBox = duckGeometry.boundingBox;
   // 19.7 更新世界矩阵
   duckMesh.updateWorldMatrix(true, true);
   // 19.8 更新包围盒
   duckBox.applyMatrix4(duckMesh.matrixWorld);
-  // 20.2 获取包围盒中心点
-  const center = duckBox.getCenter(new THREE.Vector3());
-  console.log(center);
   // 19.6 创建包围盒辅助器
   const boxHelper = new THREE.Box3Helper(duckBox, 0xffff00);
   scene.add(boxHelper);
 
+  console.log(duckMesh);
 });
 
 // 19.2【10.1 创建RGBELoader】

@@ -1,4 +1,10 @@
-<!-- 31.透明物体_透光性_厚度_衰减颜色_衰减距离 -->
+<!-- 30.物理材质 -->
+<!-- MeshStandardMaterial的扩展，提供了更高级的基于物理的渲染属性 -->
+<!-- Clearcoat: 有些类似于车漆，碳纤，被水打湿的表面的材质需要在面上再增加一个透明的，具有一定反光特性的面。而且这个面说不定有一定的起伏与粗糙度。Clearcoat可以在不需要重新创建一个透明的面的情况下做到类似的效果。 -->
+<!-- 基于物理的透明度:.opacity属性有一些限制:在透明度比较高的时候，反射也随之减少。使用基于物理的透光性.transmission属性可以让一些很薄的透明表面，例如玻璃，变得更真实一些。 -->
+<!-- 高级光线反射: 为非金属材质提供了更多更灵活的光线反射。 -->
+<!-- Sheen: Can be used for representing cloth and fabric materials. -->
+<!-- MeshPhysicalMaterial -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -28,41 +34,38 @@ const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 10
 camera.position.set(1, 2, 3);
 scene.add(camera);
 
-// 31.1 加载环境贴图【10.1 创建RGBELoader】
+// 28.1 加载环境贴图 【10.1 创建RGBELoader】
 const rgbeLoader = new RGBELoader();
 rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
-  envMap.mapping = THREE.EquirectangularReflectionMapping;
+  // 28.2.5 设置映射为折面映射
+  envMap.mapping = THREE.EquirectangularRefractionMapping;
   scene.background = envMap;
   scene.environment = envMap;
+
+  // 28.2 加载物体模型
+  const gltfLoader = new GLTFLoader();
+  gltfLoader.load('./model/Duck.glb', gltf => {
+    scene.add(gltf.scene);
+    // 28.2.4 添加环境光
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+    scene.add(ambientLight);
+
+    const duckMesh = gltf.scene.getObjectByName('LOD3spShape');
+    const sourceMaterial = duckMesh.material;
+    duckMesh.material = new THREE.MeshPhongMaterial({
+      color: 0xffffff,
+      // 28.2.6 设置原来的贴图
+      map: sourceMaterial.map,
+      // 28.2.1 折射率，不应超过1，默认值为0.98
+      refractionRatio: 0.6,
+      // 28.2.2 环境贴图对表面的影响程度，默认值为1，介于0（无反射）和1（完全反射）之间
+      reflectivity: 0.99,
+      // 28.2.3 设置环境贴图
+      envMap: envMap,
+    });
+  });
 });
 
-// 31.2.6 加载厚度贴图
-const thicknessMap = new THREE.TextureLoader().load('./texture/diamond/diamond_emissive.png');
-
-// 31.2 创建物体
-const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshPhysicalMaterial({
-  transparent: true,
-  // 31.2.1 透光性
-  transmission: 0.95,
-  // 31.2.2 粗糙度
-  roughness: 0.05,
-  // 31.2.3 厚度
-  thickness: 2,
-  // 31.2.4 衰减颜色
-  attenuationColor: new THREE.Color(0.9, 0, 0.9),
-  // 31.2.5 衰减距离
-  attenuationDistance: 1,
-  // 31.2.6.1 厚度贴图
-  thicknessMap: thicknessMap
-});
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
-
-// 31.3 设置gui
-const gui = new GUI();
-gui.add(cube.material, 'attenuationDistance', 0, 1).name('衰减距离');
-gui.add(cube.material, 'thickness', 0, 2).name('厚度');
 
 
 // 1.4 创建渲染器

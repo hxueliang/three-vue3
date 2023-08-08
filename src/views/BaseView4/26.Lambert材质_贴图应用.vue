@@ -1,7 +1,7 @@
-<!-- 27.Phong材质 -->
-<!-- 一种用于具有镜面高光的光泽表面的材质 -->
-<!-- 例如涂漆木材 -->
-<!-- THREE.MeshPhongMaterial -->
+<!-- 26.Lambert材质_贴图应用 -->
+<!-- 一种非光泽表面的材质 -->
+<!-- 例如未经处理的木材或石材 -->
+<!-- THREE.MeshLambertMaterial -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -60,7 +60,7 @@ const aoTexture = textureLoader.load('./texture/watercover/CityNewYork002_AO_1K.
 
 // 26.2 创建平面【8.1 创建平面】
 const planeGeometry = new THREE.PlaneGeometry(1, 1, 200, 200); // 26.5.5.1 长宽都设置200个顶点
-const planeMaterial = new THREE.MeshPhongMaterial({
+const planeMaterial = new THREE.MeshLambertMaterial({
   transparent: true,
   // 10.6 反射强度
   reflectivity: 0.5,

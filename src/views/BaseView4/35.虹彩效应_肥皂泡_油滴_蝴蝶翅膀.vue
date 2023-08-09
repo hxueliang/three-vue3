@@ -1,4 +1,4 @@
-<!-- 35.虹彩效应_肥皂泡_油滴 -->
+<!-- 34.布料织物_光泽 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -42,39 +42,24 @@ const normalMap = new THREE.TextureLoader().load('./texture/diamond/diamond_norm
 // 34.2.4.1 光泽颜色贴图
 const sheenColorMap = new THREE.TextureLoader().load('./texture/brick/brick_roughness.jpg');
 
-// 35.1 添加球
+// 34.1 添加球
 const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
 const sphereMaterial = new THREE.MeshPhysicalMaterial({
-  color: 0xffffff,
-  roughness: 0.05,
-  transmission: 0.9,
-  // 35.2 虹彩
-  iridescence: 1,
-  // 35.2.1 反射率
-  reflectivity: 1,
-  // 35.2.2 虹彩色折射率 默认1.3
-  iridescenceIOR: 1.5,
-  // 35.2.3 虹彩色厚度范围 默认[100, 400]
-  iridescenceThicknessRange: [100, 300],
-  // 35.2.4 虹彩色厚度贴图
-  iridescenceThicknessMap: sheenColorMap,
+  color: 0x222288,
+  // 34.2.1 光泽层的强度
+  sheen: 1,
+  // 34.2.2 光泽颜色
+  sheenColor: 0xffffff,
+  // 34.2.3 光泽层的粗糙度
+  sheenRoughness: 0.9,
+  // 34.2.4 光泽颜色贴图
+  sheenColorMap: sheenColorMap,
 });
 const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
 scene.add(sphere);
 
 // 31.3 设置gui
 const gui = new GUI();
-// 35.3 虹彩gui
-gui.add(sphereMaterial, 'iridescence', 0, 1).name('彩虹色');
-gui.add(sphereMaterial, 'reflectivity', 0, 1).name('反射率');
-gui.add(sphereMaterial, 'iridescenceIOR', 0, 3).name('虹彩色折射率');
-const param = { min: 0, max: 1 };
-gui
-  .add(param, 'min', 0, 1000).name('虹彩色厚最小值')
-  .onChange(_ => sphereMaterial.iridescenceThicknessRange[0] = param.min);
-gui
-  .add(param, 'max', 0, 1000).name('虹彩色厚最大值')
-  .onChange(_ => sphereMaterial.iridescenceThicknessRange[1] = param.max);
 
 
 // 1.4 创建渲染器

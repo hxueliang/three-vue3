@@ -1,4 +1,4 @@
-<!-- 33.清漆_粗糙度_法向_贴图_因子 -->
+<!-- 32.透明物体_折射率_反射率 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -14,6 +14,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js';
 import { VertexNormalsHelper } from 'three/examples/jsm/helpers/VertexNormalsHelper';
 import TheCar from '../../components/TheCar.vue';
+import { TextureLoader } from 'three';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -37,29 +38,23 @@ rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
 
 // 31.2.6 加载厚度贴图
 const thicknessMap = new THREE.TextureLoader().load('./texture/diamond/diamond_emissive.png');
-// 33.5.1 清漆法向贴图
-const normalMap = new THREE.TextureLoader().load('./texture/diamond/diamond_normal.png');
 
 // 31.2 创建物体
 const geometry = new THREE.BoxGeometry(1, 1, 1);
 const material = new THREE.MeshPhysicalMaterial({
   transparent: true,
-  color: 0xffff00,
-  roughness: 0.5,
-  // 33.1 清漆
-  clearcoat: 1,
-  // 33.2 清漆粗糙度
-  clearcoatRoughness: 0,
-  // 33.3 清漆贴图
-  // clearcoatMap: thicknessMap,
-  // 33.4 清漆粗糙度贴图
-  // clearcoatRoughnessMap: thicknessMap,
-  // 33.5.2 清漆法向贴图
-  clearcoatNormalMap: normalMap,
-  // 33.5.3 法向贴图
-  normalMap: normalMap,
-  // 33.5.4 清漆法向影响因子（衡量.clearcoatNormalMap影响）
-  clearcoatNormalScale: new THREE.Vector2(0.5, 0.5),
+  // 31.2.1 透光性
+  transmission: 0.95,
+  // 31.2.2 粗糙度
+  roughness: 0.05,
+  // 31.2.3 厚度
+  thickness: 2,
+  // 31.2.4 衰减颜色
+  attenuationColor: new THREE.Color(0.9, 0, 0.9),
+  // 31.2.5 衰减距离
+  attenuationDistance: 1,
+  // 31.2.6.1 厚度贴图
+  // thicknessMap: thicknessMap
 });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);

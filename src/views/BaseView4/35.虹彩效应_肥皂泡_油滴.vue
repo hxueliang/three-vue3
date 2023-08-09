@@ -1,4 +1,4 @@
-<!-- 36.保证性能_清除物体_几何体_材质_纹理 -->
+<!-- 35.虹彩效应_肥皂泡_油滴 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -35,8 +35,47 @@ rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
   scene.environment = envMap;
 });
 
+// 31.2.6 加载厚度贴图
+const thicknessMap = new THREE.TextureLoader().load('./texture/diamond/diamond_emissive.png');
+// 33.5.1 清漆法向贴图
+const normalMap = new THREE.TextureLoader().load('./texture/diamond/diamond_normal.png');
+// 34.2.4.1 光泽颜色贴图
+const sheenColorMap = new THREE.TextureLoader().load('./texture/brick/brick_roughness.jpg');
+
+// 35.1 添加球
+const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
+const sphereMaterial = new THREE.MeshPhysicalMaterial({
+  color: 0xffffff,
+  roughness: 0.05,
+  transmission: 0.9,
+  // 35.2 虹彩
+  iridescence: 1,
+  // 35.2.1 反射率
+  reflectivity: 1,
+  // 35.2.2 虹彩色折射率 默认1.3
+  iridescenceIOR: 1.5,
+  // 35.2.3 虹彩色厚度范围 默认[100, 400]
+  iridescenceThicknessRange: [100, 300],
+  // 35.2.4 虹彩色厚度贴图
+  iridescenceThicknessMap: sheenColorMap,
+});
+const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+scene.add(sphere);
+
 // 31.3 设置gui
 const gui = new GUI();
+// 35.3 虹彩gui
+gui.add(sphereMaterial, 'iridescence', 0, 1).name('彩虹色');
+gui.add(sphereMaterial, 'reflectivity', 0, 1).name('反射率');
+gui.add(sphereMaterial, 'iridescenceIOR', 0, 3).name('虹彩色折射率');
+const param = { min: 0, max: 1 };
+gui
+  .add(param, 'min', 0, 1000).name('虹彩色厚最小值')
+  .onChange(_ => sphereMaterial.iridescenceThicknessRange[0] = param.min);
+gui
+  .add(param, 'max', 0, 1000).name('虹彩色厚最大值')
+  .onChange(_ => sphereMaterial.iridescenceThicknessRange[1] = param.max);
+
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -56,47 +95,12 @@ function createControls() {
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
 
-// 36.2 创建canvas画布
-function createImage() {
-  const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 256;
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`;
-  ctx.fillRect(0, 0, 256, 256);
-  return canvas;
-}
-
 // 1.5 创建渲染函数
 function render() {
-  // 36.3 创建canvas纹理贴图
-  const texture = new THREE.CanvasTexture(createImage());
-  // 36.1 不停的添加球体
-  const sphereGeometry = new THREE.SphereGeometry(
-    2,
-    Math.random() * 64,
-    Math.random() * 64
-  );
-  const sphereMaterial = new THREE.MeshStandardMaterial({
-    map: texture
-  });
-  const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-  scene.add(sphere);
-
   cantrols && cantrols.update();
 
   renderer.render(scene, camera);
   requestAnimationFrame(render);
-
-  // 36.4 清除场景中的物体
-  scene.remove(sphere);
-  // 36.5 清除几何体
-  sphereGeometry.dispose();
-  // 36.6 清除材质
-  sphereMaterial.dispose();
-  // 36.7 清除纹理贴图
-  texture.dispose();
-
 };
 
 // 4.1 监听视口变化

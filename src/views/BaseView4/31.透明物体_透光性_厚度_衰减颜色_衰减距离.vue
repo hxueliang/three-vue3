@@ -1,4 +1,4 @@
-<!-- 32.透明物体_折射率_反射率 -->
+<!-- 31.透明物体_透光性_厚度_衰减颜色_衰减距离 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -54,7 +54,7 @@ const material = new THREE.MeshPhysicalMaterial({
   // 31.2.5 衰减距离
   attenuationDistance: 1,
   // 31.2.6.1 厚度贴图
-  // thicknessMap: thicknessMap
+  thicknessMap: thicknessMap
 });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
@@ -63,10 +63,6 @@ scene.add(cube);
 const gui = new GUI();
 gui.add(cube.material, 'attenuationDistance', 0, 1).name('衰减距离');
 gui.add(cube.material, 'thickness', 0, 2).name('厚度');
-// 32.1 折射率
-gui.add(cube.material, 'ior', 0, 2).name('折射率');
-// 32.2 反射率
-gui.add(cube.material, 'reflectivity', 0, 1).name('反射率');
 
 
 // 1.4 创建渲染器

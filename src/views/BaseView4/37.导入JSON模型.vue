@@ -1,4 +1,4 @@
-<!-- 38.发光属性_逼真手机 -->
+<!-- 37.导入JSON模型 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -27,17 +27,18 @@ const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 10
 camera.position.set(1, 2, 3);
 scene.add(camera);
 
-// 38.1 发光属性_逼真手机
-scene.background = new THREE.Color(0x7aaff5);
-const light = new THREE.AmbientLight();
-scene.add(light);
-const gltfLoader = new GLTFLoader();
-const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath('./draco/');
-gltfLoader.setDRACOLoader(dracoLoader);
-gltfLoader.load('./model/mobile/scene.glb', gltf => {
-  gltf.scene.rotation.set(0, Math.PI, 0);
-  scene.add(gltf.scene);
+// 37.1 加载环境贴图【10.1 创建RGBELoader】
+const rgbeLoader = new RGBELoader();
+rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
+  envMap.mapping = THREE.EquirectangularReflectionMapping;
+  scene.background = envMap;
+  scene.environment = envMap;
+});
+
+// 37.2 导入JSON格式场景
+const loader = new THREE.ObjectLoader();
+loader.load('./model/damon/scene.json', object => { //
+  scene.add(object);
 });
 
 // 31.3 设置gui

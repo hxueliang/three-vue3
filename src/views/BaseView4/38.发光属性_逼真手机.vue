@@ -1,4 +1,4 @@
-<!-- 39.限制控制器位移_旋转角度 -->
+<!-- 38.发光属性_逼真手机 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -24,18 +24,18 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-// 39.2 修改相机位置
-camera.position.set(-2.5, 1, 0);
-camera.lookAt(0, 1, 0);
+camera.position.set(1, 2, 3);
 scene.add(camera);
 
-// 39.1 导入模型
+// 38.1 发光属性_逼真手机
 scene.background = new THREE.Color(0x7aaff5);
+const light = new THREE.AmbientLight();
+scene.add(light);
 const gltfLoader = new GLTFLoader();
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('./draco/');
 gltfLoader.setDRACOLoader(dracoLoader);
-gltfLoader.load('./model/livingroom.glb', gltf => {
+gltfLoader.load('./model/mobile/scene.glb', gltf => {
   gltf.scene.rotation.set(0, Math.PI, 0);
   scene.add(gltf.scene);
 });
@@ -53,24 +53,6 @@ function createControls() {
   cantrols = new OrbitControls(camera, container.value);
   cantrols.enableDamping = true;
   cantrols.dampingFactor = 0.05; // 阻尼：值越大惯性越小，0不能动
-
-  // 39.3 禁用平移（不禁用可通过：shith + 鼠标，平移）
-  cantrols.enablePan = false;
-  // 39.4 设置目标
-  cantrols.target.set(0, 1, 0);
-  // 39.5.1 设置移目标最小距离
-  cantrols.minDistance = 1;
-  // 39.5.2 设置移目标最大距离
-  cantrols.maxDistance = 3;
-  // 39.6.1 设置垂直最小角度
-  cantrols.minPolarAngle = Math.PI / 2 - Math.PI / 12;
-  // 39.6.2 设置垂直最大角度
-  cantrols.maxPolarAngle = Math.PI / 2 + Math.PI / 12;
-  // 39.7.1 设置水平最小角度
-  cantrols.minAzimuthAngle = -Math.PI / 2 - Math.PI / 12;
-  // 39.7.2 设置水平最大角度
-  cantrols.maxAzimuthAngle = -Math.PI / 2 + Math.PI / 12;
-
 
   container.value.appendChild(renderer.domElement);
 }

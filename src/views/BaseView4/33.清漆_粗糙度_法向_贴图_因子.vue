@@ -1,4 +1,4 @@
-<!-- 34.布料织物_光泽 -->
+<!-- 33.清漆_粗糙度_法向_贴图_因子 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -39,27 +39,39 @@ rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
 const thicknessMap = new THREE.TextureLoader().load('./texture/diamond/diamond_emissive.png');
 // 33.5.1 清漆法向贴图
 const normalMap = new THREE.TextureLoader().load('./texture/diamond/diamond_normal.png');
-// 34.2.4.1 光泽颜色贴图
-const sheenColorMap = new THREE.TextureLoader().load('./texture/brick/brick_roughness.jpg');
 
-// 34.1 添加球
-const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
-const sphereMaterial = new THREE.MeshPhysicalMaterial({
-  color: 0x222288,
-  // 34.2.1 光泽层的强度
-  sheen: 1,
-  // 34.2.2 光泽颜色
-  sheenColor: 0xffffff,
-  // 34.2.3 光泽层的粗糙度
-  sheenRoughness: 0.9,
-  // 34.2.4 光泽颜色贴图
-  sheenColorMap: sheenColorMap,
+// 31.2 创建物体
+const geometry = new THREE.BoxGeometry(1, 1, 1);
+const material = new THREE.MeshPhysicalMaterial({
+  transparent: true,
+  color: 0xffff00,
+  roughness: 0.5,
+  // 33.1 清漆
+  clearcoat: 1,
+  // 33.2 清漆粗糙度
+  clearcoatRoughness: 0,
+  // 33.3 清漆贴图
+  // clearcoatMap: thicknessMap,
+  // 33.4 清漆粗糙度贴图
+  // clearcoatRoughnessMap: thicknessMap,
+  // 33.5.2 清漆法向贴图
+  clearcoatNormalMap: normalMap,
+  // 33.5.3 法向贴图
+  normalMap: normalMap,
+  // 33.5.4 清漆法向影响因子（衡量.clearcoatNormalMap影响）
+  clearcoatNormalScale: new THREE.Vector2(0.5, 0.5),
 });
-const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-scene.add(sphere);
+const cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
 
 // 31.3 设置gui
 const gui = new GUI();
+gui.add(cube.material, 'attenuationDistance', 0, 1).name('衰减距离');
+gui.add(cube.material, 'thickness', 0, 2).name('厚度');
+// 32.1 折射率
+gui.add(cube.material, 'ior', 0, 2).name('折射率');
+// 32.2 反射率
+gui.add(cube.material, 'reflectivity', 0, 1).name('反射率');
 
 
 // 1.4 创建渲染器

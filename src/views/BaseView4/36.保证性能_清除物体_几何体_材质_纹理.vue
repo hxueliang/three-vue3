@@ -1,4 +1,4 @@
-<!-- 37.导入JSON模型 -->
+<!-- 36.保证性能_清除物体_几何体_材质_纹理 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -27,18 +27,12 @@ const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 10
 camera.position.set(1, 2, 3);
 scene.add(camera);
 
-// 37.1 加载环境贴图【10.1 创建RGBELoader】
+// 31.1 加载环境贴图【10.1 创建RGBELoader】
 const rgbeLoader = new RGBELoader();
 rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
   envMap.mapping = THREE.EquirectangularReflectionMapping;
   scene.background = envMap;
   scene.environment = envMap;
-});
-
-// 37.2 导入JSON格式场景
-const loader = new THREE.ObjectLoader();
-loader.load('./model/damon/scene.json', object => { //
-  scene.add(object);
 });
 
 // 31.3 设置gui
@@ -62,12 +56,47 @@ function createControls() {
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
 
+// 36.2 创建canvas画布
+function createImage() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`;
+  ctx.fillRect(0, 0, 256, 256);
+  return canvas;
+}
+
 // 1.5 创建渲染函数
 function render() {
+  // 36.3 创建canvas纹理贴图
+  const texture = new THREE.CanvasTexture(createImage());
+  // 36.1 不停的添加球体
+  const sphereGeometry = new THREE.SphereGeometry(
+    2,
+    Math.random() * 64,
+    Math.random() * 64
+  );
+  const sphereMaterial = new THREE.MeshStandardMaterial({
+    map: texture
+  });
+  const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  scene.add(sphere);
+
   cantrols && cantrols.update();
 
   renderer.render(scene, camera);
   requestAnimationFrame(render);
+
+  // 36.4 清除场景中的物体
+  scene.remove(sphere);
+  // 36.5 清除几何体
+  sphereGeometry.dispose();
+  // 36.6 清除材质
+  sphereMaterial.dispose();
+  // 36.7 清除纹理贴图
+  texture.dispose();
+
 };
 
 // 4.1 监听视口变化

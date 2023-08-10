@@ -1,4 +1,4 @@
-<!-- 44.各项异性 -->
+<!-- 44. -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -53,12 +53,6 @@ texture.minFilter = THREE.LinearMipmapLinearFilter; // 默认值
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(innerWidth, innerHeight);
-
-// 44.1 查询GPU中各向异性的最大有效值；这个值通常是2的幂
-const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
-console.log(maxAnisotropy); // 16
-// 44.2 通过具有最高纹素密度的像素的样本数。默认：1
-texture.anisotropy = maxAnisotropy;
 
 // 1.6 创建控制器
 let cantrols = null;

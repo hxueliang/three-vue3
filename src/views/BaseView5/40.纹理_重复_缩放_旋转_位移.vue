@@ -1,4 +1,4 @@
-<!-- 41.纹理_纵向翻转_预乘alpha -->
+<!-- 40.纹理_重复_缩放_旋转_位移 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -24,34 +24,38 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.set(0.5, 0.5, 3);
+camera.position.set(1, 2, 6);
 scene.add(camera);
 
 // 40.1 添加物体
 const textureLoader = new THREE.TextureLoader();
-const texture = textureLoader.load('./texture/rain.png');
+const texture = textureLoader.load('./imgs/dog.jpeg');
+
+// // 40.2.1 允许重复
+// texture.repeat.set(4, 4);
+// // 40.2.2 水平重复 2.镜像重复 1.简单地重复
+// texture.wrapS = THREE.MirroredRepeatWrapping; // THREE.RepeatWrapping;
+// // 40.2.3 垂直重复
+// texture.wrapT = THREE.MirroredRepeatWrapping;
+
+// 40.3 偏移
+// texture.offset.set(0.25, 0.25);
+
+// 40.4.1 旋转
+texture.rotation = Math.PI / 4;
+// 40.4.2 设置中心点
+texture.center.set(0.5, 0.5);
+
 const planeGeometry = new THREE.PlaneGeometry(2, 2);
 const PlaneMaterial = new THREE.MeshBasicMaterial({
   color: 0xffffff,
   map: texture,
-  transparent: true,
 });
 const plane = new THREE.Mesh(planeGeometry, PlaneMaterial);
 scene.add(plane);
 
-// 41.1 纵向翻转，因为图片与uv的y坐标刚好是相反的，所以默认为true，让纹理翻转
-// texture.flipY = false;
-
-// 41.2.2 设置背景，方便查看效果
-scene.background = new THREE.Color(0xffffff);
-
 // 31.3 设置gui
 const gui = new GUI();
-// 41.2.1 调试预乘透明度属性
-gui.add(texture, 'premultiplyAlpha').name('预乘透明度').onChange(_ => {
-  // 41.2.3 更新纹理
-  texture.needsUpdate = true;
-});
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer({ antialias: true });

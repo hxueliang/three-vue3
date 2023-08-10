@@ -1,4 +1,4 @@
-<!-- 47.高动态范围图片_EXR_TIF_PNG -->
+<!-- 46.高动态范围全景背景_色调映射_色调曝光 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -14,9 +14,6 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader';
 import { DDSLoader } from 'three/examples/jsm/loaders/DDSLoader';
 import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
-import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
-import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
-import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js';
 
 let innerWidth = window.innerWidth;
@@ -51,48 +48,14 @@ renderer.toneMappingExposure = 1;
 gui.add(renderer, 'toneMappingExposure', 0, 1);
 
 // 46.1 加载hdr贴图
-// const rgbeLoader = new RGBELoader();
-// const texture = rgbeLoader.load(
-//   './texture/opt/memorial/Alex_Hart-Nature_Lab_Bones_2k.hdr',
-//   envMap => {
-//     envMap.mapping = THREE.EquirectangularReflectionMapping;
-//     scene.background = envMap;
-//     scene.environment = envMap;
-//     plane.material.map = envMap;
-//   }
-// );
-
-// 47.1 加载exr贴图
-// const exrLoader = new EXRLoader();
-// const texture = exrLoader.load(
-//   './texture/opt/memorial/Alex_Hart-Nature_Lab_Bones_2k.exr',
-//   texture => {
-//     texture.mapping = THREE.EquirectangularReflectionMapping;
-//     scene.background = texture;
-//     scene.environment = texture;
-//     plane.material.map = texture;
-//   }
-// );
-
-// 47.2 加载tif贴图
-// const logLuvLoader = new LogLuvLoader();
-// const texture = logLuvLoader.load(
-//   './texture/opt/memorial/memorial.tif',
-//   texture => {
-//     scene.background = texture;
-//     scene.environment = texture;
-//     plane.material.map = texture;
-//   }
-// );
-
-// 47.3 加载png贴图
-const rgbmLoader = new RGBMLoader();
-const texture = rgbmLoader.load(
-  './texture/opt/memorial/memorial.png',
-  texture => {
-    scene.background = texture;
-    scene.environment = texture;
-    plane.material.map = texture;
+const rgbeLoader = new RGBELoader();
+const texture = rgbeLoader.load(
+  './texture/opt/memorial/Alex_Hart-Nature_Lab_Bones_2k.hdr',
+  envMap => {
+    envMap.mapping = THREE.EquirectangularReflectionMapping;
+    scene.background = envMap;
+    scene.environment = envMap;
+    plane.material.map = envMap;
   }
 );
 

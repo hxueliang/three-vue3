@@ -1,4 +1,4 @@
-<!-- 52.渲染器裁剪场景_一个物体可以同时渲染多种材质 -->
+<!-- 51.裁剪平面 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -56,6 +56,29 @@ const material = new THREE.MeshBasicMaterial({
 const sphere = new THREE.Mesh(geometry, material);
 scene.add(sphere);
 
+// 51.2 创建裁剪平面
+const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+// 51.2.1 创建裁剪平面
+const plane1 = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
+// 51.3 裁剪平面集合
+material.clippingPlanes = [plane, plane1];
+// 51.3.1 场景里所有物体都相同的 裁剪平面集合
+// renderer.clippingPlanes = [plane, plane1];
+// 51.7 设置裁剪为并集，默认：false，即交集
+material.clipIntersection = true;
+// 51.4 渲染器是否考虑对象级剪切平面
+renderer.localClippingEnabled = true;
+// 51.5 原点到平面有符号距离
+plane.constant = 0;
+// 51.8 设置裁剪阴影（配合灯光使用）
+material.clipShadows = true;
+// 51.6 gui
+const folder = gui.addFolder('裁剪平面');
+folder.add(plane, 'constant', -14.6, 14.6).step(0.1).name('位置');
+folder.add(plane.normal, 'x', -1, 1).step(0.5).name('法向量x');
+folder.add(plane.normal, 'y', -1, 1).step(0.5).name('法向量y');
+folder.add(plane.normal, 'z', -1, 1).step(0.5).name('法向量z');
+
 // 1.6 创建控制器
 let cantrols = null;
 function createControls() {
@@ -70,46 +93,11 @@ function createControls() {
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
 
-// 52.3 创建新的场景
-const sceneNew = new THREE.Scene();
-const material1 = new THREE.MeshBasicMaterial({
-  color: 0xff00ff,
-  wireframe: true,
-});
-const sphere1 = new THREE.Mesh(geometry, material1);
-sceneNew.add(sphere1);
-
-// 52.7 设置gui
-const params = { scissorWidth: window.innerWidth / 2, };
-gui.add(params, 'scissorWidth', 0, window.innerWidth);
-
 // 1.5 创建渲染函数
 function render() {
   cantrols && cantrols.update();
 
-  // 52.1 启用剪裁检测
-  renderer.setScissorTest(true);
-  // 52.2 设置裁剪区域
-  // renderer.setScissor(0, 0, window.innerWidth / 2, window.innerHeight);
-  // 52.7.1 配合设置gui调整
-  renderer.setScissor(0, 0, params.scissorWidth, window.innerHeight);
-
   renderer.render(scene, camera);
-
-  // 52.4 设置裁剪区域
-  // renderer.setScissor(window.innerWidth / 2, 0, window.innerWidth / 2, window.innerHeight);
-  // 52.7.2 配合设置gui调整
-  renderer.setScissor(
-    params.scissorWidth,
-    0,
-    window.innerWidth - params.scissorWidth,
-    window.innerHeight
-  );
-  // 52.5 渲染新的场景
-  renderer.render(sceneNew, camera);
-  // 52.6 禁用剪裁检测（防止其它地方要用renderer被影响）
-  renderer.setScissorTest(false);
-
   requestAnimationFrame(render);
 };
 

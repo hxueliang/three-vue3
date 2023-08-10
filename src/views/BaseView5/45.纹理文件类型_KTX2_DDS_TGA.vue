@@ -1,4 +1,4 @@
-<!-- 46.高动态范围全景背景_色调映射_色调曝光 -->
+<!-- 45.纹理文件类型_KTX2_DDS_TGA -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -31,33 +31,6 @@ scene.add(camera);
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(innerWidth, innerHeight);
-
-// 46.2 设置色调映射
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-const gui = new GUI();
-gui.add(renderer, 'toneMapping', {
-  'No(Linear)': THREE.NoToneMapping,
-  'Linear(默认)': THREE.LinearToneMapping,
-  Reinhard: THREE.ReinhardToneMapping,
-  Cineon: THREE.CineonToneMapping,
-  ACESFilmic: THREE.ACESFilmicToneMapping,
-});
-
-// 46.3 设置色调映射曝光度 默认：1
-renderer.toneMappingExposure = 1;
-gui.add(renderer, 'toneMappingExposure', 0, 1);
-
-// 46.1 加载hdr贴图
-const rgbeLoader = new RGBELoader();
-const texture = rgbeLoader.load(
-  './texture/opt/memorial/Alex_Hart-Nature_Lab_Bones_2k.hdr',
-  envMap => {
-    envMap.mapping = THREE.EquirectangularReflectionMapping;
-    scene.background = envMap;
-    scene.environment = envMap;
-    plane.material.map = envMap;
-  }
-);
 
 // 45.1 普通图版加载器
 // const textureLoader = new THREE.TextureLoader();
@@ -95,20 +68,20 @@ const texture = rgbeLoader.load(
 // );
 
 // 45.4 加载tga纹理
-// const tgaLoader = new TGALoader();
-// const texture = tgaLoader.load(
-//   './texture/opt/env/Alex_Hart-Nature_Lab_Bones_2k-mipmap.tga',
-//   texture => {
-//     texture.mapping = THREE.EquirectangularReflectionMapping;
-//     texture.flipY = true; // 生效
-//     scene.background = texture;
-//     scene.environment = texture;
-//     plane.material.map = texture;
-//   }
-// );
+const tgaLoader = new TGALoader();
+const texture = tgaLoader.load(
+  './texture/opt/env/Alex_Hart-Nature_Lab_Bones_2k-mipmap.tga',
+  texture => {
+    texture.mapping = THREE.EquirectangularReflectionMapping;
+    texture.flipY = true; // 生效
+    scene.background = texture;
+    scene.environment = texture;
+    plane.material.map = texture;
+  }
+);
 
 // 40.1 添加物体
-// texture.colorSpace = THREE.SRGBColorSpace;
+texture.colorSpace = THREE.SRGBColorSpace;
 const planeGeometry = new THREE.PlaneGeometry(2, 2);
 const PlaneMaterial = new THREE.MeshBasicMaterial({
   color: 0xffffff,

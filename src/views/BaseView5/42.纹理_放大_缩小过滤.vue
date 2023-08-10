@@ -1,4 +1,4 @@
-<!-- 43.mipmap解决摩尔纹条纹 -->
+<!-- 42.纹理_放大_缩小过滤 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -29,6 +29,8 @@ scene.add(camera);
 
 // 40.1 添加物体
 const textureLoader = new THREE.TextureLoader();
+// 42.1.1 加载小图
+// const texture = textureLoader.load('./texture/filter/minecraft.png');
 // 42.2.1 加载大图
 const texture = textureLoader.load('./texture/brick/brick_diffuse.jpg');
 // 42.2.2 设置颜色空间
@@ -42,13 +44,13 @@ const PlaneMaterial = new THREE.MeshBasicMaterial({
 const plane = new THREE.Mesh(planeGeometry, PlaneMaterial);
 scene.add(plane);
 
-// 43.1 开启mipmap
-texture.generateMipmaps = true; // 默认值
-// 43.1.1 设置minFilter
-// texture.minFilter = THREE.NearestMipmapNearestFilter;
-// texture.minFilter = THREE.NearestMipmapLinearFilter;
-// texture.minFilter = THREE.LinearMipmapNearestFilter;
-texture.minFilter = THREE.LinearMipmapLinearFilter; // 默认值
+
+
+// 42.1.2 使用放大滤镜 2.最接近的纹理元素的值 1.最近的四个纹理元素
+// texture.magFilter = THREE.NearestFilter; // THREE.LinearFilter;
+
+// 42.2.3 使用缩小滤镜 2.最接近的纹理元素的值 1.最近的四个纹理元素
+texture.minFilter = THREE.NearestFilter; // THREE.LinearFilter;
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer({ antialias: true });

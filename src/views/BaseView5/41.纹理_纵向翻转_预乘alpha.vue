@@ -1,4 +1,4 @@
-<!-- 42.纹理_放大_缩小过滤 -->
+<!-- 41.纹理_纵向翻转_预乘alpha -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -29,12 +29,7 @@ scene.add(camera);
 
 // 40.1 添加物体
 const textureLoader = new THREE.TextureLoader();
-// 42.1.1 加载小图
-// const texture = textureLoader.load('./texture/filter/minecraft.png');
-// 42.2.1 加载大图
-const texture = textureLoader.load('./texture/brick/brick_diffuse.jpg');
-// 42.2.2 设置颜色空间
-texture.colorSpace = THREE.SRGBColorSpace;
+const texture = textureLoader.load('./texture/rain.png');
 const planeGeometry = new THREE.PlaneGeometry(2, 2);
 const PlaneMaterial = new THREE.MeshBasicMaterial({
   color: 0xffffff,
@@ -44,13 +39,19 @@ const PlaneMaterial = new THREE.MeshBasicMaterial({
 const plane = new THREE.Mesh(planeGeometry, PlaneMaterial);
 scene.add(plane);
 
+// 41.1 纵向翻转，因为图片与uv的y坐标刚好是相反的，所以默认为true，让纹理翻转
+// texture.flipY = false;
 
+// 41.2.2 设置背景，方便查看效果
+scene.background = new THREE.Color(0xffffff);
 
-// 42.1.2 使用放大滤镜 2.最接近的纹理元素的值 1.最近的四个纹理元素
-// texture.magFilter = THREE.NearestFilter; // THREE.LinearFilter;
-
-// 42.2.3 使用缩小滤镜 2.最接近的纹理元素的值 1.最近的四个纹理元素
-texture.minFilter = THREE.NearestFilter; // THREE.LinearFilter;
+// 31.3 设置gui
+const gui = new GUI();
+// 41.2.1 调试预乘透明度属性
+gui.add(texture, 'premultiplyAlpha').name('预乘透明度').onChange(_ => {
+  // 41.2.3 更新纹理
+  texture.needsUpdate = true;
+});
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer({ antialias: true });

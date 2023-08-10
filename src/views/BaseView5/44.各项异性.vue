@@ -1,4 +1,4 @@
-<!-- 13.加载gltf模型_加载压缩过的模型 -->
+<!-- 44.各项异性 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -11,6 +11,9 @@ import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
+import * as TWEEN from 'three/examples/jsm/libs/tween.module.js';
+import { VertexNormalsHelper } from 'three/examples/jsm/helpers/VertexNormalsHelper';
+import TheCar from '../../components/TheCar.vue';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -21,43 +24,41 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.set(1, 2, 3);
+camera.position.set(0.5, 0.5, 3);
 scene.add(camera);
 
-// 12.3 创建指数雾
-scene.fog = new THREE.FogExp2(0x999999, 0.1);
-// 12.4 设置场景背景与雾同色
-scene.background = new THREE.Color(0x999999);
+// 40.1 添加物体
+const textureLoader = new THREE.TextureLoader();
+// 42.2.1 加载大图
+const texture = textureLoader.load('./texture/brick/brick_diffuse.jpg');
+// 42.2.2 设置颜色空间
+texture.colorSpace = THREE.SRGBColorSpace;
+const planeGeometry = new THREE.PlaneGeometry(2, 2);
+const PlaneMaterial = new THREE.MeshBasicMaterial({
+  color: 0xffffff,
+  map: texture,
+  transparent: true,
+});
+const plane = new THREE.Mesh(planeGeometry, PlaneMaterial);
+scene.add(plane);
 
-// 13.1 实例化加载器gltf
-const gltfLoader = new GLTFLoader();
-// 13.2 加载鸭子模型
-gltfLoader.load('./model/Duck.glb', gltf => { // glb: 二进制数据，gltf: json数据
-  scene.add(gltf.scene);
-});
-// 13.4 加载城市模型
-// 13.4.1 实例化加载器draco
-const dracoLoader = new DRACOLoader();
-// 13.4.2 设置draco路径
-dracoLoader.setDecoderPath('./draco/'); // /node_modules/three/examples/jsm/libs/draco
-// 13.4.3 为gltf加载器设置draco解码器
-gltfLoader.setDRACOLoader(dracoLoader);
-// 13.4.4 加载压缩过的城市模型
-gltfLoader.load('./model/city.glb', gltf => { // glb: 二进制数据，gltf: json数据
-  scene.add(gltf.scene);
-});
-// 13.3 加载环境贴图
-const rgbeLoader = new RGBELoader();
-rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
-  envMap.mapping = THREE.EquirectangularReflectionMapping;
-  scene.environment = envMap;
-});
-
-const gui = new GUI();
+// 43.1 开启mipmap
+texture.generateMipmaps = true; // 默认值
+// 43.1.1 设置minFilter
+// texture.minFilter = THREE.NearestMipmapNearestFilter;
+// texture.minFilter = THREE.NearestMipmapLinearFilter;
+// texture.minFilter = THREE.LinearMipmapNearestFilter;
+texture.minFilter = THREE.LinearMipmapLinearFilter; // 默认值
 
 // 1.4 创建渲染器
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(innerWidth, innerHeight);
+
+// 44.1 查询GPU中各向异性的最大有效值；这个值通常是2的幂
+const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
+console.log(maxAnisotropy); // 16
+// 44.2 通过具有最高纹素密度的像素的样本数。默认：1
+texture.anisotropy = maxAnisotropy;
 
 // 1.6 创建控制器
 let cantrols = null;

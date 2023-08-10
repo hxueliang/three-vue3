@@ -1,4 +1,4 @@
-<!-- 44.各项异性 -->
+<!-- 45.纹理文件类型_KTX2_DDS_TGA -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -11,9 +11,10 @@ import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
+import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader';
+import { DDSLoader } from 'three/examples/jsm/loaders/DDSLoader';
+import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js';
-import { VertexNormalsHelper } from 'three/examples/jsm/helpers/VertexNormalsHelper';
-import TheCar from '../../components/TheCar.vue';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -27,11 +28,59 @@ const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 10
 camera.position.set(0.5, 0.5, 3);
 scene.add(camera);
 
+// 1.4 创建渲染器
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+
+// 45.1 普通图版加载器
+// const textureLoader = new THREE.TextureLoader();
+// const texture = textureLoader.load('./texture/brick/brick_diffuse.jpg');
+
+// 45.2 加载KTX2纹理
+// 45.2.1 实例化KTX2加载器
+// const ktx2Loader = new KTX2Loader()
+//   .setTranscoderPath('./basis/') // node_modules/three/examples/jsm/libs/basis
+//   .detectSupport(renderer);
+// const texture = ktx2Loader.load(
+//   './texture/opt/ktx2/Alex_Hart-Nature_Lab_Bones_2k_uastc_flipY_nomipmap.ktx2',
+//   // './texture/opt/ktx2/Alex_Hart-Nature_Lab_Bones_2k_uastc-mip-triangle.ktx2',
+//   texture => {
+//     texture.mapping = THREE.EquirectangularReflectionMapping; // 如果要设置全景贴，导入的纹理就不分有mipmap
+//     texture.anisotropy = 16;
+//     texture.flipY = true; // 没生效?所以加载设置flipY的ktx2图片
+//     scene.background = texture;
+//     plane.material.map = texture;
+//   }
+// );
+
+// 45.3 加载dds纹理
+// const ddsLoader = new DDSLoader();
+// const texture = ddsLoader.load(
+//   './texture/opt/env/Alex_Hart-Nature_Lab_Bones_2k_bc3_nomip.dds',
+//   texture => {
+//     texture.mapping = THREE.EquirectangularReflectionMapping;
+//     texture.flipY = true; // 不生效
+//     texture.needsUpdate = true;
+//     scene.background = texture;
+//     scene.environment = texture;
+//     plane.material.map = texture;
+//   }
+// );
+
+// 45.4 加载tga纹理
+const tgaLoader = new TGALoader();
+const texture = tgaLoader.load(
+  './texture/opt/env/Alex_Hart-Nature_Lab_Bones_2k-mipmap.tga',
+  texture => {
+    texture.mapping = THREE.EquirectangularReflectionMapping;
+    texture.flipY = true; // 生效
+    scene.background = texture;
+    scene.environment = texture;
+    plane.material.map = texture;
+  }
+);
+
 // 40.1 添加物体
-const textureLoader = new THREE.TextureLoader();
-// 42.2.1 加载大图
-const texture = textureLoader.load('./texture/brick/brick_diffuse.jpg');
-// 42.2.2 设置颜色空间
 texture.colorSpace = THREE.SRGBColorSpace;
 const planeGeometry = new THREE.PlaneGeometry(2, 2);
 const PlaneMaterial = new THREE.MeshBasicMaterial({
@@ -41,24 +90,6 @@ const PlaneMaterial = new THREE.MeshBasicMaterial({
 });
 const plane = new THREE.Mesh(planeGeometry, PlaneMaterial);
 scene.add(plane);
-
-// 43.1 开启mipmap
-texture.generateMipmaps = true; // 默认值
-// 43.1.1 设置minFilter
-// texture.minFilter = THREE.NearestMipmapNearestFilter;
-// texture.minFilter = THREE.NearestMipmapLinearFilter;
-// texture.minFilter = THREE.LinearMipmapNearestFilter;
-texture.minFilter = THREE.LinearMipmapLinearFilter; // 默认值
-
-// 1.4 创建渲染器
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(innerWidth, innerHeight);
-
-// 44.1 查询GPU中各向异性的最大有效值；这个值通常是2的幂
-const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
-console.log(maxAnisotropy); // 16
-// 44.2 通过具有最高纹素密度的像素的样本数。默认：1
-texture.anisotropy = maxAnisotropy;
 
 // 1.6 创建控制器
 let cantrols = null;

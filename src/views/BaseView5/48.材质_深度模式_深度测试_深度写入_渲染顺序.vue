@@ -1,13 +1,4 @@
-<!-- 49.材质混合模式理论 -->
-<!-- 最终颜色 = 源颜色 * 源因子 + 目标颜色 * 目标因子 -->
-
-<!-- blending：使用何种混合模式，默认：NormalBlending -->
-<!-- blendEquation：所采用的混合方程式，默认：AddEquation -->
-<!-- blendSrc：混合源，默认：SrcAlphaFactor -->
-<!-- blendDst：混合目标，默认：OneMinusSrcAlphaFactor -->
-<!-- blendEquationAlpha：blendEquation的透明度，默认：null -->
-<!-- blendSrcAlpha：blendSrc的透明度，默认：null -->
-<!-- blendDstAlpha： blendDst的透明度，默认：null -->
+<!-- 48.材质_深度模式_深度测试_深度写入_渲染顺序 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -52,6 +43,61 @@ rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
   scene.background = envMap;
   scene.environment = envMap;
 });
+
+// 48.1 创建两个平面
+function createPlane(url) {
+  const planeGeometry = new THREE.PlaneGeometry(10, 10);
+  const planeMaterial = new THREE.MeshBasicMaterial({
+    map: new THREE.TextureLoader().load(url),
+    transparent: true,
+    side: THREE.DoubleSide,
+  });
+  return new THREE.Mesh(planeGeometry, planeMaterial);
+}
+const plane = createPlane('./texture/sprite0.png');
+const plane1 = createPlane('./texture/lensflare0_alpha.png');
+plane1.position.z = 3;
+scene.add(plane);
+scene.add(plane1);
+
+// 48.2 设置材质模式
+const gui = new GUI();
+const folder = gui.addFolder('plane红');
+// 48.2.1 深度模式，使用何种深度函数
+folder.add(plane.material, 'depthFunc', {
+  NeverDepth: THREE.NeverDepth,
+  AlwaysDepth: THREE.AlwaysDepth,
+  LessDepth: THREE.LessDepth,
+  LessEqualDepth: THREE.LessEqualDepth,
+  GreaterEqualDepth: THREE.GreaterEqualDepth,
+  GreaterDepth: THREE.GreaterDepth,
+  NotEqualDepth: THREE.NotEqualDepth,
+}).name('深度模式');
+//  48.2.2 深度写入，是否对深度缓冲区
+folder.add(plane.material, 'depthWrite').name('深度写入');
+//  48.2.3 深度测试，是否开启深度测试
+folder.add(plane.material, 'depthTest').name('深度测试');
+//  48.2.4 渲染顺序，默认：0，越小越先渲染
+folder.add(plane, 'renderOrder', 0, 5).name('深度测试');
+
+
+const folder1 = gui.addFolder('plane光');
+// 48.2.5 深度模式，使用何种深度函数
+folder1.add(plane1.material, 'depthFunc', {
+  NeverDepth: THREE.NeverDepth,
+  AlwaysDepth: THREE.AlwaysDepth,
+  LessDepth: THREE.LessDepth,
+  LessEqualDepth: THREE.LessEqualDepth,
+  GreaterEqualDepth: THREE.GreaterEqualDepth,
+  GreaterDepth: THREE.GreaterDepth,
+  NotEqualDepth: THREE.NotEqualDepth,
+}).name('深度模式');
+//  48.2.6 深度写入，是否对深度缓冲区
+folder1.add(plane1.material, 'depthWrite').name('深度写入');
+//  48.2.7 深度测试，是否开启深度测试
+folder1.add(plane1.material, 'depthTest').name('深度测试');
+//  48.2.8 渲染顺序，默认：0，越小越先渲染
+folder1.add(plane1, 'renderOrder', 0, 5).name('深度测试');
 
 // 1.6 创建控制器
 let cantrols = null;

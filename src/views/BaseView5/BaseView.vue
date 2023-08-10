@@ -1,4 +1,4 @@
-<!-- 50.多个透明物体混合_杯子_液体_冰块 -->
+<!-- 51.裁剪平面 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -28,7 +28,7 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.set(1, 2, 5);
+camera.position.set(1, 2, 30);
 scene.add(camera);
 
 // 1.4 创建渲染器
@@ -46,161 +46,38 @@ rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
 
 const gui = new GUI();
 
-// 50.6 gui调试
-function createGui(mesh, name) {
-  const folder = gui.addFolder(name);
-  folder.add(mesh.material, "blendEquation", {
-    AddEquation: THREE.AddEquation,
-    SubtractEquation: THREE.SubtractEquation,
-    ReverseSubtractEquation: THREE.ReverseSubtractEquation,
-    MinEquation: THREE.MinEquation,
-    MaxEquation: THREE.MaxEquation,
-  });
-  folder.add(mesh.material, "blendSrc", {
-    ZeroFactor: THREE.ZeroFactor,
-    OneFactor: THREE.OneFactor,
-    SrcColorFactor: THREE.SrcColorFactor,
-    OneMinusSrcColorFactor: THREE.OneMinusSrcColorFactor,
-    SrcAlphaFactor: THREE.SrcAlphaFactor,
-    OneMinusSrcAlphaFactor: THREE.OneMinusSrcAlphaFactor,
-    DstAlphaFactor: THREE.DstAlphaFactor,
-    OneMinusDstAlphaFactor: THREE.OneMinusDstAlphaFactor,
-    DstColorFactor: THREE.DstColorFactor,
-    OneMinusDstColorFactor: THREE.OneMinusDstColorFactor,
-    SrcAlphaSaturateFactor: THREE.SrcAlphaSaturateFactor,
-  });
-  folder.add(mesh.material, "blendDst", {
-    ZeroFactor: THREE.ZeroFactor,
-    OneFactor: THREE.OneFactor,
-    SrcColorFactor: THREE.SrcColorFactor,
-    OneMinusSrcColorFactor: THREE.OneMinusSrcColorFactor,
-    SrcAlphaFactor: THREE.SrcAlphaFactor,
-    OneMinusSrcAlphaFactor: THREE.OneMinusSrcAlphaFactor,
-    DstAlphaFactor: THREE.DstAlphaFactor,
-    OneMinusDstAlphaFactor: THREE.OneMinusDstAlphaFactor,
-    DstColorFactor: THREE.DstColorFactor,
-    OneMinusDstColorFactor: THREE.OneMinusDstColorFactor,
-    // SrcAlphaSaturateFactor: THREE.SrcAlphaSaturateFactor,
-  });
-  folder.add(mesh.material, "blendEquationAlpha", {
-    AddEquation: THREE.AddEquation,
-    SubtractEquation: THREE.SubtractEquation,
-    ReverseSubtractEquation: THREE.ReverseSubtractEquation,
-    MinEquation: THREE.MinEquation,
-    MaxEquation: THREE.MaxEquation,
-  });
-  folder.add(mesh.material, "blendSrcAlpha", {
-    ZeroFactor: THREE.ZeroFactor,
-    OneFactor: THREE.OneFactor,
-    SrcColorFactor: THREE.SrcColorFactor,
-    OneMinusSrcColorFactor: THREE.OneMinusSrcColorFactor,
-    SrcAlphaFactor: THREE.SrcAlphaFactor,
-    OneMinusSrcAlphaFactor: THREE.OneMinusSrcAlphaFactor,
-    DstAlphaFactor: THREE.DstAlphaFactor,
-    OneMinusDstAlphaFactor: THREE.OneMinusDstAlphaFactor,
-    DstColorFactor: THREE.DstColorFactor,
-    OneMinusDstColorFactor: THREE.OneMinusDstColorFactor,
-    SrcAlphaSaturateFactor: THREE.SrcAlphaSaturateFactor,
-  });
-  folder.add(mesh.material, "blendDstAlpha", {
-    ZeroFactor: THREE.ZeroFactor,
-    OneFactor: THREE.OneFactor,
-    SrcColorFactor: THREE.SrcColorFactor,
-    OneMinusSrcColorFactor: THREE.OneMinusSrcColorFactor,
-    SrcAlphaFactor: THREE.SrcAlphaFactor,
-    OneMinusSrcAlphaFactor: THREE.OneMinusSrcAlphaFactor,
-    DstAlphaFactor: THREE.DstAlphaFactor,
-    OneMinusDstAlphaFactor: THREE.OneMinusDstAlphaFactor,
-    DstColorFactor: THREE.DstColorFactor,
-    OneMinusDstColorFactor: THREE.OneMinusDstColorFactor,
-    // SrcAlphaSaturateFactor: THREE.SrcAlphaSaturateFactor,
-  });
-}
+// 51.1 创建物体
+const geometry = new THREE.SphereGeometry(15, 32, 16);
+const material = new THREE.MeshBasicMaterial({
+  color: 0xffffff,
+  side: THREE.DoubleSide,
+  wireframe: true,
+});
+const sphere = new THREE.Mesh(geometry, material);
+scene.add(sphere);
 
-// 50.1 加载物体
-const gltfLoader = new GLTFLoader();
-const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath('./draco/');
-gltfLoader.setDRACOLoader(dracoLoader);
-gltfLoader.load(
-  './model/cup.glb',
-  gltf => {
-    console.log(gltf);
-    const cup = gltf.scene.getObjectByName('copo_low_01_vidro_0');
-    const water = gltf.scene.getObjectByName('copo_low_02_agua_0');
-    const ice = gltf.scene.getObjectByName('copo_low_04_vidro_0');
-    // console.log(cup, water, ice);
-
-    // 50.2 模型不做好，微调一下
-    ice.scale.set(0.86, 0.86, 0.86);
-    water.position.z = -1;
-
-    // 50.3 设置渲染顺序，从里到外
-    ice.renderOrder = 1;
-    water.renderOrder = 2;
-    cup.renderOrder = 3;
-
-    // 50.4 隐藏杯子，液体，调试冰块
-    // cup.visible = false;
-    // water.visible = false;
-
-    // 50.5 给冰块设置透明度
-    const srcIceMaterial = ice.material;
-    ice.material = new THREE.MeshPhysicalMaterial({
-      normalMap: srcIceMaterial.normalMap,
-      metalnessMap: srcIceMaterial.metalnessMap,
-      roughness: 0.05,
-      color: 0xffffff,
-      transmission: 0.95,
-      transparent: true,
-      thickness: 20,
-      ior: 2
-    });
-
-    // 50.5 给水设置透明度
-    const srcWaterMaterial = water.material;
-    water.material = new THREE.MeshPhysicalMaterial({
-      map: srcWaterMaterial.map,
-      normalMap: srcWaterMaterial.normalMap,
-      metalnessMap: srcWaterMaterial.metalnessMap,
-      roughnessMap: srcWaterMaterial.roughnessMap,
-      roughness: 0.1,
-      transmission: 0.95,
-      transparent: true,
-      thickness: 10,
-      ior: 2,
-      // opacity: 0.6,
-      blending: THREE.CustomBlending,
-      blendEquation: THREE.AddEquation,
-      blendSrc: THREE.SrcAlphaFactor,
-      blendDst: THREE.SrcColorFactor,
-    });
-
-    // 50.5 给杯设置透明度
-    const srcCupMaterial = cup.material;
-    cup.material = new THREE.MeshPhysicalMaterial({
-      map: srcWaterMaterial.map,
-      normalMap: srcCupMaterial.normalMap,
-      metalnessMap: srcCupMaterial.metalnessMap,
-      roughnessMap: srcCupMaterial.roughnessMap,
-      roughness: 0.3,
-      transmission: 0.95,
-      transparent: true,
-      thickness: 10,
-      ior: 2,
-      // opacity: 0.6,
-      blending: THREE.CustomBlending,
-      blendEquation: THREE.AddEquation,
-      blendSrc: THREE.SrcAlphaFactor,
-      blendDst: THREE.SrcColorFactor,
-    });
-
-    createGui(water, '水');
-    createGui(cup, '杯');
-
-    scene.add(gltf.scene);
-  }
-);
+// 51.2 创建裁剪平面
+const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+// 51.2.1 创建裁剪平面
+const plane1 = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
+// 51.3 裁剪平面集合
+material.clippingPlanes = [plane, plane1];
+// 51.3.1 场景里所有物体都相同的 裁剪平面集合
+// renderer.clippingPlanes = [plane, plane1];
+// 51.7 设置裁剪为并集，默认：false，即交集
+material.clipIntersection = true;
+// 51.4 渲染器是否考虑对象级剪切平面
+renderer.localClippingEnabled = true;
+// 51.5 原点到平面有符号距离
+plane.constant = 0;
+// 51.8 设置裁剪阴影（配合灯光使用）
+material.clipShadows = true;
+// 51.6 gui
+const folder = gui.addFolder('裁剪平面');
+folder.add(plane, 'constant', -14.6, 14.6).step(0.1).name('位置');
+folder.add(plane.normal, 'x', -1, 1).step(0.5).name('法向量x');
+folder.add(plane.normal, 'y', -1, 1).step(0.5).name('法向量y');
+folder.add(plane.normal, 'z', -1, 1).step(0.5).name('法向量z');
 
 // 1.6 创建控制器
 let cantrols = null;

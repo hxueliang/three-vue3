@@ -1,4 +1,4 @@
-<!-- 47.高动态范围图片_EXR_TIF_PNG -->
+<!-- 48.材质_深度模式_深度测试_深度写入_渲染顺序 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -28,132 +28,76 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.set(0.5, 0.5, 3);
+camera.position.set(1, 2, 12);
 scene.add(camera);
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(innerWidth, innerHeight);
 
-// 46.2 设置色调映射
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-const gui = new GUI();
-gui.add(renderer, 'toneMapping', {
-  'No(Linear)': THREE.NoToneMapping,
-  'Linear(默认)': THREE.LinearToneMapping,
-  Reinhard: THREE.ReinhardToneMapping,
-  Cineon: THREE.CineonToneMapping,
-  ACESFilmic: THREE.ACESFilmicToneMapping,
+// 10.1 创建RGBELoader
+const rgbeLoader = new RGBELoader();
+// 10.2 加载hdr图
+rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
+  envMap.mapping = THREE.EquirectangularReflectionMapping;
+  scene.background = envMap;
+  scene.environment = envMap;
 });
 
-// 46.3 设置色调映射曝光度 默认：1
-renderer.toneMappingExposure = 1;
-gui.add(renderer, 'toneMappingExposure', 0, 1);
-
-// 46.1 加载hdr贴图
-// const rgbeLoader = new RGBELoader();
-// const texture = rgbeLoader.load(
-//   './texture/opt/memorial/Alex_Hart-Nature_Lab_Bones_2k.hdr',
-//   envMap => {
-//     envMap.mapping = THREE.EquirectangularReflectionMapping;
-//     scene.background = envMap;
-//     scene.environment = envMap;
-//     plane.material.map = envMap;
-//   }
-// );
-
-// 47.1 加载exr贴图
-// const exrLoader = new EXRLoader();
-// const texture = exrLoader.load(
-//   './texture/opt/memorial/Alex_Hart-Nature_Lab_Bones_2k.exr',
-//   texture => {
-//     texture.mapping = THREE.EquirectangularReflectionMapping;
-//     scene.background = texture;
-//     scene.environment = texture;
-//     plane.material.map = texture;
-//   }
-// );
-
-// 47.2 加载tif贴图
-// const logLuvLoader = new LogLuvLoader();
-// const texture = logLuvLoader.load(
-//   './texture/opt/memorial/memorial.tif',
-//   texture => {
-//     scene.background = texture;
-//     scene.environment = texture;
-//     plane.material.map = texture;
-//   }
-// );
-
-// 47.3 加载png贴图
-const rgbmLoader = new RGBMLoader();
-const texture = rgbmLoader.load(
-  './texture/opt/memorial/memorial.png',
-  texture => {
-    scene.background = texture;
-    scene.environment = texture;
-    plane.material.map = texture;
-  }
-);
-
-// 45.1 普通图版加载器
-// const textureLoader = new THREE.TextureLoader();
-// const texture = textureLoader.load('./texture/brick/brick_diffuse.jpg');
-
-// 45.2 加载KTX2纹理
-// 45.2.1 实例化KTX2加载器
-// const ktx2Loader = new KTX2Loader()
-//   .setTranscoderPath('./basis/') // node_modules/three/examples/jsm/libs/basis
-//   .detectSupport(renderer);
-// const texture = ktx2Loader.load(
-//   './texture/opt/ktx2/Alex_Hart-Nature_Lab_Bones_2k_uastc_flipY_nomipmap.ktx2',
-//   // './texture/opt/ktx2/Alex_Hart-Nature_Lab_Bones_2k_uastc-mip-triangle.ktx2',
-//   texture => {
-//     texture.mapping = THREE.EquirectangularReflectionMapping; // 如果要设置全景贴，导入的纹理就不分有mipmap
-//     texture.anisotropy = 16;
-//     texture.flipY = true; // 没生效?所以加载设置flipY的ktx2图片
-//     scene.background = texture;
-//     plane.material.map = texture;
-//   }
-// );
-
-// 45.3 加载dds纹理
-// const ddsLoader = new DDSLoader();
-// const texture = ddsLoader.load(
-//   './texture/opt/env/Alex_Hart-Nature_Lab_Bones_2k_bc3_nomip.dds',
-//   texture => {
-//     texture.mapping = THREE.EquirectangularReflectionMapping;
-//     texture.flipY = true; // 不生效
-//     texture.needsUpdate = true;
-//     scene.background = texture;
-//     scene.environment = texture;
-//     plane.material.map = texture;
-//   }
-// );
-
-// 45.4 加载tga纹理
-// const tgaLoader = new TGALoader();
-// const texture = tgaLoader.load(
-//   './texture/opt/env/Alex_Hart-Nature_Lab_Bones_2k-mipmap.tga',
-//   texture => {
-//     texture.mapping = THREE.EquirectangularReflectionMapping;
-//     texture.flipY = true; // 生效
-//     scene.background = texture;
-//     scene.environment = texture;
-//     plane.material.map = texture;
-//   }
-// );
-
-// 40.1 添加物体
-// texture.colorSpace = THREE.SRGBColorSpace;
-const planeGeometry = new THREE.PlaneGeometry(2, 2);
-const PlaneMaterial = new THREE.MeshBasicMaterial({
-  color: 0xffffff,
-  map: texture,
-  transparent: true,
-});
-const plane = new THREE.Mesh(planeGeometry, PlaneMaterial);
+// 48.1 创建两个平面
+function createPlane(url) {
+  const planeGeometry = new THREE.PlaneGeometry(10, 10);
+  const planeMaterial = new THREE.MeshBasicMaterial({
+    map: new THREE.TextureLoader().load(url),
+    transparent: true,
+    side: THREE.DoubleSide,
+  });
+  return new THREE.Mesh(planeGeometry, planeMaterial);
+}
+const plane = createPlane('./texture/sprite0.png');
+const plane1 = createPlane('./texture/lensflare0_alpha.png');
+plane1.position.z = 3;
 scene.add(plane);
+scene.add(plane1);
+
+// 48.2 设置材质模式
+const gui = new GUI();
+const folder = gui.addFolder('plane红');
+// 48.2.1 深度模式，使用何种深度函数
+folder.add(plane.material, 'depthFunc', {
+  NeverDepth: THREE.NeverDepth,
+  AlwaysDepth: THREE.AlwaysDepth,
+  LessDepth: THREE.LessDepth,
+  LessEqualDepth: THREE.LessEqualDepth,
+  GreaterEqualDepth: THREE.GreaterEqualDepth,
+  GreaterDepth: THREE.GreaterDepth,
+  NotEqualDepth: THREE.NotEqualDepth,
+}).name('深度模式');
+//  48.2.2 深度写入，是否对深度缓冲区
+folder.add(plane.material, 'depthWrite').name('深度写入');
+//  48.2.3 深度测试，是否开启深度测试
+folder.add(plane.material, 'depthTest').name('深度测试');
+//  48.2.4 渲染顺序，默认：0，越小越先渲染
+folder.add(plane, 'renderOrder', 0, 5).name('深度测试');
+
+
+const folder1 = gui.addFolder('plane光');
+// 48.2.5 深度模式，使用何种深度函数
+folder1.add(plane1.material, 'depthFunc', {
+  NeverDepth: THREE.NeverDepth,
+  AlwaysDepth: THREE.AlwaysDepth,
+  LessDepth: THREE.LessDepth,
+  LessEqualDepth: THREE.LessEqualDepth,
+  GreaterEqualDepth: THREE.GreaterEqualDepth,
+  GreaterDepth: THREE.GreaterDepth,
+  NotEqualDepth: THREE.NotEqualDepth,
+}).name('深度模式');
+//  48.2.6 深度写入，是否对深度缓冲区
+folder1.add(plane1.material, 'depthWrite').name('深度写入');
+//  48.2.7 深度测试，是否开启深度测试
+folder1.add(plane1.material, 'depthTest').name('深度测试');
+//  48.2.8 渲染顺序，默认：0，越小越先渲染
+folder1.add(plane1, 'renderOrder', 0, 5).name('深度测试');
 
 // 1.6 创建控制器
 let cantrols = null;

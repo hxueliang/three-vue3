@@ -1,4 +1,10 @@
-<!-- 57.阴影的属性 -->
+<!-- 56.灯光与阴影 -->
+<!-- 1.材质要求 -->
+<!-- 2.灯光要求 -->
+<!-- 3.开启渲染器阴影 -->
+<!-- 4.开启光照投射阴影 -->
+<!-- 5.开启物体投射阴影 -->
+<!-- 6.开启物体接收阴影 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -67,36 +73,15 @@ plane.rotation.x = -Math.PI / 2;
 plane.receiveShadow = true;
 scene.add(plane);
 
-// 57.0 添加 环境光
-const light = new THREE.AmbientLight(0xffffff, 0.5);
+// 56.0.1 添加 环境光
+const light = new THREE.AmbientLight(0xffffff, 1);
 scene.add(light);
-// 57.1 添加 聚光灯
-const spotLight = new THREE.SpotLight(0xffffff, 1);
-spotLight.position.set(3, 3, 3);
-scene.add(spotLight);
-// 57.7 设置高度（测试用）
-spotLight.intensity = 2;
-
-// 57.0 模糊阴影的边缘
-spotLight.shadow.radius = 20;
-spotLight.shadow.mapSize.set(4096, 4096);
-// 57.2 聚光灯目标
-spotLight.target = sphere;
-// 57.3 聚光灯角度
-spotLight.angle = Math.PI / 6;
-// 57.4 从光源发出光的最大距离，其强度根据光源的距离线性衰减
-spotLight.distance = 0;
-// 57.5 聚光锥的半影衰减百分比
-spotLight.penumbra = 0;
-// 57.6 沿着光照距离的衰减量
-spotLight.decay = 0;
-
-// 57.8 添加gui
-gui.add(sphere.position, 'x').min(-5).max(5).step(0.1);
-gui.add(spotLight, 'angle').min(0).max(Math.PI / 2).step(0.01);
-gui.add(spotLight, 'distance').min(0).max(10).step(0.01);
-gui.add(spotLight, 'penumbra').min(0).max(1).step(0.01);
-gui.add(spotLight, 'decay').min(0).max(5).step(0.01);
+// 56.0.2 添加 平行光
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(10, 10, 10);
+// 56.4 开启光照投射阴影
+directionalLight.castShadow = true;
+scene.add(directionalLight);
 
 // 1.6 创建控制器
 let cantrols = null;

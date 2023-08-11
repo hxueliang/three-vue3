@@ -1,4 +1,4 @@
-<!-- 65.运用数学知识_创建多条分支 -->
+<!-- 64.运用数学知识_渲染一条直线上的点 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -55,18 +55,10 @@ function createGalaxy() {
   particlesGeometry = new THREE.BufferGeometry();
   const positions = new Float32Array(params.count * 3);
   for (let i = 0; i < params.count; i++) {
-    // 65.1 分支角度 = 第几条分支 * 角度
-    const barnch = i % params.branch;
-    const angle = 2 * Math.PI / params.branch;
-    const barnchAngle = barnch * angle;
-    // 65.2 当前点距离圆心的位置
-    const r = Math.random() * params.radius;
     const current = i * 3;
-    // 65.3.1 修改x值
-    positions[current] = Math.cos(barnchAngle) * r;
+    positions[current] = Math.random() * params.radius;
     positions[current + 1] = 0;
-    // 65.3.2 修改y值
-    positions[current + 2] = Math.sin(barnchAngle) * r;
+    positions[current + 2] = 0;
   }
   particlesGeometry.setAttribute(
     'position',

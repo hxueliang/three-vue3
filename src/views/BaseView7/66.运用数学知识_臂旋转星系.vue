@@ -1,4 +1,4 @@
-<!-- 67.颜色收敛_旋臂渐变 -->
+<!-- 66.运用数学知识_臂旋转星系 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -38,13 +38,11 @@ renderer.setSize(innerWidth, innerHeight);
 
 // 64.1 初始化数据
 const params = {
-  count: 50000,
+  count: 20000,
   size: 0.1,
   radius: 5,
-  branch: 4,
-  // 67.1 设置圆心为亮红色，边缘为亮蓝色，用于从红色过渡到蓝色
-  color: '#ff6030',
-  endColor: '#1b3984',
+  branch: 6,
+  color: '#ffffff',
   bend: 0.3, // 控制弯曲程度
 };
 let particlesGeometry = null;
@@ -53,16 +51,10 @@ let points = null;
 const textureLoader = new THREE.TextureLoader();
 const texture = textureLoader.load(`./texture/particles/1.png`);
 
-// 67.3 初始化中心颜色 边缘颜色
-const centerColor = new THREE.Color(params.color);
-const endColor = new THREE.Color(params.endColor);
-
 // 64.2 创建星系
 function createGalaxy() {
   particlesGeometry = new THREE.BufferGeometry();
   const positions = new Float32Array(params.count * 3);
-  // 67.2 创建顶点颜色数组
-  const colors = new Float32Array(params.count * 3);
   for (let i = 0; i < params.count; i++) {
     // 65.1 分支角度 = 第几条分支 * 角度
     const barnch = i % params.branch;
@@ -81,25 +73,13 @@ function createGalaxy() {
     positions[current + 1] = 0 + randomY;
     // 66.2.4 加上随机值 【66.1.1 角度值加上距离实现直线弯曲】【65.3.2 修改y值】
     positions[current + 2] = Math.sin(barnchAngle + r * params.bend) * r + randomZ;
-    // 67.4 混合颜色，形成渐变色
-    const mixColor = centerColor.clone();
-    mixColor.lerp(endColor, r / params.radius);
-    colors[current] = mixColor.r;
-    colors[current + 1] = mixColor.g;
-    colors[current + 2] = mixColor.b;
   }
   particlesGeometry.setAttribute(
     'position',
     new THREE.BufferAttribute(positions, 3)
   );
-  // 67.6 设置颜色属性
-  particlesGeometry.setAttribute(
-    'color',
-    new THREE.BufferAttribute(colors, 3)
-  );
   pointsMaterial = new THREE.PointsMaterial({
-    // 67.7 取消原来的颜色，避免混合颜色时，此颜色值变重，影响混合效果
-    // color: new THREE.Color(params.color),
+    color: new THREE.Color(params.color),
     size: params.size,
     sizeAttenuation: true,
     map: texture,
@@ -107,8 +87,6 @@ function createGalaxy() {
     transparent: true,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
-    // 67.5 是否使用顶点着色
-    vertexColors: true,
   });
   points = new THREE.Points(particlesGeometry, pointsMaterial);
   scene.add(points);

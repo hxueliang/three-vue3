@@ -1,4 +1,4 @@
-<!-- 59.让点光源小球动起来 -->
+<!-- 58.点光源 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -29,7 +29,7 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.set(1, 5, 10);
+camera.position.set(1, 10, 10);
 scene.add(camera);
 
 // 1.4 创建渲染器
@@ -106,17 +106,8 @@ function createControls() {
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
 
-// 59.1 设置时钟
-const clock = new THREE.Clock();
-
 // 1.5 创建渲染函数
 function render() {
-  // 59.2 获取当前动画运行时间
-  const time = clock.getElapsedTime();
-  lightBall.position.x = Math.sin(time) * 2;
-  lightBall.position.z = Math.cos(time) * 2;
-  lightBall.position.y = 2 + Math.sin(time * 10) / 5;
-
   cantrols && cantrols.update();
 
   renderer.render(scene, camera);

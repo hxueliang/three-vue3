@@ -1,10 +1,6 @@
-<!-- 56.灯光与阴影 -->
-<!-- 1.材质要求 -->
-<!-- 2.灯光要求 -->
-<!-- 3.开启渲染器阴影 -->
-<!-- 4.开启光照投射阴影 -->
-<!-- 5.开启物体投射阴影 -->
-<!-- 6.开启物体接收阴影 -->
+<!-- 55.动画库Gsap -->
+<!-- https://www.npmjs.com/package/gsap -->
+<!-- https://greensock.com/docs/ -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -41,8 +37,6 @@ scene.add(camera);
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(innerWidth, innerHeight);
-// 55.3 开启渲染器阴影
-renderer.shadowMap.enabled = true;
 
 // 10.1 创建RGBELoader
 const rgbeLoader = new RGBELoader();
@@ -50,38 +44,48 @@ const rgbeLoader = new RGBELoader();
 rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
   envMap.mapping = THREE.EquirectangularReflectionMapping;
   scene.background = envMap;
-  // 55.7 取消环境贴图，太亮，影响阴影
-  // scene.environment = envMap;
+  scene.environment = envMap;
 });
 
 const gui = new GUI();
 
-// 55.1 添加球体
-const sphereGeometry = new THREE.SphereGeometry(1, 20, 20);
-const material = new THREE.MeshStandardMaterial();
-const sphere = new THREE.Mesh(sphereGeometry, material);
-// 55.5 开启物体投射阴影
-sphere.castShadow = true;
-scene.add(sphere);
+// 55.1 添加物体
+const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true });
+const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+scene.add(cube);
 
-// 55.2 添加平面
-const planeGeometry = new THREE.PlaneGeometry(10, 10);
-const plane = new THREE.Mesh(planeGeometry, material);
-plane.position.y = -1;
-plane.rotation.x = -Math.PI / 2;
-// 55.6 开启物体接收阴影
-plane.receiveShadow = true;
-scene.add(plane);
-
-// 55.0.1 添加 环境光
-const light = new THREE.AmbientLight(0xffffff, 1);
-scene.add(light);
-// 55.0.2 添加 平行光
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.set(10, 10, 10);
-// 55.4 开启光照投射阴影
-directionalLight.castShadow = true;
-scene.add(directionalLight);
+// 55.2 使用gsap
+const animatePosition = gsap.to(cube.position, {
+  x: 5,
+  duration: 5, // 时间
+  repeat: -1, // 重复次数
+  ease: "power1.inOut", // 缓动方式
+  yoyo: true, // 往返运动
+  delay: 1, // 延迟运动
+  onStart() { // 开始生命周期
+    console.log('开始了');
+  },
+  onComplete() { // 完成生命周期
+    console.log('完成了');
+  }
+});
+gsap.to(cube.rotation, {
+  x: 2 * Math.PI,
+  duration: 5,
+  repeat: -1,
+  ease: "power1.inOut",
+  yoyo: true,
+  delay: 1
+});
+// 55.2 暂停动画
+window.addEventListener('click', () => {
+  if (animatePosition.isActive()) {
+    animatePosition.pause();
+  } else {
+    animatePosition.resume();
+  }
+});
 
 // 1.6 创建控制器
 let cantrols = null;

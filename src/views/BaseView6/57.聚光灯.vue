@@ -1,4 +1,4 @@
-<!-- 58.点光源 -->
+<!-- 57.聚光灯 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -67,30 +67,36 @@ plane.rotation.x = -Math.PI / 2;
 plane.receiveShadow = true;
 scene.add(plane);
 
-// 58.0 添加 环境光
+// 57.0 添加 环境光
 const light = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(light);
+// 57.1 添加 聚光灯
+const spotLight = new THREE.SpotLight(0xffffff, 1);
+spotLight.position.set(3, 3, 3);
+scene.add(spotLight);
+// 57.7 设置高度（测试用）
+spotLight.intensity = 2;
 
-// 58.1 添加 点光源
-const pointLight = new THREE.PointLight(0xff0000, 4);
+// 57.0 模糊阴影的边缘
+spotLight.shadow.radius = 20;
+spotLight.shadow.mapSize.set(4096, 4096);
+// 57.2 聚光灯目标
+spotLight.target = sphere;
+// 57.3 聚光灯角度
+spotLight.angle = Math.PI / 6;
+// 57.4 从光源发出光的最大距离，其强度根据光源的距离线性衰减
+spotLight.distance = 0;
+// 57.5 聚光锥的半影衰减百分比
+spotLight.penumbra = 0;
+// 57.6 沿着光照距离的衰减量
+spotLight.decay = 0;
 
-// 58.2 创建小球
-const lightBall = new THREE.Mesh(
-  new THREE.SphereGeometry(0.05, 20, 20),
-  new THREE.MeshBasicMaterial({ color: 0xff0000 }),
-);
-scene.add(lightBall);
-
-// 58.3 将点光源添加到小球上
-lightBall.add(pointLight);
-lightBall.position.set(2, 2, 2);
-
-// 58.0 模糊阴影的边缘
-pointLight.shadow.radius = 20;
-pointLight.shadow.mapSize.set(4096, 4096);
-
-// 58.4 gui
-gui.add(lightBall.position, 'x').min(-5).max(5).step(0.1);
+// 57.8 添加gui
+gui.add(sphere.position, 'x').min(-5).max(5).step(0.1);
+gui.add(spotLight, 'angle').min(0).max(Math.PI / 2).step(0.01);
+gui.add(spotLight, 'distance').min(0).max(10).step(0.01);
+gui.add(spotLight, 'penumbra').min(0).max(1).step(0.01);
+gui.add(spotLight, 'decay').min(0).max(5).step(0.01);
 
 // 1.6 创建控制器
 let cantrols = null;

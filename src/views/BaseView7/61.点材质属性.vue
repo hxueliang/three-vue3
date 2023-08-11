@@ -1,4 +1,4 @@
-<!-- 62.顶点颜色_多彩星空 -->
+<!-- 61.点材质属性 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -47,35 +47,14 @@ renderer.setSize(innerWidth, innerHeight);
 
 const gui = new GUI();
 
-// 62.1 自定义几何体
-const particlesGeometry = new THREE.BufferGeometry();
-const count = 5000;
-// 62.2 设置缓冲区数组
-const positions = new Float32Array(count * 3);
-// 62.5 设置顶点颜色
-const colors = new Float32Array(count * 3);
-// 62.3 设置顶点
-for (let i = 0; i < count * 3; i++) {
-  positions[i] = (Math.random() - 0.5) * 200;
-  colors[i] = Math.random();
-}
-particlesGeometry.setAttribute(
-  'position',
-  new THREE.BufferAttribute(positions, 3)
-);
-particlesGeometry.setAttribute(
-  'color',
-  new THREE.BufferAttribute(colors, 3)
-);
-
 // 60.1 创建球几何体
-// const spheregeometry = new THREE.SphereGeometry(3, 30, 30);
+const spheregeometry = new THREE.SphereGeometry(3, 30, 30);
 // 61.3.2 解决纹理加载异常的问题
-// delete spheregeometry.attributes.uv;
+delete spheregeometry.attributes.uv;
 // 60.2 创建点材质
 const pointsMaterial = new THREE.PointsMaterial();
 // 60.3 设置点材质的大小
-pointsMaterial.size = 1;
+pointsMaterial.size = 0.1;
 
 // 61.1 设置点材质的颜色
 pointsMaterial.color.set(0xfff000);
@@ -83,17 +62,15 @@ pointsMaterial.color.set(0xfff000);
 pointsMaterial.sizeAttenuation = true;
 // 61.3.1 设置纹理
 const textureLoader = new THREE.TextureLoader();
-const texture = textureLoader.load('./texture/particles/1.png');
+const texture = textureLoader.load('./texture/particles/14.png');
 pointsMaterial.map = texture;
 pointsMaterial.alphaMap = texture;
 pointsMaterial.transparent = true;
 pointsMaterial.depthWrite = false;
 pointsMaterial.blending = THREE.AdditiveBlending;
-// 62.6 启用顶点颜色设置
-pointsMaterial.vertexColors = true;
 
-// 62.4 生成物体【60.4 创建点物体】
-const points = new THREE.Points(particlesGeometry, pointsMaterial);
+// 60.4 创建点物体
+const points = new THREE.Points(spheregeometry, pointsMaterial);
 scene.add(points);
 
 // 1.6 创建控制器

@@ -1,4 +1,4 @@
-<!-- 54.模板渲染实现金属剖切面 -->
+<!-- 53.模板渲染_小球只在平面内渲染 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -28,7 +28,7 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.set(9, 20, 30);
+camera.position.set(1, 2, 30);
 scene.add(camera);
 
 // 1.4 创建渲染器
@@ -46,47 +46,44 @@ rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
 
 const gui = new GUI();
 
-// 54.1 创建两个相同形状的物体（一个显示前面，另一个显示后面）
-const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
-const frontMaterial = new THREE.MeshBasicMaterial({
-  color: 0xffffff,
-  side: THREE.FrontSide,
-});
-const backMaterial = new THREE.MeshBasicMaterial({
-  color: 0xff00ff,
-  side: THREE.BackSide,
-  // 54.4.1 设置渲染模板相关参数
+// 53.1 创建平面
+const planeGeometry = new THREE.PlaneGeometry(10, 10);
+const planeMaterial = new THREE.MeshPhysicalMaterial({
+  side: THREE.DoubleSide,
+  // 53.3.1 两个物体都设置模板缓冲区的写入和测试
   stencilWrite: true,
+  // 53.4.1 两个物体都设置相同的模板缓冲基准值
   stencilRef: 2,
+  // 53.5 模板设置设置允许写入的掩码0xff（0-255）
   stencilWriteMask: 0xff,
+  // 53.7 模板函数比较通过时候，设置为replace替换
   stencilZPass: THREE.ReplaceStencilOp,
 });
-const frontMesh = new THREE.Mesh(geometry, frontMaterial);
-const backMesh = new THREE.Mesh(geometry, backMaterial);
-scene.add(frontMesh);
-scene.add(backMesh);
+const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+scene.add(plane);
 
-// 54.2 创建裁剪平面，并给前后两物体添加裁剪平面
-const plane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
-frontMaterial.clippingPlanes = [plane];
-backMaterial.clippingPlanes = [plane];
-renderer.localClippingEnabled = true;
-plane.constant = 0;
-
-// 54.3 创建金属平面
-const planeGeometry = new THREE.PlaneGeometry(100, 100);
-const planeMaterial = new THREE.MeshPhysicalMaterial({
-  color: 0x6090e0,
-  metalness: 0.95,
-  roughness: 0.1,
-  // 54.4.2 设置物体要渲染到模板相关参数
+// 53.2 创建小球
+const geometry = new THREE.SphereGeometry(1, 20, 20);
+const material = new THREE.MeshPhysicalMaterial({
+  color: 0xffcccc,
+  // 53.3.2 两个物体都设置模板缓冲区的写入和测试
   stencilWrite: true,
+  // 53.4.2 两个物体都设置相同的模板缓冲基准值
   stencilRef: 2,
+  // 53.6 小球上设置模板比较函数THREE.EqualStencilFunc
   stencilFunc: THREE.EqualStencilFunc,
+  // 53.8.2 配合小球在平面后时，不做深度验证，使小球能渲染出来
+  depthTest: false,
 });
-const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
-planeMesh.rotation.x = -Math.PI / 2;
-scene.add(planeMesh);
+const sphere = new THREE.Mesh(geometry, material);
+// 53.8.0 小球位置在平面前面
+// sphere.position.z = 2;
+// 53.8.1 修改小球位置在平面后面
+sphere.position.z = -2;
+scene.add(sphere);
+
+// 53.8.2 测试小球在平面前后进动
+gui.add(sphere.position, 'z', -10, 10);
 
 // 1.6 创建控制器
 let cantrols = null;

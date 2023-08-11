@@ -1,4 +1,4 @@
-<!-- 66.运用数学知识_臂旋转星系 -->
+<!-- 65.运用数学知识_创建多条分支 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -38,12 +38,11 @@ renderer.setSize(innerWidth, innerHeight);
 
 // 64.1 初始化数据
 const params = {
-  count: 20000,
-  size: 0.1,
+  count: 100,
+  size: 0.3,
   radius: 5,
-  branch: 6,
+  branch: 3,
   color: '#ffffff',
-  bend: 0.3, // 控制弯曲程度
 };
 let particlesGeometry = null;
 let pointsMaterial = null;
@@ -60,19 +59,14 @@ function createGalaxy() {
     const barnch = i % params.branch;
     const angle = 2 * Math.PI / params.branch;
     const barnchAngle = barnch * angle;
-    // 66.4 0到1再做3次方,实现圆心密集【65.2 当前点距离圆心的位置】
-    const r = Math.random() * params.radius * Math.pow(Math.random(), 3);
+    // 65.2 当前点距离圆心的位置
+    const r = Math.random() * params.radius;
     const current = i * 3;
-    // 66.5 乘上(radius-r)*0.2,实现圆心厚边缘薄【66.3.1 -1到1再做3次方,实现线中心密集】【66.2.1 让点在曲线附近散开】
-    const randomX = Math.pow(Math.random() * 2 - 1, 3) * (params.radius - r) * 0.2;
-    const randomY = Math.pow(Math.random() * 2 - 1, 3) * (params.radius - r) * 0.2;
-    const randomZ = Math.pow(Math.random() * 2 - 1, 3) * (params.radius - r) * 0.2;
-    // 66.2.2 加上随机值【66.1.1 角度值加上距离实现直线弯曲】【65.3.1 修改x值】
-    positions[current] = Math.cos(barnchAngle + r * params.bend) * r + randomX;
-    // 66.2.3 加上随机值
-    positions[current + 1] = 0 + randomY;
-    // 66.2.4 加上随机值 【66.1.1 角度值加上距离实现直线弯曲】【65.3.2 修改y值】
-    positions[current + 2] = Math.sin(barnchAngle + r * params.bend) * r + randomZ;
+    // 65.3.1 修改x值
+    positions[current] = Math.cos(barnchAngle) * r;
+    positions[current + 1] = 0;
+    // 65.3.2 修改y值
+    positions[current + 2] = Math.sin(barnchAngle) * r;
   }
   particlesGeometry.setAttribute(
     'position',

@@ -1,4 +1,4 @@
-<!-- 64.运用数学知识_渲染一条直线上的点 -->
+<!-- 63.漫天雪花 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -27,57 +27,14 @@ let container = ref(null);
 // 1.1 创建场景
 const scene = new THREE.Scene();
 
-// 1.2 创建相机
-const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.set(0, 3, 12);
+// 63.3 调近相机远剪切面，使用后面向上旋转雪花不渲染【1.2 创建相机】
+const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 40);
+camera.position.set(0, 3, 40);
 scene.add(camera);
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(innerWidth, innerHeight);
-
-// 64.1 初始化数据
-const params = {
-  count: 100,
-  size: 0.3,
-  radius: 5,
-  branch: 3,
-  color: '#ffffff',
-};
-let particlesGeometry = null;
-let pointsMaterial = null;
-let points = null;
-const textureLoader = new THREE.TextureLoader();
-const texture = textureLoader.load(`./texture/particles/1.png`);
-
-// 64.2 创建星系
-function createGalaxy() {
-  particlesGeometry = new THREE.BufferGeometry();
-  const positions = new Float32Array(params.count * 3);
-  for (let i = 0; i < params.count; i++) {
-    const current = i * 3;
-    positions[current] = Math.random() * params.radius;
-    positions[current + 1] = 0;
-    positions[current + 2] = 0;
-  }
-  particlesGeometry.setAttribute(
-    'position',
-    new THREE.BufferAttribute(positions, 3)
-  );
-  pointsMaterial = new THREE.PointsMaterial({
-    color: new THREE.Color(params.color),
-    size: params.size,
-    sizeAttenuation: true,
-    map: texture,
-    alphaMap: texture,
-    transparent: true,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-  });
-  points = new THREE.Points(particlesGeometry, pointsMaterial);
-  scene.add(points);
-}
-createGalaxy();
 
 // 10.1 创建RGBELoader
 // const rgbeLoader = new RGBELoader();
@@ -90,6 +47,63 @@ createGalaxy();
 
 const gui = new GUI();
 
+// 63.1 创建物体
+function createMesh(name, size = 0.05) {
+
+  // 62.1 自定义几何体
+  const particlesGeometry = new THREE.BufferGeometry();
+  const count = 10000;
+  // 62.2 设置缓冲区数组
+  const positions = new Float32Array(count * 3);
+  // 62.5 设置顶点颜色
+  // const colors = new Float32Array(count * 3);
+  // 62.3 设置顶点
+  for (let i = 0; i < count * 3; i++) {
+    positions[i] = (Math.random() - 0.5) * 200;
+    // colors[i] = Math.random();
+  }
+  particlesGeometry.setAttribute(
+    'position',
+    new THREE.BufferAttribute(positions, 3)
+  );
+  // particlesGeometry.setAttribute(
+  //   'color',
+  //   new THREE.BufferAttribute(colors, 3)
+  // );
+
+  // 60.1 创建球几何体
+  // const spheregeometry = new THREE.SphereGeometry(3, 30, 30);
+  // 61.3.2 解决纹理加载异常的问题
+  // delete spheregeometry.attributes.uv;
+  // 60.2 创建点材质
+  const pointsMaterial = new THREE.PointsMaterial();
+  // 60.3 设置点材质的大小
+  pointsMaterial.size = size;
+
+  // 61.1 设置点材质的颜色
+  pointsMaterial.color.set(0xfffffff);
+  // 61.2 是否应相机深度而衰减
+  pointsMaterial.sizeAttenuation = true;
+  // 61.3.1 设置纹理
+  const textureLoader = new THREE.TextureLoader();
+  const texture = textureLoader.load(`./texture/particles/${name}.png`);
+  pointsMaterial.map = texture;
+  pointsMaterial.alphaMap = texture;
+  pointsMaterial.transparent = true;
+  pointsMaterial.depthWrite = false;
+  pointsMaterial.blending = THREE.AdditiveBlending;
+  // 62.6 启用顶点颜色设置
+  // pointsMaterial.vertexColors = true;
+
+  // 62.4 生成物体【60.4 创建点物体】
+  const points = new THREE.Points(particlesGeometry, pointsMaterial);
+  scene.add(points);
+
+  return points;
+}
+const points = createMesh('1', 1.2);
+const points1 = createMesh('14', 0.8);
+const points2 = createMesh('xh', 0.6);
 
 // 1.6 创建控制器
 let cantrols = null;
@@ -111,6 +125,13 @@ const clock = new THREE.Clock();
 // 1.5 创建渲染函数
 function render() {
   const time = clock.getElapsedTime();
+  // 63.2.1 旋转x轴，形成下雪感觉
+  points.rotation.x = time * 0.3;
+  points1.rotation.x = time * 0.4;
+  points2.rotation.x = time * 0.5;
+  // 63.2.2 旋转y轴，形成风吹感觉
+  points1.rotation.y = time * 0.5;
+  points2.rotation.y = time * 0.6;
 
   cantrols && cantrols.update();
   renderer.render(scene, camera);

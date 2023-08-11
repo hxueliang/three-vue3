@@ -1,4 +1,4 @@
-<!-- 61.点材质属性 -->
+<!-- 60.Points与点材质 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -29,7 +29,7 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
-camera.position.set(0, 3, 5);
+camera.position.set(1, 3, 5);
 scene.add(camera);
 
 // 1.4 创建渲染器
@@ -37,38 +37,22 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(innerWidth, innerHeight);
 
 // 10.1 创建RGBELoader
-// const rgbeLoader = new RGBELoader();
-// // 10.2 加载hdr图;
-// rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
-//   envMap.mapping = THREE.EquirectangularReflectionMapping;
-//   scene.background = envMap;
-//   scene.environment = envMap;
-// });
+const rgbeLoader = new RGBELoader();
+// 10.2 加载hdr图
+rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
+  envMap.mapping = THREE.EquirectangularReflectionMapping;
+  scene.background = envMap;
+  scene.environment = envMap;
+});
 
 const gui = new GUI();
 
 // 60.1 创建球几何体
-const spheregeometry = new THREE.SphereGeometry(3, 30, 30);
-// 61.3.2 解决纹理加载异常的问题
-delete spheregeometry.attributes.uv;
+const spheregeometry = new THREE.SphereGeometry(3, 20, 20);
 // 60.2 创建点材质
 const pointsMaterial = new THREE.PointsMaterial();
 // 60.3 设置点材质的大小
 pointsMaterial.size = 0.1;
-
-// 61.1 设置点材质的颜色
-pointsMaterial.color.set(0xfff000);
-// 61.2 是否应相机深度而衰减
-pointsMaterial.sizeAttenuation = true;
-// 61.3.1 设置纹理
-const textureLoader = new THREE.TextureLoader();
-const texture = textureLoader.load('./texture/particles/14.png');
-pointsMaterial.map = texture;
-pointsMaterial.alphaMap = texture;
-pointsMaterial.transparent = true;
-pointsMaterial.depthWrite = false;
-pointsMaterial.blending = THREE.AdditiveBlending;
-
 // 60.4 创建点物体
 const points = new THREE.Points(spheregeometry, pointsMaterial);
 scene.add(points);

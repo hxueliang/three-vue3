@@ -1,4 +1,4 @@
-<!-- 53.模板渲染_小球只在平面内渲染 -->
+<!-- 52.渲染器裁剪场景_一个物体可以同时渲染多种材质 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -46,44 +46,15 @@ rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
 
 const gui = new GUI();
 
-// 53.1 创建平面
-const planeGeometry = new THREE.PlaneGeometry(10, 10);
-const planeMaterial = new THREE.MeshPhysicalMaterial({
+// 51.1 创建物体
+const geometry = new THREE.SphereGeometry(15, 32, 16);
+const material = new THREE.MeshBasicMaterial({
+  color: 0xffffff,
   side: THREE.DoubleSide,
-  // 53.3.1 两个物体都设置模板缓冲区的写入和测试
-  stencilWrite: true,
-  // 53.4.1 两个物体都设置相同的模板缓冲基准值
-  stencilRef: 2,
-  // 53.5 模板设置设置允许写入的掩码0xff（0-255）
-  stencilWriteMask: 0xff,
-  // 53.7 模板函数比较通过时候，设置为replace替换
-  stencilZPass: THREE.ReplaceStencilOp,
-});
-const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-scene.add(plane);
-
-// 53.2 创建小球
-const geometry = new THREE.SphereGeometry(1, 20, 20);
-const material = new THREE.MeshPhysicalMaterial({
-  color: 0xffcccc,
-  // 53.3.2 两个物体都设置模板缓冲区的写入和测试
-  stencilWrite: true,
-  // 53.4.2 两个物体都设置相同的模板缓冲基准值
-  stencilRef: 2,
-  // 53.6 小球上设置模板比较函数THREE.EqualStencilFunc
-  stencilFunc: THREE.EqualStencilFunc,
-  // 53.8.2 配合小球在平面后时，不做深度验证，使小球能渲染出来
-  depthTest: false,
+  wireframe: true,
 });
 const sphere = new THREE.Mesh(geometry, material);
-// 53.8.0 小球位置在平面前面
-// sphere.position.z = 2;
-// 53.8.1 修改小球位置在平面后面
-sphere.position.z = -2;
 scene.add(sphere);
-
-// 53.8.2 测试小球在平面前后进动
-gui.add(sphere.position, 'z', -10, 10);
 
 // 1.6 创建控制器
 let cantrols = null;
@@ -99,12 +70,46 @@ function createControls() {
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
 
+// 52.3 创建新的场景
+const sceneNew = new THREE.Scene();
+const material1 = new THREE.MeshBasicMaterial({
+  color: 0xff00ff,
+  wireframe: true,
+});
+const sphere1 = new THREE.Mesh(geometry, material1);
+sceneNew.add(sphere1);
+
+// 52.7 设置gui
+const params = { scissorWidth: window.innerWidth / 2, };
+gui.add(params, 'scissorWidth', 0, window.innerWidth);
 
 // 1.5 创建渲染函数
 function render() {
   cantrols && cantrols.update();
 
+  // 52.1 启用剪裁检测
+  renderer.setScissorTest(true);
+  // 52.2 设置裁剪区域
+  // renderer.setScissor(0, 0, window.innerWidth / 2, window.innerHeight);
+  // 52.7.1 配合设置gui调整
+  renderer.setScissor(0, 0, params.scissorWidth, window.innerHeight);
+
   renderer.render(scene, camera);
+
+  // 52.4 设置裁剪区域
+  // renderer.setScissor(window.innerWidth / 2, 0, window.innerWidth / 2, window.innerHeight);
+  // 52.7.2 配合设置gui调整
+  renderer.setScissor(
+    params.scissorWidth,
+    0,
+    window.innerWidth - params.scissorWidth,
+    window.innerHeight
+  );
+  // 52.5 渲染新的场景
+  renderer.render(sceneNew, camera);
+  // 52.6 禁用剪裁检测（防止其它地方要用renderer被影响）
+  renderer.setScissorTest(false);
+
   requestAnimationFrame(render);
 };
 

@@ -1,4 +1,4 @@
-<!-- 73.3D全屏滚动_切屏文字动画 -->
+<!-- 72.3D全屏滚动_切屏触发物体特效 -->
 <template>
   <!-- 69.0.1 添加三个页面 -->
   <div class="page page1">
@@ -239,22 +239,6 @@ window.addEventListener('scroll', () => {
     // 72.2 让当前页面下的3d物体转360度
     gsap.to(groupArr[currentPage].rotation, {
       z: '+=' + 2 * Math.PI,
-    });
-    // 73.1 用gsap和css选择器，使元素旋转
-    // gsap.to(`.page${currentPage + 1} h1`, {
-    //   rotate: '+=360',
-    //   duration: 2
-    // });
-    // 73.2 用gsap和css选择器，使元素飞入
-    // gsap.fromTo(`.page${currentPage + 1} h1`, { x: -500 }, {
-    //   x: 0,
-    //   duration: 1
-    // });
-    // 73.3 用gsap和css选择器，使元素旋转飞入
-    gsap.fromTo(`.page${currentPage + 1} h1`, { x: -500, rotate: 90 }, {
-      x: 0,
-      rotate: '+=270',
-      duration: 2
     });
   }
 });

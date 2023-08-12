@@ -1,4 +1,4 @@
-<!-- 70.3D全屏滚动_同步滚屏与相机位置_第二个页面 -->
+<!-- 69.3D全屏滚动_页面样式_第一个页面 -->
 <template>
   <!-- 69.0.1 添加三个页面 -->
   <div class="page page1">
@@ -33,7 +33,6 @@ import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js';
 import gsap from 'gsap';
-import { DoubleSide } from 'three';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -76,29 +75,6 @@ for (let x = 0; x < 5; x++) {
 }
 // 69.2.3 组添加进场景
 scene.add(cubeGroup);
-
-// 70. 酷炫三角形
-const sjxGroup = new THREE.Group();
-for (let i = 0; i < 50; i++) {
-  const geometry = new THREE.BufferGeometry();
-  const vertices = new Float32Array(9);
-  for (let j = 0; j < 9; j++) {
-    vertices[j] = Math.random() * 12 - 6;
-  }
-  // 17.2设置几何体的position属性
-  geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-  // 18.1创建随机颜色
-  const color = new THREE.Color(Math.random(), Math.random(), Math.random(), 0.5);
-  // 17.3创建材质
-  const material = new THREE.MeshBasicMaterial({ color, opacity: 0.5, transparent: true, side: THREE.DoubleSide });
-  // 17.4根据几何体和材质创建物体
-  const mesh = new THREE.Mesh(geometry, material);
-  sjxGroup.add(mesh);
-}
-// 70.1 把所有三角形y轴往下移30
-sjxGroup.position.y = -30;
-scene.add(sjxGroup);
-
 // 68.2 创建投射光线
 const raycaster = new THREE.Raycaster();
 // 68.3 创建鼠标位置
@@ -141,12 +117,6 @@ function render() {
   cubeGroup.rotation.x = time * 0.5;
   cubeGroup.rotation.y = time * 0.5;
 
-  // 70.2.2 根据当前滚动的位置scrollY，设置相机位置
-  camera.position.y = -(window.scrollY / window.innerHeight) * 30;
-  // 70.3 让三角形组旋转
-  sjxGroup.rotation.x = time * 0.4;
-  sjxGroup.rotation.y = time * 0.3;
-
   cantrols && cantrols.update();
   renderer.render(scene, camera);
   requestAnimationFrame(render);
@@ -162,16 +132,6 @@ window.addEventListener('resize', () => {
   camera.aspect = innerWidth / innerHeight;
   // 更新摄像头投影矩阵
   camera.updateProjectionMatrix();
-});
-
-// 70.2.1 监听滚动事件
-let currentPage = 0;
-window.addEventListener('scroll', () => {
-  const newPage = Math.round(window.scrollY / window.innerHeight);
-  if (currentPage !== newPage) {
-    currentPage = newPage;
-    console.log(currentPage);
-  }
 });
 
 onMounted(() => {

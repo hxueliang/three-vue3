@@ -1,4 +1,4 @@
-<!-- 74.3D全屏滚动_鼠标控制相机摇晃特效 -->
+<!-- 73.3D全屏滚动_切屏文字动画 -->
 <template>
   <!-- 69.0.1 添加三个页面 -->
   <div class="page page1">
@@ -154,12 +154,6 @@ window.addEventListener('click', event => {
   result.forEach(res => res.object.material = redMaterial);
 });
 
-// 74.1 监听鼠标移动
-window.addEventListener('mousemove', event => {
-  mouse.x = event.clientX / window.innerWidth - 0.5;
-  mouse.y = -(event.clientY / window.innerHeight - 0.5);
-});
-
 const gui = new GUI();
 
 // 1.6 创建控制器
@@ -202,9 +196,6 @@ function render() {
 
   // 70.2.2 根据当前滚动的位置scrollY，设置相机位置
   camera.position.y = -(window.scrollY / window.innerHeight) * 30;
-  // 74.2 让相机左右摇晃
-  // camera.position.x = mouse.x * 10;
-  camera.position.x += mouse.x * 10 - camera.position.x;
   // 70.3 让三角形组旋转
   // sjxGroup.rotation.x = time * 0.4;
   // sjxGroup.rotation.y = time * 0.3;

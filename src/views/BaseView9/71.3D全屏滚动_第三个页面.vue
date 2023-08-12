@@ -1,4 +1,4 @@
-<!-- 72.3D全屏滚动_切屏触发物体特效 -->
+<!-- 71.3D全屏滚动_第三个页面 -->
 <template>
   <!-- 69.0.1 添加三个页面 -->
   <div class="page page1">
@@ -172,33 +172,19 @@ scene.add(axesHelper);
 // 设置时钟
 const clock = new THREE.Clock();
 
-// 72.4 gsap改造动画效果
-gsap.to(cubeGroup.rotation, {
-  x: '+=' + Math.PI,
-  y: '+=' + Math.PI,
-  duration: 5,
-  repeat: -1
-});
-gsap.to(sjxGroup.rotation, {
-  x: '+=' + Math.PI,
-  y: '-=' + Math.PI,
-  duration: 5,
-  repeat: -1
-});
-
 // 1.5 创建渲染函数
 function render() {
   const time = clock.getElapsedTime();
 
   // 69.2.4 设置级旋转
-  // cubeGroup.rotation.x = time * 0.5;
-  // cubeGroup.rotation.y = time * 0.5;
+  cubeGroup.rotation.x = time * 0.5;
+  cubeGroup.rotation.y = time * 0.5;
 
   // 70.2.2 根据当前滚动的位置scrollY，设置相机位置
   camera.position.y = -(window.scrollY / window.innerHeight) * 30;
   // 70.3 让三角形组旋转
-  // sjxGroup.rotation.x = time * 0.4;
-  // sjxGroup.rotation.y = time * 0.3;
+  sjxGroup.rotation.x = time * 0.4;
+  sjxGroup.rotation.y = time * 0.3;
 
   // 71.2 设置小球动起来
   lightBall.position.x = Math.sin(time * 2) * 3;
@@ -206,8 +192,7 @@ function render() {
   lightBall.position.y = 2 + Math.sin(time * 10) / 3;
   // 71.4 让小球组旋转
   sphereGroup.rotation.x = Math.sin(time) * 0.04;
-  // 72.3 与72.2的gsap动画冲突，先取消，有需要可以用gsap写重写动画
-  // sphereGroup.rotation.z = Math.sin(time) * 0.04;
+  sphereGroup.rotation.z = Math.sin(time) * 0.04;
 
   cantrols && cantrols.update();
   renderer.render(scene, camera);
@@ -226,9 +211,6 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
 });
 
-// 72.1 创建组数组
-const groupArr = [cubeGroup, sjxGroup, sphereGroup];
-
 // 70.2.1 监听滚动事件
 let currentPage = 0;
 window.addEventListener('scroll', () => {
@@ -236,10 +218,6 @@ window.addEventListener('scroll', () => {
   if (currentPage !== newPage) {
     currentPage = newPage;
     console.log(currentPage);
-    // 72.2 让当前页面下的3d物体转360度
-    gsap.to(groupArr[currentPage].rotation, {
-      z: '+=' + 2 * Math.PI,
-    });
   }
 });
 

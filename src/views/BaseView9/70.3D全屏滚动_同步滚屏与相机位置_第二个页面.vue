@@ -1,4 +1,4 @@
-<!-- 71.3D全屏滚动_第三个页面 -->
+<!-- 70.3D全屏滚动_同步滚屏与相机位置_第二个页面 -->
 <template>
   <!-- 69.0.1 添加三个页面 -->
   <div class="page page1">
@@ -99,45 +99,6 @@ for (let i = 0; i < 50; i++) {
 sjxGroup.position.y = -30;
 scene.add(sjxGroup);
 
-// 71.1 弹跳小球
-const sphereGeometry = new THREE.SphereGeometry(1, 20, 20);
-const sphereMaterial = new THREE.MeshStandardMaterial();
-const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-// 71.3.1 创建小球组
-const sphereGroup = new THREE.Group();
-// 56.5 开启物体投射阴影
-sphere.castShadow = true;
-sphereGroup.add(sphere);
-// 56.2 添加平面
-const planeGeometry = new THREE.PlaneGeometry(20, 20);
-const plane = new THREE.Mesh(planeGeometry, sphereMaterial);
-plane.position.y = -1;
-plane.rotation.x = -Math.PI / 2;
-// 56.6 开启物体接收阴影
-plane.receiveShadow = true;
-sphereGroup.add(plane);
-// 58.0 添加 环境光
-const light = new THREE.AmbientLight(0xffffff, 0.5);
-sphereGroup.add(light);
-// 58.1 添加 点光源
-const pointLight = new THREE.PointLight(0xff0000, 20);
-pointLight.castShadow = true;
-// 58.2 创建小球
-const lightBall = new THREE.Mesh(
-  new THREE.SphereGeometry(0.1, 20, 20),
-  new THREE.MeshBasicMaterial({ color: 0xff0000 }),
-);
-sphereGroup.add(lightBall);
-// 58.3 将点光源添加到小球上
-lightBall.add(pointLight);
-lightBall.position.set(2, 2, 2);
-// 58.0 模糊阴影的边缘
-pointLight.shadow.radius = 20;
-pointLight.shadow.mapSize.set(4096, 4096);
-// 71.3.2 添加小球组进场景
-sphereGroup.position.y = -60;
-scene.add(sphereGroup);
-
 // 68.2 创建投射光线
 const raycaster = new THREE.Raycaster();
 // 68.3 创建鼠标位置
@@ -185,14 +146,6 @@ function render() {
   // 70.3 让三角形组旋转
   sjxGroup.rotation.x = time * 0.4;
   sjxGroup.rotation.y = time * 0.3;
-
-  // 71.2 设置小球动起来
-  lightBall.position.x = Math.sin(time * 2) * 3;
-  lightBall.position.z = Math.cos(time * 2) * 3;
-  lightBall.position.y = 2 + Math.sin(time * 10) / 3;
-  // 71.4 让小球组旋转
-  sphereGroup.rotation.x = Math.sin(time) * 0.04;
-  sphereGroup.rotation.z = Math.sin(time) * 0.04;
 
   cantrols && cantrols.update();
   renderer.render(scene, camera);

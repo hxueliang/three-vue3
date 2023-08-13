@@ -1,4 +1,4 @@
-<!-- 79.立方体碰撞后旋转 -->
+<!-- 78.物理世界关联材质_摩擦与弹性系数 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -38,6 +38,13 @@ scene.add(camera);
 
 const gui = new GUI();
 
+// 75.1.1 创建球体
+const sphereGeometry = new THREE.SphereGeometry(1, 20, 20);
+const sphereMaterial = new THREE.MeshStandardMaterial();
+const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+// 75.2.3 开启投射阴影
+sphere.castShadow = true;
+scene.add(sphere);
 // 75.1.2 创建平面
 const floor = new THREE.Mesh(
   new THREE.PlaneGeometry(20, 20),
@@ -58,63 +65,37 @@ scene.add(dirLight);
 
 // 75.3 创建物理世界
 const world = new CANNON.World();
+world.gravity.set(0, -9.8, 0);
+// 75.4 创建小球形状
+const sphereShape = new CANNON.Sphere(1);
+// 75.5 创建物理世界的物体
+const sphereBody = new CANNON.Body({
+  // 75.5.1 形状
+  shape: sphereShape,
+  // 75.5.2 位置
+  position: new CANNON.Vec3(0, 0, 0),
+  // 75.5.3 重量
+  mass: 1,
+  // 78.1.1 设置小球材质【75.5.4 材质】
+  material: new CANNON.Material('sphere'),
+});
+// 75.6 将物体添加到世界
+world.addBody(sphereBody);
 
 // 77.3.1 导入音效
 const hitSound = new Audio('./audio/metalHit.mp3');
 
-// 79.3.1 存放所有cube
-const cubeArr = [];
-// 79.0 提取cubeWorldMaterial到全局，方便多处使用
-const cubeWorldMaterial = new CANNON.Material('cube');
-// 79.2 创建立方体函数
-function createCube() {
-  // 79.0 将立方体换成立方体
-  // 75.1.1 创建立方体
-  const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-  const cubeMaterial = new THREE.MeshStandardMaterial();
-  const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-  // 75.2.3 开启投射阴影
-  cube.castShadow = true;
-  scene.add(cube);
-
-  world.gravity.set(0, -9.8, 0);
-  // 75.4 创建立方体形状
-  const cubeShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
-  // 75.5 创建物理世界的物体
-  const cubeBody = new CANNON.Body({
-    // 75.5.1 形状
-    shape: cubeShape,
-    // 75.5.2 位置
-    position: new CANNON.Vec3(0, 0, 0),
-    // 75.5.3 重量
-    mass: 1,
-    // 78.1.1 设置立方体材质【75.5.4 材质】
-    material: cubeWorldMaterial,
-  });
-  // 75.6 将物体添加到世界
-  world.addBody(cubeBody);
-
-  // 77.1 监听碰撞事件
-  cubeBody.addEventListener('collide', e => {
-    // 77.2 获取碰撞强度
-    const impactStrength = e.contact.getImpactVelocityAlongNormal();
-    // 77.3.2 播放，需要用户与页面有交互才能听到声音，测试的时候，可以点击一下页面会听到声音
-    if (impactStrength > 2) {
-      // 78.4 音效的时长，大于回弹的时长时，可以设置从0开始播放
-      hitSound.currentTime = 0;
-      hitSound.play();
-    }
-  });
-  // 79.3.2 存入数组
-  cubeArr.push({
-    mesh: cube,
-    body: cubeBody
-  });
-}
-
-// 79.4 点击创建cube
-window.addEventListener('click', _ => {
-  createCube();
+// 77.1 监听碰撞事件
+sphereBody.addEventListener('collide', e => {
+  // 77.2 获取碰撞强度
+  const impactStrength = e.contact.getImpactVelocityAlongNormal();
+  // 77.3.2 播放，需要用户与页面有交互才能听到声音，测试的时候，可以点击一下页面会听到声音
+  if (impactStrength > 2) {
+    // 78.4 音效的时长，大于回弹的时长时，可以设置从0开始播放
+    hitSound.currentTime = 0;
+    hitSound.play();
+  }
+  console.log(impactStrength);
 });
 
 // 76.1 创建物理世界的地面
@@ -135,7 +116,7 @@ world.addBody(floorBody);
 
 // 78.2 设置2种材质的碰撞参数
 const defaultContactMaterial = new CANNON.ContactMaterial(
-  cubeWorldMaterial,
+  sphereBody.material,
   floorBody.material,
   {
     // 78.2.1 摩擦力
@@ -146,9 +127,6 @@ const defaultContactMaterial = new CANNON.ContactMaterial(
 );
 // 78.3 将材料的关联设置添加的物理世界
 world.addContactMaterial(defaultContactMaterial);
-
-// 79.1 设置世界碰撞的默认材料，如果材料没有设置会用这个
-world.defaultContactMaterial = defaultContactMaterial;
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer();
@@ -178,12 +156,8 @@ function render() {
 
   // 75.7 更新物理引擎世界里的物体
   world.step(1 / 60, deltaTime);
-  // 75.8 渲染引擎的物体位置，复制物理引擎的物体位置
-  // cube.position.copy(cubeBody.position);
-  // 79.3.3 循环数组，渲染引擎的物体位置，复制物理引擎的物体位置
-  cubeArr.forEach(({ mesh, body }) => {
-    mesh.position.copy(body.position);
-  });
+  // 75.8 浸染引擎的物体位置，复制物理引擎的物体位置
+  sphere.position.copy(sphereBody.position);
 
   cantrols && cantrols.update();
   renderer.render(scene, camera);

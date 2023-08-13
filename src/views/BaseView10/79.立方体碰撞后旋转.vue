@@ -1,4 +1,4 @@
-<!-- 80.给物体施加作用力 -->
+<!-- 79.立方体碰撞后旋转 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -92,15 +92,6 @@ function createCube() {
     // 78.1.1 设置立方体材质【75.5.4 材质】
     material: cubeWorldMaterial,
   });
-
-  // 80.1 添加作用力
-  cubeBody.applyLocalForce(
-    // 80.1.1 力的大小和方向
-    new CANNON.Vec3(100, 0, 0),
-    // 80.1.2 力作用的位置
-    new CANNON.Vec3(0, 0, 0)
-  );
-
   // 75.6 将物体添加到世界
   world.addBody(cubeBody);
 

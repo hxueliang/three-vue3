@@ -33,7 +33,7 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 300);
-camera.position.set(1, 3, 10);
+camera.position.set(1, 3, 20);
 scene.add(camera);
 
 const gui = new GUI();
@@ -43,7 +43,8 @@ const floor = new THREE.Mesh(
   new THREE.PlaneGeometry(20, 20),
   new THREE.MeshStandardMaterial()
 );
-floor.position.y = -5;
+const floorPositionY = -10;
+floor.position.y = floorPositionY;
 floor.rotation.x = -Math.PI / 2;
 // 75.2.4 设置接收阴影
 floor.receiveShadow = true;
@@ -98,10 +99,16 @@ function createCube() {
   cubeBody.addEventListener('collide', e => {
     // 77.2 获取碰撞强度
     const impactStrength = e.contact.getImpactVelocityAlongNormal();
+    // 79.6.2 记录碰撞强度的最大值，用与得到音量0-1之间的数值
+    console.log(impactStrength);
+    window.impactStrengthMax = Math.max(window.impactStrengthMax || 0, impactStrength);
+    console.log(impactStrength, window.impactStrengthMax);
     // 77.3.2 播放，需要用户与页面有交互才能听到声音，测试的时候，可以点击一下页面会听到声音
     if (impactStrength > 2) {
       // 78.4 音效的时长，大于回弹的时长时，可以设置从0开始播放
       hitSound.currentTime = 0;
+      // 79.6.1 设置音量(音量范围是：0-1)
+      hitSound.volume = impactStrength / window.impactStrengthMax;
       hitSound.play();
     }
   });
@@ -127,7 +134,7 @@ floorBody.mass = 0;
 // 76.1.2 设置形状
 floorBody.addShape(floorShape);
 // 76.1.3 设置位置
-floorBody.position.set(0, -5, 0);
+floorBody.position.set(0, floorPositionY, 0);
 // 76.1.4 旋转地面的位置(参数为一个向量，物体将其旋转)
 floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
 // 76.2 将地面添加到世界
@@ -183,6 +190,8 @@ function render() {
   // 79.3.3 循环数组，渲染引擎的物体位置，复制物理引擎的物体位置
   cubeArr.forEach(({ mesh, body }) => {
     mesh.position.copy(body.position);
+    // 79.5 设置渲染的物体跟随物理的物体旋转
+    mesh.quaternion.copy(body.quaternion);
   });
 
   cantrols && cantrols.update();

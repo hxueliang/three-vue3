@@ -1,4 +1,4 @@
-<!-- 76.固定不动的地面与小球碰撞 -->
+<!-- 77.碰撞事件_碰撞音效 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -81,6 +81,17 @@ const sphereBody = new CANNON.Body({
 });
 // 75.6 将物体添加到世界
 world.addBody(sphereBody);
+
+// 77.3.1 导入音效
+const hitSound = new Audio('./audio/metalHit.mp3');
+
+// 77.1 监听碰撞事件
+sphereBody.addEventListener('collide', e => {
+  // 77.2 获取碰撞强度
+  const impactStrength = e.contact.getImpactVelocityAlongNormal();
+  // 77.3.2 播放，需要用户与页面有交互才能听到声音，测试的时候，可以点击一下页面会听到声音
+  impactStrength > 5 && hitSound.play();
+});
 
 // 76.1 创建物理世界的地面
 const floorShape = new CANNON.Plane();

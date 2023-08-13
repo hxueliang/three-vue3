@@ -1,5 +1,4 @@
-<!-- 75.物理引擎_cannon -->
-<!-- https://pmndrs.github.io/cannon-es/ -->
+<!-- 76.固定不动的地面与小球碰撞 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -72,7 +71,7 @@ const sphereShape = new CANNON.Sphere(1);
 // 75.5 创建物理世界的物体
 const sphereBody = new CANNON.Body({
   // 75.5.1 形状
-  shpae: sphereShape,
+  shape: sphereShape,
   // 75.5.2 位置
   position: new CANNON.Vec3(0, 0, 0),
   // 75.5.3 重量
@@ -83,10 +82,23 @@ const sphereBody = new CANNON.Body({
 // 75.6 将物体添加到世界
 world.addBody(sphereBody);
 
+// 76.1 创建物理世界的地面
+const floorShape = new CANNON.Plane();
+const floorBody = new CANNON.Body();
+// 76.1.1 当质量为0的时候，可以使用物体保持不动
+floorBody.mass = 0;
+// 76.1.2 设置形状
+floorBody.addShape(floorShape);
+// 76.1.3 设置位置
+floorBody.position.set(0, -5, 0);
+// 76.1.4 旋转地面的位置(参数为一个向量，物体将其旋转)
+floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
+// 76.2 将地面添加到世界
+world.addBody(floorBody);
+
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer();
-renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.setSize(innerWidth, innerHeight);
 // 75.2.2 允许在场景中使用阴影贴图
 renderer.shadowMap.enabled = true;

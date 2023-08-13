@@ -1,4 +1,4 @@
-<!-- 78.物理世界关联材质_摩擦与弹性系数 -->
+<!-- 77.碰撞事件_碰撞音效 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -76,8 +76,8 @@ const sphereBody = new CANNON.Body({
   position: new CANNON.Vec3(0, 0, 0),
   // 75.5.3 重量
   mass: 1,
-  // 78.1.1 设置小球材质【75.5.4 材质】
-  material: new CANNON.Material('sphere'),
+  // 75.5.4 材质
+  material: new CANNON.Material(),
 });
 // 75.6 将物体添加到世界
 world.addBody(sphereBody);
@@ -90,19 +90,12 @@ sphereBody.addEventListener('collide', e => {
   // 77.2 获取碰撞强度
   const impactStrength = e.contact.getImpactVelocityAlongNormal();
   // 77.3.2 播放，需要用户与页面有交互才能听到声音，测试的时候，可以点击一下页面会听到声音
-  if (impactStrength > 2) {
-    // 78.4 音效的时长，大于回弹的时长时，可以设置从0开始播放
-    hitSound.currentTime = 0;
-    hitSound.play();
-  }
-  console.log(impactStrength);
+  impactStrength > 5 && hitSound.play();
 });
 
 // 76.1 创建物理世界的地面
 const floorShape = new CANNON.Plane();
 const floorBody = new CANNON.Body();
-// 78.1.2 设置地面材质
-floorBody.material = new CANNON.Material('floor');
 // 76.1.1 当质量为0的时候，可以使用物体保持不动
 floorBody.mass = 0;
 // 76.1.2 设置形状
@@ -114,19 +107,6 @@ floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
 // 76.2 将地面添加到世界
 world.addBody(floorBody);
 
-// 78.2 设置2种材质的碰撞参数
-const defaultContactMaterial = new CANNON.ContactMaterial(
-  sphereBody.material,
-  floorBody.material,
-  {
-    // 78.2.1 摩擦力
-    friction: 0.1,
-    // 78.2.2 弹性
-    restitution: 0.7,
-  }
-);
-// 78.3 将材料的关联设置添加的物理世界
-world.addContactMaterial(defaultContactMaterial);
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer();

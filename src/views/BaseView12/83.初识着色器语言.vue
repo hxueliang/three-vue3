@@ -1,6 +1,4 @@
-<!-- 84.颜色器插件_文件导入 -->
-<!-- 84.1 新建两个glsl文件，并把js的shader代码，移到想应文件 -->
-<!-- 84.2 安装vscode插件：Shader languages support for VS Code -->
+<!-- 84.初识着色器语言 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -25,8 +23,6 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
-import basicVertexShader from "../../shader/basic/vertex.glsl?raw";
-import basicFragmentShader from '../../shader/basic/fragment.glsl?raw';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -46,9 +42,17 @@ const gui = new GUI();
 // 83.2 创建着色器材质
 const shaderMaterial = new THREE.ShaderMaterial({
   // 83.2.1 顶点着色器
-  vertexShader: basicVertexShader,
+  vertexShader: `
+    void main() {
+      gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+    }
+  `,
   // 83.2.2 片元着色器
-  fragmentShader: basicFragmentShader,
+  fragmentShader: `
+    void main() {
+      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    }
+  `,
 });
 // 83.1 创建平面
 const plane = new THREE.Mesh(

@@ -1,4 +1,4 @@
-<!-- 86.控制顶点位置_波浪形状 -->
+<!-- 85.RawShaderMatericl_attribute_uniform_varying -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -40,9 +40,6 @@ scene.add(camera);
 
 const gui = new GUI();
 
-// 86.5.1 加载纹理
-const textureLoader = new THREE.TextureLoader();
-const textrue = textureLoader.load('./imgs/ca.jpeg');
 
 // 85.1 创建原始着色器材质【83.2 创建着色器材质】
 const rowShaderMaterial = new THREE.RawShaderMaterial({
@@ -50,17 +47,6 @@ const rowShaderMaterial = new THREE.RawShaderMaterial({
   vertexShader: basicVertexShader,
   // 83.2.2 片元着色器
   fragmentShader: basicFragmentShader,
-  side: THREE.DoubleSide,
-  // 86.4.1 设置参数
-  uniforms: {
-    uTime: {
-      value: 0,
-    },
-    // 86.5.2 添加纹理参数
-    uTextrue: {
-      value: textrue,
-    }
-  }
 });
 // 83.1 创建平面
 const plane = new THREE.Mesh(
@@ -92,9 +78,6 @@ const clock = new THREE.Clock();
 
 // 1.5 创建渲染函数
 function render() {
-  const elapsedTime = clock.getElapsedTime();
-  // 86.4.2 设置uTime的值
-  rowShaderMaterial.uniforms.uTime.value = elapsedTime;
   cantrols && cantrols.update();
   renderer.render(scene, camera);
   requestAnimationFrame(render);

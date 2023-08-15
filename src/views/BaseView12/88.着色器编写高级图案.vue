@@ -1,4 +1,4 @@
-<!-- 89.漫天飞舞孔明灯 -->
+<!-- 88.着色器编写高级图案 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -23,8 +23,8 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
-import vertexShader from "../../shader/flylight/vertex.glsl?raw";
-import fragmentShader from '../../shader/flylight/fragment.glsl?raw';
+import deepVertexShader from "../../shader/deep/vertex.glsl?raw";
+import deepFragmentShader from '../../shader/deep/fragment.glsl?raw';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -40,16 +40,64 @@ scene.add(camera);
 
 const gui = new GUI();
 
+// 86.5.1 加载纹理
+const textureLoader = new THREE.TextureLoader();
+const textrue = textureLoader.load('./imgs/ca.jpeg');
+
+const params = {
+  uFrequency: 10,
+  uScale: 0.1,
+};
+
 // 85.1 创建原始着色器材质【83.2 创建着色器材质】
 const rowShaderMaterial = new THREE.RawShaderMaterial({
   // 83.2.1 顶点着色器
-  vertexShader: vertexShader,
+  vertexShader: deepVertexShader,
   // 83.2.2 片元着色器
-  fragmentShader: fragmentShader,
+  fragmentShader: deepFragmentShader,
   side: THREE.DoubleSide,
   // 86.4.1 设置参数
-  uniforms: {}
+  uniforms: {
+    // 波浪的频率
+    uFrequency: {
+      value: params.uFrequency,
+    },
+    // 波浪的幅度
+    uScale: {
+      value: params.uScale,
+    },
+    uTime: {
+      value: 0,
+    },
+    // 86.5.2 添加纹理参数
+    uTextrue: {
+      value: textrue,
+    }
+  }
 });
+// 83.1 创建平面
+const plane = new THREE.Mesh(
+  new THREE.PlaneGeometry(1, 1, 64, 64),
+  rowShaderMaterial
+);
+scene.add(plane);
+
+gui
+  .add(params, "uFrequency")
+  .min(0)
+  .max(50)
+  .step(0.1)
+  .onChange((value) => {
+    rowShaderMaterial.uniforms.uFrequency.value = value;
+  });
+gui
+  .add(params, "uScale")
+  .min(0)
+  .max(1)
+  .step(0.01)
+  .onChange((value) => {
+    rowShaderMaterial.uniforms.uScale.value = value;
+  });
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer({ alpha: true });
@@ -75,7 +123,8 @@ const clock = new THREE.Clock();
 // 1.5 创建渲染函数
 function render() {
   const elapsedTime = clock.getElapsedTime();
-
+  // 86.4.2 设置uTime的值
+  rowShaderMaterial.uniforms.uTime.value = elapsedTime;
   cantrols && cantrols.update();
   renderer.render(scene, camera);
   requestAnimationFrame(render);

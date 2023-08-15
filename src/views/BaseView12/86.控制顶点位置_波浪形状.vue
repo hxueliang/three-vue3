@@ -1,4 +1,4 @@
-<!-- 87.着色器编写各类型图案 -->
+<!-- 86.控制顶点位置_波浪形状 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -23,8 +23,8 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
-import deepVertexShader from "../../shader/deep/vertex.glsl?raw";
-import deepFragmentShader from '../../shader/deep/fragment.glsl?raw';
+import basicVertexShader from "../../shader/raw/vertex.glsl?raw";
+import basicFragmentShader from '../../shader/raw/fragment.glsl?raw';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -35,7 +35,7 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 300);
-camera.position.set(0, 0, 2);
+camera.position.set(1, 2, 5);
 scene.add(camera);
 
 const gui = new GUI();
@@ -47,9 +47,9 @@ const textrue = textureLoader.load('./imgs/ca.jpeg');
 // 85.1 创建原始着色器材质【83.2 创建着色器材质】
 const rowShaderMaterial = new THREE.RawShaderMaterial({
   // 83.2.1 顶点着色器
-  vertexShader: deepVertexShader,
+  vertexShader: basicVertexShader,
   // 83.2.2 片元着色器
-  fragmentShader: deepFragmentShader,
+  fragmentShader: basicFragmentShader,
   side: THREE.DoubleSide,
   // 86.4.1 设置参数
   uniforms: {
@@ -70,7 +70,7 @@ const plane = new THREE.Mesh(
 scene.add(plane);
 
 // 1.4 创建渲染器
-const renderer = new THREE.WebGLRenderer({ alpha: true });
+const renderer = new THREE.WebGLRenderer();
 renderer.setSize(innerWidth, innerHeight);
 // 75.2.2 允许在场景中使用阴影贴图
 renderer.shadowMap.enabled = true;
@@ -123,10 +123,5 @@ onMounted(() => {
 .container {
   width: 100vw;
   height: 100vh;
-}
-</style>
-<style>
-body {
-  background-color: #1e1a20;
 }
 </style>

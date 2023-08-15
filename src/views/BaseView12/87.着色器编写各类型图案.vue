@@ -1,4 +1,4 @@
-<!-- 88.着色器编写高级图案 -->
+<!-- 87.着色器编写各类型图案 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -44,11 +44,6 @@ const gui = new GUI();
 const textureLoader = new THREE.TextureLoader();
 const textrue = textureLoader.load('./imgs/ca.jpeg');
 
-const params = {
-  uFrequency: 10,
-  uScale: 0.1,
-};
-
 // 85.1 创建原始着色器材质【83.2 创建着色器材质】
 const rowShaderMaterial = new THREE.RawShaderMaterial({
   // 83.2.1 顶点着色器
@@ -58,14 +53,6 @@ const rowShaderMaterial = new THREE.RawShaderMaterial({
   side: THREE.DoubleSide,
   // 86.4.1 设置参数
   uniforms: {
-    // 波浪的频率
-    uFrequency: {
-      value: params.uFrequency,
-    },
-    // 波浪的幅度
-    uScale: {
-      value: params.uScale,
-    },
     uTime: {
       value: 0,
     },
@@ -81,23 +68,6 @@ const plane = new THREE.Mesh(
   rowShaderMaterial
 );
 scene.add(plane);
-
-gui
-  .add(params, "uFrequency")
-  .min(0)
-  .max(50)
-  .step(0.1)
-  .onChange((value) => {
-    rowShaderMaterial.uniforms.uFrequency.value = value;
-  });
-gui
-  .add(params, "uScale")
-  .min(0)
-  .max(1)
-  .step(0.01)
-  .onChange((value) => {
-    rowShaderMaterial.uniforms.uScale.value = value;
-  });
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer({ alpha: true });

@@ -35,24 +35,79 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 300);
-camera.position.set(0, 0, 2);
+camera.position.set(0, 0, 10);
 scene.add(camera);
 
 const gui = new GUI();
 
 // 85.1 创建原始着色器材质【83.2 创建着色器材质】
-const rowShaderMaterial = new THREE.RawShaderMaterial({
+const shaderMaterial = new THREE.ShaderMaterial({
   // 83.2.1 顶点着色器
   vertexShader: vertexShader,
   // 83.2.2 片元着色器
   fragmentShader: fragmentShader,
   side: THREE.DoubleSide,
   // 86.4.1 设置参数
-  uniforms: {}
+  uniforms: {},
+  // transparent: true,
 });
+
+// 89.1 加载环境纹理
+const rgbeLoader = new RGBELoader();
+rgbeLoader.loadAsync('./hdr/2k.hdr').then(texture => {
+  texture.mapping = THREE.EquirectangularReflectionMapping;
+  scene.background = texture;
+  scene.environment = texture;
+});
+// 89.3 加载孔明灯贴图
+let lightBox = null;
+const gltfLoader = new GLTFLoader();
+gltfLoader.load('./model/flylight/flyLight.glb', gltf => {
+  lightBox = gltf.scene.children[0];
+  lightBox.material = shaderMaterial;
+  toRotation(gltf.scene.rotation);
+  toPosition(gltf.scene.position, 1.5, 0, 5, 0);
+  scene.add(gltf.scene);
+
+  for (let i = 0; i < 60; i++) {
+    let flyLight = gltf.scene.clone(true);
+    let x = (Math.random() - 0.5) * 300; // -150 ~ 150
+    let z = (Math.random() - 0.5) * 300;
+    let y = Math.random() * 60 + 20; // 25 ~ 85
+    flyLight.position.set(x, y, z);
+    toRotation(flyLight.rotation);
+    toPosition(flyLight.position);
+    scene.add(flyLight);
+  }
+});
+// 89.4 灯y轴旋转
+function toRotation(obj, defaultN = 10, randomN = 30) {
+  gsap.to(obj, {
+    y: 2 * Math.PI,
+    duration: defaultN + Math.random() * randomN,
+    ease: "power2.inOut",
+    repeat: -1,
+  });
+}
+// 89.5 灯位移
+function toPosition(obj, defaultN = 10, randomN = 20, defaultTime = 5, randomTime = 10) {
+  gsap.to(obj, {
+    x: `+=${Math.random() * 5}`,
+    y: `+=${defaultN + Math.random() * randomN}`,
+    yoyo: true,
+    duration: defaultTime + Math.random() * randomTime,
+    repeat: -1,
+  });
+}
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer({ alpha: true });
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+// 89.1.1 色调映射
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+// 89.2.2 色调映射的曝光级别
+renderer.toneMappingExposure = 0.2;
+
 renderer.setSize(innerWidth, innerHeight);
 // 75.2.2 允许在场景中使用阴影贴图
 renderer.shadowMap.enabled = true;
@@ -63,11 +118,15 @@ function createControls() {
   cantrols = new OrbitControls(camera, container.value);
   cantrols.enableDamping = true;
   cantrols.dampingFactor = 0.05; // 阻尼：值越大惯性越小，0不能动
+  cantrols.autoRotate = true; // 自动围绕目标旋转
+  cantrols.autoRotateSpeed = 0.4; // 围绕目标旋转的速度将有多快，默认值为2.0，相当于在60fps时每旋转一周需要30秒。
+  cantrols.maxPolarAngle = Math.PI / 4 * 3;
+  cantrols.minPolarAngle = Math.PI / 4 * 3;
 }
 
 // 1.7 添加坐标轴辅助器
-const axesHelper = new THREE.AxesHelper(5);
-scene.add(axesHelper);
+// const axesHelper = new THREE.AxesHelper(5);
+// scene.add(axesHelper);
 
 // 设置时钟
 const clock = new THREE.Clock();

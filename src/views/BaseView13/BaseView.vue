@@ -35,15 +35,116 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 300);
-camera.position.set(1, 2, 3);
+camera.position.set(0, 1, 1);
 scene.add(camera);
 
 const gui = new GUI();
 
+// 90.4.1 水纹控制属性
+const params = {
+  uWaterFrequency: 14, // 水波纹频率
+  uScale: 0.03, // 水波纹大小
+  uNoiseFrequency: 16, // 噪声频率
+  uNoiseScale: 0.5, // 噪声大小
+  uXzScale: 1.6,// 
+  uLowColor: '#ff0000',
+  uHighColor: '#ffff00',
+  uXspeed: 1, // X水流速度
+  uZspeed: 1, // Z水流速度
+  uNoiseSpeed: 1,
+  uOpacity: 1,
+};
+// 90.4.2 设置gui
+gui.add(params, 'uWaterFrequency').min(1).max(100).step(0.1).onChange(value => {
+  shaderMaterial.uniforms.uWaterFrequency.value = value;
+});
+gui.add(params, 'uScale').min(0).max(0.2).step(0.001).onChange(value => {
+  shaderMaterial.uniforms.uScale.value = value;
+});
+gui.add(params, 'uNoiseFrequency').min(1).max(100).step(0.1).onChange(value => {
+  shaderMaterial.uniforms.uNoiseFrequency.value = value;
+});
+
+gui.add(params, 'uNoiseScale').min(0).max(5).step(0.001).onChange(value => {
+  shaderMaterial.uniforms.uNoiseScale.value = value;
+});
+gui.add(params, 'uXzScale').min(0).max(5).step(0.1).onChange(value => {
+  shaderMaterial.uniforms.uXzScale.value = value;
+});
+
+gui.addColor(params, 'uLowColor').onChange(value => {
+  shaderMaterial.uniforms.uLowColor.value = new THREE.Color(value);
+});
+gui.addColor(params, 'uHighColor').onChange(value => {
+  shaderMaterial.uniforms.uHighColor.value = new THREE.Color(value);
+});
+
+
+
+gui.add(params, 'uXspeed').min(0).max(5).step(0.1).onChange(value => {
+  shaderMaterial.uniforms.uXspeed.value = value;
+});
+gui.add(params, 'uZspeed').min(0).max(5).step(0.1).onChange(value => {
+  shaderMaterial.uniforms.uZspeed.value = value;
+});
+gui.add(params, 'uNoiseSpeed').min(0).max(5).step(0.1).onChange(value => {
+  shaderMaterial.uniforms.uNoiseSpeed.value = value;
+});
+gui.add(params, 'uOpacity').min(0).max(1).step(0.01).onChange(value => {
+  shaderMaterial.uniforms.uOpacity.value = value;
+});
+
+// 90.2.1 自定义材质
+const shaderMaterial = new THREE.ShaderMaterial({
+  vertexShader,
+  fragmentShader,
+  side: THREE.DoubleSide,
+  transparent: true,
+  uniforms: {
+    uWaterFrequency: {
+      value: params.uWaterFrequency
+    },
+    uScale: {
+      value: params.uScale
+    },
+    uNoiseFrequency: {
+      value: params.uNoiseFrequency
+    },
+    uNoiseScale: {
+      value: params.uNoiseScale
+    },
+    uXzScale: {
+      value: params.uXzScale
+    },
+    uTime: {
+      value: 0
+    },
+    uLowColor: {
+      value: new THREE.Color(params.uLowColor)
+    },
+    uHighColor: {
+      value: new THREE.Color(params.uHighColor)
+    },
+    uXspeed: {
+      value: params.uXspeed
+    },
+    uZspeed: {
+      value: params.uZspeed
+    },
+    uNoiseSpeed: {
+      value: params.uNoiseSpeed
+    },
+    uOpacity: {
+      value: params.uOpacity
+    },
+  },
+});
+
 // 90.1 创建平面
 const plane = new THREE.Mesh(
-  new THREE.PlaneGeometry(1, 1, 512, 512),
-  new THREE.MeshBasicMaterial({ color: 0xff0000 })
+  new THREE.PlaneGeometry(1, 1, 1024, 1024),
+  // 90.2.2 使用自定义材质
+  shaderMaterial,
 );
 plane.rotation.x = -Math.PI / 2;
 scene.add(plane);
@@ -71,6 +172,7 @@ const clock = new THREE.Clock();
 // 1.5 创建渲染函数
 function render() {
   const elapsedTime = clock.getElapsedTime();
+  shaderMaterial.uniforms.uTime.value = elapsedTime;
 
   cantrols && cantrols.update();
   renderer.render(scene, camera);

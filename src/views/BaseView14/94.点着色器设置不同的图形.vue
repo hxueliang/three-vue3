@@ -1,4 +1,4 @@
-<!-- 95.设置物体近大远小 -->
+<!-- 94.点着色器设置不同的图形 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -36,7 +36,7 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 300);
-camera.position.set(2, 5, 3);
+camera.position.set(1, 5, 5);
 scene.add(camera);
 
 const gui = new GUI();

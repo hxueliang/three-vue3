@@ -12,13 +12,16 @@ void main(){
     vec4 viewPosition = viewMatrix * modelPosition;
 
     gl_Position =  projectionMatrix * viewPosition;
-
     vUv = uv;
 
     // 94.2.3.3 传值给片元着色器
     vImgIndex = imgIndex;
 
     // 92.4 设置点大小
-    gl_PointSize = 40.0;
+    // gl_PointSize = 40.0;
+
+    // 95.1 根据viewPosition设置物体大小
+    gl_PointSize = 200.0 / -viewPosition.z;
+
 }
 

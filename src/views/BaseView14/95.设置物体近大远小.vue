@@ -1,4 +1,4 @@
-<!-- 96.让顶点旋转 -->
+<!-- 95.设置物体近大远小 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -141,9 +141,6 @@ function createGalaxy() {
       uTexture3: {
         value: texture3
       },
-      uTime: {
-        value: 0
-      },
     }
   });
 
@@ -174,10 +171,7 @@ const clock = new THREE.Clock();
 
 // 1.5 创建渲染函数
 function render() {
-  const elapsedTime = clock.getElapsedTime();
-
-  // 96.1.1 设置uTime
-  material.uniforms.uTime.value = elapsedTime;
+  const elapsedTime = clock.getDelta();
 
   cantrols && cantrols.update();
   renderer.render(scene, camera);

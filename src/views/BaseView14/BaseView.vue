@@ -36,7 +36,7 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 300);
-camera.position.set(1, 2, 5);
+camera.position.set(1, 5, 5);
 scene.add(camera);
 
 const gui = new GUI();
@@ -44,10 +44,12 @@ const gui = new GUI();
 // 92.3.1 加载纹理
 const textureLoader = new THREE.TextureLoader();
 const texture = textureLoader.load('./texture/particles/1.png');
+const texture2 = textureLoader.load('./texture/particles/14.png');
+const texture3 = textureLoader.load('./texture/particles/xh.png');
 
 // 64.1 初始化数据
 const params = {
-  count: 50000,
+  count: 1000,
   size: 0.1,
   radius: 5,
   branch: 4,
@@ -80,6 +82,8 @@ function createGalaxy() {
   const positions = new Float32Array(params.count * 3);
   // 67.2 创建顶点颜色数组
   const colors = new Float32Array(params.count * 3);
+  // 94.2.2 图案
+  const imgIndex = new Float32Array(params.count);
   for (let i = 0; i < params.count; i++) {
     // 65.1 分支角度 = 第几条分支 * 角度
     const barnch = i % params.branch;
@@ -104,20 +108,39 @@ function createGalaxy() {
     colors[current] = mixColor.r;
     colors[current + 1] = mixColor.g;
     colors[current + 2] = mixColor.b;
+
+    // 94.2.1 根据索引值设置不同的图案
+    imgIndex[current] = (current / 3) % 3; // current: 0 3 6 9 -> 0,1,2
   }
   geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   // 67.6 设置颜色属性
   geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+  // console.log(new THREE.BufferAttribute(imgIndex, 1));
+  // 94.2.3.1 设置imgIndex
+  geometry.setAttribute('imgIndex', new THREE.BufferAttribute(imgIndex, 1));
 
   // 94.1.2 创建材质
   material = new THREE.ShaderMaterial({
     vertexShader,
     fragmentShader,
     transparent: true,
+
+    // 94.1.2.1 增加这3个属性
+    vertexColors: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+
     uniforms: {
       uTexture: {
         value: texture
-      }
+      },
+      uTexture2: {
+        value: texture2
+      },
+      uTexture3: {
+        value: texture3
+      },
     }
   });
 

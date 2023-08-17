@@ -2,8 +2,13 @@ precision lowp float;
 
 varying vec2 vUv;
 
+varying float vImgIndex;
+
 // 92.3.2 接收sampler2D类型
 uniform sampler2D uTexture;
+// 94.2.4 再接收两个新的纹理
+uniform sampler2D uTexture2;
+uniform sampler2D uTexture3;
 
 void main(){
     // 92.1.1 点材质，一个图形只是一个点，不能用uv坐标，无法用了着色
@@ -34,6 +39,18 @@ void main(){
     // gl_FragColor = vec4(textureColor.rgb, textureColor.r);
 
     // 92.3.4 根据纹理设置图案，上色
-    vec4 textureColor = texture2D(uTexture, gl_PointCoord);
+    // vec4 textureColor = texture2D(uTexture, gl_PointCoord);
+    // gl_FragColor = vec4(gl_PointCoord, 1.0,textureColor.r);
+
+    // 94.2.5 使用多个纹理
+    vec4 textureColor;
+    if(vImgIndex == 0.0) {
+        textureColor = texture2D(uTexture, gl_PointCoord);
+    } else if(vImgIndex == 1.0) {
+        textureColor = texture2D(uTexture2, gl_PointCoord);
+    } else {
+        textureColor = texture2D(uTexture3, gl_PointCoord);
+    }
+    
     gl_FragColor = vec4(gl_PointCoord, 1.0,textureColor.r);
 }

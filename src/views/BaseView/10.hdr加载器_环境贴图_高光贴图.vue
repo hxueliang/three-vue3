@@ -43,6 +43,13 @@ rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
   // 10.5 给plane设置环境贴图
   planeMaterial.envMap = envMap;
 });
+// 10.2.1 异步加载hdr图
+// rgbeLoader.loadAsync('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr').then(envMap => {
+//   envMap.mapping = THREE.EquirectangularReflectionMapping;
+//   scene.background = envMap;
+//   scene.environment = envMap;
+//   planeMaterial.envMap = envMap;
+// });
 // 8.1 创建平面
 const planeGeometry = new THREE.PlaneGeometry(5, 5);
 const planeMaterial = new THREE.MeshBasicMaterial({

@@ -22,6 +22,10 @@ import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
+import { BufferGeometry, PointsMaterial } from 'three';
+
+import vertexShader from "../../shader/point/vertex.glsl?raw";
+import fragmentShader from '../../shader/point/fragment.glsl?raw';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -32,10 +36,29 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 300);
-camera.position.set(1, 2, 5);
+camera.position.set(1, 2, 40);
 scene.add(camera);
 
 const gui = new GUI();
+
+// 92.1 创建几何体
+const geometry = new THREE.BufferGeometry();
+const positions = new Float32Array([0, 0, 0]);
+geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+// 92.2.1 创建点材质
+// const material = new THREE.PointsMaterial({
+//   color: 0xff0000,
+//   size: 10,
+//   sizeAttenuation: true,
+// });
+// 92.2.2 创建点着色器材质
+const material = new THREE.ShaderMaterial({
+  vertexShader,
+  fragmentShader,
+});
+// 92.3 生成点
+const points = new THREE.Points(geometry, material);
+scene.add(points);
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer({ alpha: true });

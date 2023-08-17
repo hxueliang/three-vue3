@@ -1,4 +1,4 @@
-<!-- 93.点着色器图形设置 -->
+<!-- 92.着色器_点材质基础 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -45,11 +45,6 @@ const gui = new GUI();
 const geometry = new THREE.BufferGeometry();
 const positions = new Float32Array([0, 0, 0]);
 geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-// 92.3.1 加载纹理
-const textureLoader = new THREE.TextureLoader();
-const texture = textureLoader.load('./texture/particles/1.png');
-
 // 92.2.1 创建点材质
 // const material = new THREE.PointsMaterial({
 //   color: 0xff0000,
@@ -60,12 +55,6 @@ const texture = textureLoader.load('./texture/particles/1.png');
 const material = new THREE.ShaderMaterial({
   vertexShader,
   fragmentShader,
-  transparent: true,
-  uniforms: {
-    uTexture: {
-      value: texture
-    }
-  }
 });
 // 92.3 生成点
 const points = new THREE.Points(geometry, material);

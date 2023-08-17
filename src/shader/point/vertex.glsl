@@ -10,6 +10,9 @@ varying float vImgIndex;
 // 96.1.2 接收uTime
 uniform float uTime;
 
+// 97.1 vColor
+varying vec3 vColor;
+
 void main(){
     vec4 modelPosition = modelMatrix * vec4( position, 1.0 );
 
@@ -29,6 +32,9 @@ void main(){
 
     gl_Position =  projectionMatrix * viewPosition;
     vUv = uv;
+
+    // 97.2 传值给片元着色器
+    vColor = color;
 
     // 94.2.3.3 传值给片元着色器
     vImgIndex = imgIndex;

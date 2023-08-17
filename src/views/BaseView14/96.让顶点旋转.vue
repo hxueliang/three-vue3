@@ -1,4 +1,4 @@
-<!-- 97.设置顶点颜色_实现渐变 -->
+<!-- 96.让顶点旋转 -->
 <template>
   <div class="container" ref="container"></div>
 </template>

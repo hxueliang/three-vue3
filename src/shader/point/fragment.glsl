@@ -4,6 +4,8 @@ varying vec2 vUv;
 
 varying float vImgIndex;
 
+varying vec3 vColor;
+
 // 92.3.2 接收sampler2D类型
 uniform sampler2D uTexture;
 // 94.2.4 再接收两个新的纹理
@@ -52,5 +54,8 @@ void main(){
         textureColor = texture2D(uTexture3, gl_PointCoord);
     }
     
-    gl_FragColor = vec4(gl_PointCoord, 1.0,textureColor.r);
+    // gl_FragColor = vec4(gl_PointCoord, 1.0,textureColor.r);
+
+    // 97.3 使用vColor
+    gl_FragColor = vec4(vColor,textureColor.r);
 }

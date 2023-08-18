@@ -1,4 +1,4 @@
-<!-- 106.让人物模型旋转 -->
+<!-- 105.修改物理光照材质 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -62,7 +62,6 @@ scene.background = envMapTexture;
 
 // 105.0.3 添加平行光
 const directionLight = new THREE.DirectionalLight("#ffffff", 1);
-// 106.4.2 开启阴影投敌
 directionLight.castShadow = true;
 directionLight.position.set(0, 0, 200);
 scene.add(directionLight);
@@ -76,39 +75,6 @@ const material = new THREE.MeshStandardMaterial({
   normalMap: normalTexture,
 });
 
-// 106.1 设置材质编译shader前回调
-material.onBeforeCompile = (shader, renderer) => {
-  console.log(shader.vertexShader);
-  console.log(shader.fragmentShader);
-
-  shader.vertexShader = shader.vertexShader.replace(
-    `#include <common>`,
-    `
-    #include <common>
-
-    // 106.3 设置旋转矩阵
-    mat2 rotate2d(float _angle){
-      return mat2(
-        cos(_angle), -sin(_angle),
-        sin(_angle), cos(_angle)
-      );
-    }
-    `,
-  );
-
-  shader.vertexShader = shader.vertexShader.replace(
-    `#include <begin_vertex>`,
-    `
-    #include <begin_vertex>
-
-    // 106.2 让头顶点旋转
-    float angle = -transformed.y * 0.5; // 跟据y坐标设置旋转角度
-    mat2 rotateMatrix = rotate2d(angle);
-    transformed.xz *= rotateMatrix;
-    `,
-  );
-};
-
 // 105.0.4 加载模型
 const gltfLoader = new GLTFLoader();
 gltfLoader.load("./model/LeePerrySmith/LeePerrySmith.glb", (gltf) => {
@@ -116,9 +82,6 @@ gltfLoader.load("./model/LeePerrySmith/LeePerrySmith.glb", (gltf) => {
 
   // 105.2 替换材质
   mesh.material = material;
-
-  // 106.4.3 开启阴影投敌
-  mesh.castShadow = true;
 
   scene.add(mesh);
 });
@@ -129,15 +92,11 @@ const plane = new THREE.Mesh(
   new THREE.MeshStandardMaterial()
 );
 plane.position.set(0, 0, -6);
-// 106.4.4 开启接收阴影投敌
-plane.receiveShadow = true;
 scene.add(plane);
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer({ alpha: true });
 renderer.setSize(innerWidth, innerHeight);
-// 106.4.1 开启阴影投敌
-renderer.shadowMap.enabled = true;
 
 // 1.6 创建控制器
 let cantrols = null;

@@ -1,4 +1,4 @@
-<!-- 103.烟花_添加音效 -->
+<!-- 102.烟花_设置场景_优化内存 -->
 <template>
   <div class="container" ref="container"></div>
 </template>

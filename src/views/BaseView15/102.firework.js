@@ -111,31 +111,6 @@ export default class Fireworks {
 
     // 100.3 创建爆炸烟花
     this.bombs = new THREE.Points(this.bombGeometry, this.bombMaterial);
-
-    // 103.1.1 创建音频 爆炸
-    this.linstener1 = new THREE.AudioListener();
-    this.sound = new THREE.Audio(this.linstener1);
-    // 103.1.2 创建音频加载器1
-    const audioLoader1 = new THREE.AudioLoader();
-    const sendIndex = Math.ceil(Math.random() * 4);
-    audioLoader1.load(`./audio/pow${sendIndex}.ogg`, buffer => {
-      this.sound.setBuffer(buffer);
-      this.sound.setLoop(false);
-      this.sound.setVolume(1);
-    });
-
-    // 103.2.1 创建音频 移动
-    this.linstener2 = new THREE.AudioListener();
-    this.sendSound = new THREE.Audio(this.linstener2);
-    // 103.2.2 创建音频加载器1
-    const audioLoader2 = new THREE.AudioLoader();
-    audioLoader2.load(`./audio/send.mp3`, buffer => {
-      this.sendSound.setBuffer(buffer);
-      this.sendSound.setLoop(false);
-      this.sendSound.setVolume(0.13);
-      console.log(this.sendSound);
-    });
-
   }
 
   // 98.4.2 添加到场景
@@ -150,21 +125,10 @@ export default class Fireworks {
   update() {
     const elapsedTime = this.clock.getElapsedTime();
 
-    // 103.3 修复音效衔接问题
-    if (elapsedTime < 0.2) {
-      return;
-    }
-
     if (elapsedTime < 1) {
       // 99.3.1 一秒内
       this.startMaterial.uniforms.uTime.value = elapsedTime;
       this.startMaterial.uniforms.uSize.value = 20;
-
-      // 103.2.3 播放音效
-      if (!this.sendSound.isPlaying && !this.sendPlay) {
-        this.sendSound.play();
-        this.sendPlay = true;
-      }
     } else {
       // 99.3.2 超过一秒
       const time = elapsedTime - 1;
@@ -172,12 +136,6 @@ export default class Fireworks {
       this.startPoint.clear();
       this.startMaterial.dispose();
       this.startMaterial.dispose();
-
-      // 103.1.3 播放音效
-      if (!this.sound.isPlaying && !this.play) {
-        this.sound.play();
-        this.play = true;
-      }
 
       // 100.4.1 设置烟花显示
       this.bombMaterial.uniforms.uSize.value = 20;

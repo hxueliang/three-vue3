@@ -1,4 +1,4 @@
-<!-- 98.烟花 -->
+<!-- 98.烟花_创建开始点 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -25,6 +25,9 @@ import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
 import vertexShader from "../../shader/flylight/vertex.glsl?raw";
 import fragmentShader from '../../shader/flylight/fragment.glsl?raw';
+
+// 98.1.2 导入烟花类
+import Firework from './firework';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -101,6 +104,26 @@ function light89() {
 }
 light89();
 
+// 98.3.2 管理烟花
+const fireworks = [];
+// 98.1.2 创建烟花工厂
+const createFireworks = () => {
+  // 98.3.1 创建烟花
+  const color = `hsl(${Math.floor(Math.random() * 360)}, 100%, 80%)`; // hsl(色相,纯度,亮度)
+  const position = {
+    x: (Math.random() - 0.5) * 40,
+    z: (Math.random() - 0.5) * 40,
+    y: 30 + (Math.random() - 0.5) * 20,
+  };
+  let firework = new Firework(color, position);
+  fireworks.push(firework);
+
+  // 98.4.1 添加到场景
+  firework.addScene(scene, camera);
+};
+
+// 98.2 监听点击事件
+window.addEventListener('click', createFireworks);
 
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer({ alpha: true });
@@ -119,14 +142,14 @@ let cantrols = null;
 function createControls() {
   cantrols = new OrbitControls(camera, container.value);
   cantrols.enableDamping = true;
-  cantrols.dampingFactor = 0.05; // 阻尼：值越大惯性越小，0不能动
-  cantrols.autoRotate = true; // 自动围绕目标旋转
-  cantrols.autoRotateSpeed = 0.4; // 围绕目标旋转的速度将有多快，默认值为2.0，相当于在60fps时每旋转一周需要30秒。
+  // cantrols.dampingFactor = 0.05; // 阻尼：值越大惯性越小，0不能动
+  // cantrols.autoRotate = true; // 自动围绕目标旋转
+  // cantrols.autoRotateSpeed = 0.4; // 围绕目标旋转的速度将有多快，默认值为2.0，相当于在60fps时每旋转一周需要30秒。
 }
 
 // 1.7 添加坐标轴辅助器
-// const axesHelper = new THREE.AxesHelper(5);
-// scene.add(axesHelper);
+const axesHelper = new THREE.AxesHelper(5);
+scene.add(axesHelper);
 
 // 设置时钟
 const clock = new THREE.Clock();

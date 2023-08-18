@@ -1,4 +1,4 @@
-<!-- 105.修改物理光照材质_人物被打效果 -->
+<!-- 105.修改物理光照材质 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -66,10 +66,23 @@ directionLight.castShadow = true;
 directionLight.position.set(0, 0, 200);
 scene.add(directionLight);
 
+// 105.1 创建材质，加载模型纹理和模型的法向纹理
+const textureLoader = new THREE.TextureLoader();
+const mapTexture = textureLoader.load("./model/LeePerrySmith/color.jpg");
+const normalTexture = textureLoader.load("./model/LeePerrySmith/normal.jpg");
+const material = new THREE.MeshStandardMaterial({
+  map: mapTexture,
+  normalMap: normalTexture,
+});
+
 // 105.0.4 加载模型
 const gltfLoader = new GLTFLoader();
 gltfLoader.load("./model/LeePerrySmith/LeePerrySmith.glb", (gltf) => {
   const mesh = gltf.scene.children[0];
+
+  // 105.2 替换材质
+  mesh.material = material;
+
   scene.add(mesh);
 });
 

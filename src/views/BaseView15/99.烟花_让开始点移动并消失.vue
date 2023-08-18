@@ -1,4 +1,4 @@
-<!-- 100.烟花_创建爆炸的烟花 -->
+<!-- 99.烟花_让开始点移动并消失 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -112,7 +112,7 @@ const createFireworks = () => {
   const color = `hsl(${Math.floor(Math.random() * 360)}, 100%, 80%)`; // hsl(色相,纯度,亮度)
   const position = {
     x: (Math.random() - 0.5) * 40,
-    z: -(Math.random() - 0.5) * 40,
+    z: (Math.random() - 0.5) * 40,
     y: 10 + (Math.random() - 0.5) * 8,
   };
   let firework = new Firework(color, position);

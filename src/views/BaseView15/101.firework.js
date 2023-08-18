@@ -148,13 +148,6 @@ export default class Fireworks {
         this.bombs.clear();
         this.bombGeometry.dispose();
         this.bombMaterial.dispose();
-
-        // 102.2.1 移除物体
-        this.scene.remove(this.startPoint);
-        this.scene.remove(this.bombs);
-
-        // 102.2.2 移除标识
-        return 'isRemove';
       }
     }
 

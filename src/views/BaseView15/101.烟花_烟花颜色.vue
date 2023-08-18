@@ -1,4 +1,4 @@
-<!-- 102.烟花_设置场景_优化内存 -->
+<!-- 101.烟花_烟花颜色 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -38,7 +38,7 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 300);
-camera.position.set(2, -5, 35);
+camera.position.set(0, -6, 35);
 scene.add(camera);
 
 const gui = new GUI();
@@ -75,7 +75,7 @@ function light89() {
       let flyLight = gltf.scene.clone(true);
       let x = (Math.random() - 0.5) * 300; // -150 ~ 150
       let z = (Math.random() - 0.5) * 300;
-      let y = Math.random() * 30 + 15;
+      let y = Math.random() * 50 + 5;
       flyLight.position.set(x, y, z);
       toRotation(flyLight.rotation);
       toPosition(flyLight.position, 1, 5);
@@ -104,13 +104,6 @@ function light89() {
 }
 light89();
 
-// 102.1 加载场景
-// const gltfLoader = new GLTFLoader();
-// gltfLoader.loadAsync('./big/newyears_min.glb').then(gltf => {
-//   console.log(gltf);
-//   scene.add(gltf.scene);
-// });
-
 // 98.3.2 管理烟花
 const fireworks = [];
 // 98.1.2 创建烟花工厂
@@ -138,7 +131,7 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 // 89.1.1 色调映射
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 // 89.2.2 色调映射的曝光级别
-renderer.toneMappingExposure = 0.1;
+renderer.toneMappingExposure = 0.2;
 
 renderer.setSize(innerWidth, innerHeight);
 // 75.2.2 允许在场景中使用阴影贴图
@@ -149,7 +142,7 @@ let cantrols = null;
 function createControls() {
   cantrols = new OrbitControls(camera, container.value);
   cantrols.enableDamping = true;
-  cantrols.dampingFactor = 0.05; // 阻尼：值越大惯性越小，0不能动
+  // cantrols.dampingFactor = 0.05; // 阻尼：值越大惯性越小，0不能动
   // cantrols.autoRotate = true; // 自动围绕目标旋转
   // cantrols.autoRotateSpeed = 0.4; // 围绕目标旋转的速度将有多快，默认值为2.0，相当于在60fps时每旋转一周需要30秒。
 }
@@ -166,14 +159,8 @@ function render() {
   const elapsedTime = clock.getElapsedTime();
 
   // 99.4 更新
-  fireworks.forEach((itme, i, arr) => {
-    // 102.2.3 取到返回值
-    const type = itme.update();
-
-    // 102.2.4 移除物体
-    if (type === 'isRemove') {
-      arr.splice(i, 1);
-    }
+  fireworks.forEach((itme, i) => {
+    itme.update();
   });
 
   cantrols && cantrols.update();

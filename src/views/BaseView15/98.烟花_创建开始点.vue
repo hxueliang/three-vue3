@@ -1,4 +1,4 @@
-<!-- 99.烟花_让开始点称动并消失 -->
+<!-- 98.烟花_创建开始点 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -38,7 +38,7 @@ const scene = new THREE.Scene();
 
 // 1.2 创建相机
 const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 300);
-camera.position.set(0, -6, 35);
+camera.position.set(0, -3, 10);
 scene.add(camera);
 
 const gui = new GUI();
@@ -113,7 +113,7 @@ const createFireworks = () => {
   const position = {
     x: (Math.random() - 0.5) * 40,
     z: (Math.random() - 0.5) * 40,
-    y: 10 + (Math.random() - 0.5) * 8,
+    y: 30 + (Math.random() - 0.5) * 20,
   };
   let firework = new Firework(color, position);
   fireworks.push(firework);
@@ -157,11 +157,6 @@ const clock = new THREE.Clock();
 // 1.5 创建渲染函数
 function render() {
   const elapsedTime = clock.getElapsedTime();
-
-  // 99.4 更新
-  fireworks.forEach((itme, i) => {
-    itme.update();
-  });
 
   cantrols && cantrols.update();
   renderer.render(scene, camera);

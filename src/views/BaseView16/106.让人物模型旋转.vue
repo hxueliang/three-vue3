@@ -1,4 +1,4 @@
-<!-- 107.人物旋转_灯光阴影矫正 -->
+<!-- 106.让人物模型旋转 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -97,59 +97,14 @@ material.onBeforeCompile = (shader, renderer) => {
   );
 
   shader.vertexShader = shader.vertexShader.replace(
-    `#include <beginnormal_vertex>`,
-    `
-    #include <beginnormal_vertex>
-
-    // 107.1 让法向旋转，效果人物光线与阴影
-    float angle = position.y * 0.5; // 跟据y坐标设置旋转角度
-    mat2 rotateMatrix = rotate2d(angle);
-    objectNormal.xz = rotateMatrix * objectNormal.xz;
-    `,
-  );
-
-  shader.vertexShader = shader.vertexShader.replace(
     `#include <begin_vertex>`,
     `
     #include <begin_vertex>
 
     // 106.2 让头顶点旋转
-    // float angle = transformed.y * 0.5; // 跟据y坐标设置旋转角度
-    // mat2 rotateMatrix = rotate2d(angle);
-    transformed.xz = rotateMatrix * transformed.xz;
-    `,
-  );
-};
-
-// 107.2.2 创建自定义深度材质
-const depthMaterial = new THREE.MeshDepthMaterial({
-  depthPacking: THREE.RGBADepthPacking
-});
-
-// 107.2.3 设置自定义材质编译shader前回调
-depthMaterial.onBeforeCompile = (shader, renderer) => {
-
-  shader.vertexShader = shader.vertexShader.replace(
-    `#include <common>`,
-    `
-    #include <common>
-
-    mat2 rotate2d(float _angle){
-      return mat2(
-        cos(_angle), -sin(_angle),
-        sin(_angle), cos(_angle)
-      );
-    }
-    `,
-  );
-  shader.vertexShader = shader.vertexShader.replace(
-    `#include <begin_vertex>`,
-    `
-    #include <begin_vertex>
-
-    float angle = transformed.y * 0.5; // 跟据y坐标设置旋转角度
+    float angle = -transformed.y * 0.5; // 跟据y坐标设置旋转角度
     mat2 rotateMatrix = rotate2d(angle);
-    transformed.xz = rotateMatrix * transformed.xz;
+    transformed.xz *= rotateMatrix;
     `,
   );
 };
@@ -164,9 +119,6 @@ gltfLoader.load("./model/LeePerrySmith/LeePerrySmith.glb", (gltf) => {
 
   // 106.4.3 开启阴影投敌
   mesh.castShadow = true;
-
-  // 107.2.1 设置自定义深度材质
-  mesh.customDepthMaterial = depthMaterial;
 
   scene.add(mesh);
 });

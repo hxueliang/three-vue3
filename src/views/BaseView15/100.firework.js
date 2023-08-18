@@ -9,10 +9,6 @@ import bombFragmentShader from '../../shader/firework-bomb/fragment.glsl?raw';
 export default class Fireworks {
   // 98.3.2 构造函数
   constructor(color, to, from = { x: 0, y: 0, z: 0 }) {
-
-    // 101.1 保存颜色
-    this.color = new THREE.Color(color);
-
     // 98.5.1 创建烟花发射点的几何体
     this.startGeometry = new THREE.BufferGeometry();
     const startPositionArr = new Float32Array([0, 0, 0]);
@@ -44,10 +40,6 @@ export default class Fireworks {
         uSize: {
           value: 20
         },
-        // 101.2.1 传参
-        uColor: {
-          value: this.color
-        }
       }
     });
 
@@ -102,10 +94,6 @@ export default class Fireworks {
         uTime: {
           value: 0
         },
-        // 101.3.1 传参
-        uColor: {
-          value: this.color
-        }
       }
     });
 

@@ -1,4 +1,4 @@
-<!-- 101.烟花_烟花颜色 -->
+<!-- 100.烟花_创建爆炸的烟花 -->
 <template>
   <div class="container" ref="container"></div>
 </template>

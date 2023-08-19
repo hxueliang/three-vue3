@@ -133,6 +133,66 @@ const shaderPass = new ShaderPass({
 effectComposer.addPass(shaderPass);
 
 
+// 112.1 加载法向纹理
+const textureLoader = new THREE.TextureLoader();
+const normalTexture = textureLoader.load('./big/interfaceNormalMap.png');
+
+// 112.2 创建着色器渲染通道
+const techPass = new ShaderPass({
+  uniforms: {
+    tDiffuse: {
+      value: null
+    },
+    // 112.2.1 传参
+    uNormalMap: {
+      value: null
+    },
+  },
+  vertexShader: `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    varying vec2 vUv;
+
+    // 111.4.1 接收纹理
+    uniform sampler2D tDiffuse;
+
+    // 112.2.2 接参
+    uniform sampler2D uNormalMap;
+
+    void main() {
+      // 111.4.2 取色，通过uv根据纹理
+      vec4 color = texture2D(tDiffuse, vUv);
+
+      // 112.2.3 用参
+      // vec4 normalColor = texture2D(uNormalMap, vUv);
+      // gl_FragColor = normalColor;
+
+
+      // 112.3 合成特色镜头
+      // 112.3.1 拿法向纹理
+      vec4 normalColor = texture2D(uNormalMap, vUv);
+      // 112.3.2 设置光线的角度，用normalize得到单位向量
+      vec3 lightDirection = normalize(vec3(-5,5,2)) ;
+      // 112.3.3 得到纹理和单位向量的点积
+      float normalDotDirection = dot(normalColor.xyz, lightDirection);
+      // 113.3.4 得到折射亮度(0~1之间的值，clamp大于1返回1，小于0返回0)
+      float lightness = clamp(normalDotDirection, 0.0, 1.0);
+      // 113.3.5 折射亮度加到color纹理
+      color.rbg += lightness;
+      gl_FragColor = color;
+    }
+  `,
+});
+// 112.2.4 设置参数值
+techPass.material.uniforms.uNormalMap.value = normalTexture;
+effectComposer.addPass(techPass);
+
+
 // 1.6 创建控制器
 let cantrols = null;
 function createControls() {

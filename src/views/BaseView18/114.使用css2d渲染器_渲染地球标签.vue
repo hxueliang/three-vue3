@@ -1,4 +1,4 @@
-<!-- 115.使用css2d渲染器_中国月球标签 -->
+<!-- 114.使用css2d渲染器_渲染地球标签 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -71,7 +71,6 @@ function createEarth() {
     map: textureLoader.load("textures/planets/earth_atmos_2048.jpg"),
   });
   const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-  earth.rotation.y = Math.PI;
   scene.add(earth);
 
   // 114.1 添加提示标签，用CSS2DObject包装普通DOM，并添加进对应物体
@@ -81,15 +80,6 @@ function createEarth() {
   const earthLabel = new CSS2DObject(earthDiv);
   earthLabel.position.set(0, EARTH_RADIUS, 0);
   earth.add(earthLabel);
-
-  // 114.3 添加中国提示标签
-  const chinaDiv = document.createElement('div');
-  chinaDiv.className = "label";
-  chinaDiv.innerHTML = "中国";
-  const chinaLabel = new CSS2DObject(chinaDiv);
-  // 因为模型旋转了180度，所以原来中国在z轴的-1上，xy微调
-  chinaLabel.position.set(-0.3, EARTH_RADIUS / 2 + 0.1, -1);
-  earth.add(chinaLabel);
 
 }
 
@@ -102,14 +92,6 @@ function createMoon() {
   });
   moon = new THREE.Mesh(moonGeometry, moonMaterial);
   scene.add(moon);
-
-  // 115.1 添加月球提示标签
-  const moonDiv = document.createElement('div');
-  moonDiv.className = "label";
-  moonDiv.innerHTML = "月球";
-  const moonLabel = new CSS2DObject(moonDiv);
-  moonLabel.position.set(0, MOON_RADIUS, 0);
-  moon.add(moonLabel);
 }
 
 // 创建场景

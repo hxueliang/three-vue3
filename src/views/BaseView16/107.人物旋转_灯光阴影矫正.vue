@@ -1,4 +1,4 @@
-<!-- 108.js传参给shader_人物动起来 -->
+<!-- 107.人物旋转_灯光阴影矫正 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -76,19 +76,11 @@ const material = new THREE.MeshStandardMaterial({
   normalMap: normalTexture,
 });
 
-// 108.1.1 设置参数对象
-const customUniforms = {
-  uTime: {
-    value: 0
-  }
-};
-
 // 106.1 设置材质编译shader前回调
 material.onBeforeCompile = (shader, renderer) => {
   console.log(shader.vertexShader);
   console.log(shader.fragmentShader);
-  // 108.1.2 传参1
-  shader.uniforms.uTime = customUniforms.uTime;
+
   shader.vertexShader = shader.vertexShader.replace(
     `#include <common>`,
     `
@@ -101,9 +93,6 @@ material.onBeforeCompile = (shader, renderer) => {
         sin(_angle), cos(_angle)
       );
     }
-
-    // 108.1.3 接参1（声明变量）
-    uniform float uTime;
     `,
   );
 
@@ -113,9 +102,7 @@ material.onBeforeCompile = (shader, renderer) => {
     #include <beginnormal_vertex>
 
     // 107.1 让法向旋转，效果人物光线与阴影
-    // float angle = position.y * 0.5; // 跟据y坐标设置旋转角度
-    // 108.1.4 用参1
-    float angle = sin(position.y + uTime) * 0.5;
+    float angle = position.y * 0.5; // 跟据y坐标设置旋转角度
     mat2 rotateMatrix = rotate2d(angle);
     objectNormal.xz = rotateMatrix * objectNormal.xz;
     `,
@@ -142,8 +129,6 @@ const depthMaterial = new THREE.MeshDepthMaterial({
 // 107.2.3 设置自定义材质编译shader前回调
 depthMaterial.onBeforeCompile = (shader, renderer) => {
 
-  // 108.1.5 传参2
-  shader.uniforms.uTime = customUniforms.uTime;
   shader.vertexShader = shader.vertexShader.replace(
     `#include <common>`,
     `
@@ -155,9 +140,6 @@ depthMaterial.onBeforeCompile = (shader, renderer) => {
         sin(_angle), cos(_angle)
       );
     }
-
-    // 108.1.6 接参2（声明变量）
-    uniform float uTime;
     `,
   );
   shader.vertexShader = shader.vertexShader.replace(
@@ -165,9 +147,7 @@ depthMaterial.onBeforeCompile = (shader, renderer) => {
     `
     #include <begin_vertex>
 
-    // float angle = transformed.y * 0.5; // 跟据y坐标设置旋转角度
-    // 108.1.7 用参2
-    float angle = sin(position.y + uTime) * 0.5;
+    float angle = transformed.y * 0.5; // 跟据y坐标设置旋转角度
     mat2 rotateMatrix = rotate2d(angle);
     transformed.xz = rotateMatrix * transformed.xz;
     `,
@@ -225,9 +205,6 @@ const clock = new THREE.Clock();
 // 1.5 创建渲染函数
 function render() {
   const elapsedTime = clock.getElapsedTime();
-
-  // 108.1.8 改参
-  customUniforms.uTime.value = elapsedTime;
 
   cantrols && cantrols.update();
   renderer.render(scene, camera);

@@ -1,4 +1,4 @@
-<!-- 112.使用法向纹理_合成特色渲染镜头 -->
+<!-- 111.着色器编写渲染通道 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -87,6 +87,21 @@ effectComposer.setSize(innerWidth, innerHeight);
 const renderPass = new RenderPass(scene, camera);
 effectComposer.addPass(renderPass);
 
+// 109.5 添加点粒子效果
+const dotScreenPass = new DotScreenPass();
+// 110.0 禁用效果
+dotScreenPass.enabled = false;
+effectComposer.addPass(dotScreenPass);
+
+// 110.1 抗锯齿效果
+const smaaPass = new SMAAPass();
+smaaPass.enabled = false;
+effectComposer.addPass(smaaPass);
+
+// 110.2 闪动效果
+const glitchPass = new GlitchPass();
+glitchPass.enabled = false;
+effectComposer.addPass(glitchPass);
 
 // 110.3.1 发光效果
 const unrealBloomPass = new UnrealBloomPass();
@@ -96,11 +111,56 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1;
 unrealBloomPass.strength = 1;
 unrealBloomPass.radius = 0;
-unrealBloomPass.threshold = 1;
+unrealBloomPass.threshold = 0;
 gui.add(renderer, 'toneMappingExposure').min(0).max(2).step(0.01);
 gui.add(unrealBloomPass, 'strength').min(0).max(2).step(0.01);
 gui.add(unrealBloomPass, 'radius').min(0).max(2).step(0.01);
 gui.add(unrealBloomPass, 'threshold').min(0).max(2).step(0.01);
+
+// 111.1 着色器渲染通道 base
+// const shaderPass = new ShaderPass({
+//   vertexShader: `
+//     void main() {
+//       gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+//     }
+//   `,
+//   fragmentShader: `
+//     void main() {
+//       gl_FragColor = vec4(1.0, 1.0, 0.0, 1);
+//     }
+//   `,
+// });
+// effectComposer.addPass(shaderPass);
+
+// 111.2 着色器渲染通道 uv
+// const shaderPass = new ShaderPass({
+//   vertexShader: `
+//     varying vec2 vUv;
+//     void main() {
+//       vUv = uv;
+//       gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+//     }
+//   `,
+//   fragmentShader: `
+//     varying vec2 vUv;
+//     void main() {
+//       gl_FragColor = vec4(vUv, 0.0, 1);
+//     }
+//   `,
+// });
+// effectComposer.addPass(shaderPass);
+
+// 111.5.4 参数
+const colorParams = {
+  r: 0,
+  g: 0,
+  b: 0
+};
+
+// 111.5.5 gui调试
+gui.add(colorParams, 'r', -1, 1, 0.01).onChange(v => shaderPass.uniforms.uColor.value.r = v);
+gui.add(colorParams, 'g', -1, 1, 0.01).onChange(v => shaderPass.uniforms.uColor.value.g = v);
+gui.add(colorParams, 'b', -1, 1, 0.01).onChange(v => shaderPass.uniforms.uColor.value.b = v);
 
 // 111.3 着色器渲染通道 纹理 rgb
 const shaderPass = new ShaderPass({
@@ -108,6 +168,10 @@ const shaderPass = new ShaderPass({
     tDiffuse: {
       value: null
     },
+    // 111.5.3 传入rbg
+    uColor: {
+      value: new THREE.Color(colorParams.r, colorParams.g, colorParams.b)
+    }
   },
   vertexShader: `
     varying vec2 vUv;
@@ -122,9 +186,15 @@ const shaderPass = new ShaderPass({
     // 111.4.1 接收纹理，这是shader默认传
     uniform sampler2D tDiffuse;
 
+    // 111.5.1 接收rgb，手动传入
+    uniform vec3 uColor;
+
     void main() {
       // 111.4.2 取色，通过uv根据纹理
       vec4 color = texture2D(tDiffuse, vUv);
+
+      // 111.5.2 取色，通过参数
+      color.rbg += uColor;
 
       gl_FragColor = color;
     }

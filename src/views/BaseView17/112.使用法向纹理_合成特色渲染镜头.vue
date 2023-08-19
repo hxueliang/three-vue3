@@ -1,4 +1,4 @@
-<!-- 113.使用时间_打造水底波动效果 -->
+<!-- 112.使用法向纹理_合成特色渲染镜头 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -147,10 +147,6 @@ const techPass = new ShaderPass({
     uNormalMap: {
       value: null
     },
-    // 113.3.1 传参
-    uTime: {
-      value: 0
-    }
   },
   vertexShader: `
     varying vec2 vUv;
@@ -168,18 +164,9 @@ const techPass = new ShaderPass({
     // 112.2.2 接参
     uniform sampler2D uNormalMap;
 
-    // 113.3.2 接参
-    uniform float uTime;
-
     void main() {
-      // 113.1 得到随时改的的新uv
-      vec2 newUv = vUv;
-      // newUv += sin(newUv.x * 10.0) * 0.03;
-      // 113.3.3 用参
-      newUv += sin(newUv.x * 10.0 + uTime * 0.5) * 0.03;
-
-      // 113.2 使用newUv 【111.4.2 取色，通过uv根据纹理】
-      vec4 color = texture2D(tDiffuse, newUv);
+      // 111.4.2 取色，通过uv根据纹理
+      vec4 color = texture2D(tDiffuse, vUv);
 
       // 112.2.3 用参
       // vec4 normalColor = texture2D(uNormalMap, vUv);
@@ -224,9 +211,6 @@ const clock = new THREE.Clock();
 // 1.5 创建渲染函数
 function render() {
   const elapsedTime = clock.getElapsedTime();
-
-  // 113.3.4 改参
-  techPass.material.uniforms.uTime.value = elapsedTime;
 
   cantrols && cantrols.update();
 

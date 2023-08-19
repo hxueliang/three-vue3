@@ -1,4 +1,4 @@
-<!-- 110.合成效果原理_抗锯齿_发光_闪动 -->
+<!-- 109.合成效果原理_点粒子效果 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -28,9 +28,6 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 // 109.1 导入three自带的效果
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { DotScreenPass } from 'three/examples/jsm/postprocessing/DotScreenPass';
-import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass';
-import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
 
 
 let innerWidth = window.innerWidth;
@@ -87,34 +84,8 @@ const renderPass = new RenderPass(scene, camera);
 effectComposer.addPass(renderPass);
 
 // 109.5 添加点粒子效果
-const dotScreenPass = new DotScreenPass();
-// 110.0 禁用效果
-dotScreenPass.enabled = false;
-effectComposer.addPass(dotScreenPass);
-
-// 110.1 抗锯齿效果
-const smaaPass = new SMAAPass();
-smaaPass.enabled = false;
-effectComposer.addPass(smaaPass);
-
-// 110.2 闪动效果
-const glitchPass = new GlitchPass();
-glitchPass.enabled = false;
-effectComposer.addPass(glitchPass);
-
-// 110.3.1 发光效果
-const unrealBloomPass = new UnrealBloomPass();
-effectComposer.addPass(unrealBloomPass);
-// 110.3.2 gui调试
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1;
-unrealBloomPass.strength = 1;
-unrealBloomPass.radius = 0;
-unrealBloomPass.threshold = 1;
-gui.add(renderer, 'toneMappingExposure').min(0).max(2).step(0.01);
-gui.add(unrealBloomPass, 'strength').min(0).max(2).step(0.01);
-gui.add(unrealBloomPass, 'radius').min(0).max(2).step(0.01);
-gui.add(unrealBloomPass, 'threshold').min(0).max(2).step(0.01);
+const dotScrenPass = new DotScreenPass();
+effectComposer.addPass(dotScrenPass);
 
 // 1.6 创建控制器
 let cantrols = null;

@@ -1,4 +1,4 @@
-<!-- 116.使用css2d渲染器_中国标签隐藏 -->
+<!-- 115.使用css2d渲染器_中国月球标签 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -40,8 +40,6 @@ let scene, camera, renderer, cantrols;
 // 业务常量/变量
 const EARTH_RADIUS = 1;
 const MOON_RADIUS = 0.27;
-let chinaLabel = null;
-let moonLabel = null;
 let moon = null;
 let labelRenderer = null;
 
@@ -50,12 +48,12 @@ init();
 // 初始化
 function init() {
   createScene();
-  createCamera(0, 0, -10);
+  createCamera(0, 0, 10);
   createCode();
   createRenderer();
   // 114.2.4 调用CSS2D渲染器
   createCSS2DRenderer();
-  createAxes();
+  createAxes(false);
   createAmbientLight(0.5);
   window.addEventListener('resize', onWindowResize);
 }
@@ -73,6 +71,7 @@ function createEarth() {
     map: textureLoader.load("textures/planets/earth_atmos_2048.jpg"),
   });
   const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+  earth.rotation.y = Math.PI;
   scene.add(earth);
 
   // 114.1 添加提示标签，用CSS2DObject包装普通DOM，并添加进对应物体
@@ -85,12 +84,13 @@ function createEarth() {
 
   // 114.3 添加中国提示标签
   const chinaDiv = document.createElement('div');
-  chinaDiv.className = "label-hide";
+  chinaDiv.className = "label";
   chinaDiv.innerHTML = "中国";
-  chinaLabel = new CSS2DObject(chinaDiv);
+  const chinaLabel = new CSS2DObject(chinaDiv);
   // 因为模型旋转了180度，所以原来中国在z轴的-1上，xy微调
-  chinaLabel.position.set(-0.3, EARTH_RADIUS / 2, -0.9);
+  chinaLabel.position.set(-0.3, EARTH_RADIUS / 2 + 0.1, -1);
   earth.add(chinaLabel);
+
 }
 
 // 114.0 创建月球
@@ -105,69 +105,11 @@ function createMoon() {
 
   // 115.1 添加月球提示标签
   const moonDiv = document.createElement('div');
-  moonDiv.className = "label-hide";
+  moonDiv.className = "label";
   moonDiv.innerHTML = "月球";
-  moonLabel = new CSS2DObject(moonDiv);
-  moonLabel.position.set(0, MOON_RADIUS / 2, -1);
+  const moonLabel = new CSS2DObject(moonDiv);
+  moonLabel.position.set(0, MOON_RADIUS, 0);
   moon.add(moonLabel);
-}
-
-// 116.1 是否显示中国标签
-function showChinaLabel() {
-  // 116.1.1 计算出标签和相机的距离
-  const chinaPosition = chinaLabel.position.clone();
-  // 116.1.2 标签到相机的距离
-  const labelDistance = chinaPosition.distanceTo(camera.position);
-  // 116.1.3 project将此向量(坐标)从世界空间投影到相机的标准化设备坐标(NDC)空间
-  chinaPosition.project(camera);
-  // 116.1.4 创建投射光线
-  const raycaster = new THREE.Raycaster();
-  // 116.1.5 使用一个新的原点和方向来更新射线
-  raycaster.setFromCamera(chinaPosition, camera);
-  // 116.1.6 返回射线与这些物体相交的结果集
-  const intersects = raycaster.intersectObjects(scene.children, true);
-
-  // 116.1.7 不相交，显示标签
-  if (intersects.length === 0) {
-    chinaLabel.element.classList.add('visible');
-    return;
-  }
-  // 116.1.8 相交，标签在前则显示，否则隐藏
-  const minDistance = intersects[0].distance;
-  if (minDistance > labelDistance) {
-    chinaLabel.element.classList.add('visible');
-  } else {
-    chinaLabel.element.classList.remove('visible');
-  }
-}
-
-// 116.2 是否显示月球标签
-function showMoonLabel() {
-  // 116.2.1 计算出标签和相机的距离
-  const moonPosition = moonLabel.position.clone();
-  // 116.2.2 标签到相机的距离
-  const labelDistance = moonPosition.distanceTo(camera.position);
-  // 116.2.3 project将此向量(坐标)从世界空间投影到相机的标准化设备坐标(NDC)空间
-  moonPosition.project(camera);
-  // 116.2.4 创建投射光线
-  const raycaster = new THREE.Raycaster();
-  // 116.2.5 使用一个新的原点和方向来更新射线
-  raycaster.setFromCamera(moonPosition, camera);
-  // 116.2.6 返回射线与这些物体相交的结果集
-  const intersects = raycaster.intersectObjects(scene.children);
-
-  // 116.2.7 不相交，显示标签
-  if (intersects.length === 0) {
-    moonLabel.element.classList.add('visible');
-    return;
-  }
-  // 116.2.8 相交，标签在前则显示，否则隐藏
-  const minDistance = intersects[0].distance;
-  if (minDistance > labelDistance) {
-    moonLabel.element.classList.add('visible');
-  } else {
-    moonLabel.element.classList.remove('visible');
-  }
 }
 
 // 创建场景
@@ -206,11 +148,6 @@ function render() {
 
   // 114.0 让月球绕地球转
   moon.position.set(Math.sin(elapsed) * 5, 0, Math.cos(elapsed) * 5);
-
-  // 116.1.0 是否显示中国标签
-  // showChinaLabel();
-  // 116.2.0 是否显示月球标签
-  showMoonLabel();
 
   cantrols && cantrols.update();
   renderer.render(scene, camera);
@@ -261,10 +198,6 @@ function onWindowResize() {
   const innerWidth = window.innerWidth;
   const innerHeight = window.innerHeight;
   renderer.setSize(innerWidth, innerHeight);
-
-  // 116.0 视口大小调整，重新设置labelRenderer尺寸
-  labelRenderer.setSize(innerWidth, innerHeight);
-
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
 }
@@ -287,16 +220,6 @@ onMounted(() => {
 .container {
   width: 100vw;
   height: 100vh;
-}
-
-.label-hide {
-  color: #fff;
-  display: none;
-  font: 1rem;
-}
-
-.label-hide.visible {
-  display: block;
 }
 </style>
 <style>

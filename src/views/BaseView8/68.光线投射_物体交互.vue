@@ -63,7 +63,9 @@ const mouse = new THREE.Vector2();
 window.addEventListener('click', event => {
   mouse.x = event.clientX / window.innerWidth * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight * 2 - 1);
+  // 68.5.0 使用一个新的原点和方向来更新射线
   raycaster.setFromCamera(mouse, camera);
+  // 68.5.0 返回射线与这些物体相交的结果集
   let result = raycaster.intersectObjects(cubeArr);
   // 68.5.1 把最前面的设置为red
   // result[0].object.material = redMaterial;

@@ -1,4 +1,4 @@
-<!-- 109.合成效果原理 -->
+<!-- 109.合成效果原理_点粒子效果 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -22,6 +22,12 @@ import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
+
+// 109.1 导入效果合成器
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
+// 109.1 导入three自带的效果
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
+import { DotScreenPass } from 'three/examples/jsm/postprocessing/DotScreenPass';
 
 
 let innerWidth = window.innerWidth;
@@ -69,6 +75,18 @@ renderer.setSize(innerWidth, innerHeight);
 // 106.4.1 开启阴影投敌
 renderer.shadowMap.enabled = true;
 
+// 109.2 实例化效果合成器
+const effectComposer = new EffectComposer(renderer);
+effectComposer.setSize(innerWidth, innerHeight);
+
+// 109.4 添加渲染通道，效果与原渲染效果一样
+const renderPass = new RenderPass(scene, camera);
+effectComposer.addPass(renderPass);
+
+// 109.5 添加点粒子效果
+const dotScrenPass = new DotScreenPass();
+effectComposer.addPass(dotScrenPass);
+
 // 1.6 创建控制器
 let cantrols = null;
 function createControls() {
@@ -89,7 +107,12 @@ function render() {
   const elapsedTime = clock.getElapsedTime();
 
   cantrols && cantrols.update();
-  renderer.render(scene, camera);
+
+  // renderer.render(scene, camera);
+
+  // 109.3 使用合成效果render渲染
+  effectComposer.render(scene, camera);
+
   requestAnimationFrame(render);
 };
 

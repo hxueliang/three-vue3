@@ -1,4 +1,4 @@
-<!-- 114.使用css2d渲染器 -->
+<!-- 114.使用css2d渲染器_渲染地球标签 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -22,6 +22,11 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
+import {
+  CSS2DRenderer,
+  CSS2DObject,
+} from "three/examples/jsm/renderers/CSS2DRenderer.js";
+
 const innerWidth = window.innerWidth;
 const innerHeight = window.innerHeight;
 const container = ref(null);
@@ -36,6 +41,7 @@ let scene, camera, renderer, cantrols;
 const EARTH_RADIUS = 1;
 const MOON_RADIUS = 0.27;
 let moon = null;
+let labelRenderer = null;
 
 init();
 
@@ -45,6 +51,8 @@ function init() {
   createCamera(0, 0, 10);
   createCode();
   createRenderer();
+  // 114.2.4 调用CSS2D渲染器
+  createCSS2DRenderer();
   createAxes(false);
   createAmbientLight(0.5);
   window.addEventListener('resize', onWindowResize);
@@ -64,6 +72,15 @@ function createEarth() {
   });
   const earth = new THREE.Mesh(earthGeometry, earthMaterial);
   scene.add(earth);
+
+  // 114.1 添加提示标签，用CSS2DObject包装普通DOM，并添加进对应物体
+  const earthDiv = document.createElement('div');
+  earthDiv.className = "label";
+  earthDiv.innerHTML = "地球";
+  const earthLabel = new CSS2DObject(earthDiv);
+  earthLabel.position.set(0, EARTH_RADIUS, 0);
+  earth.add(earthLabel);
+
 }
 
 // 114.0 创建月球
@@ -95,6 +112,18 @@ function createRenderer() {
   renderer.setSize(innerWidth, innerHeight);
 }
 
+// 114.2.1 创建css2d的渲染器
+function createCSS2DRenderer() {
+  labelRenderer = new CSS2DRenderer();
+  labelRenderer.setSize(innerWidth, innerHeight);
+
+  labelRenderer.domElement.style.position = 'fixed';
+  labelRenderer.domElement.style.top = '0px';
+  labelRenderer.domElement.style.left = '0px';
+  labelRenderer.domElement.style.zIndex = '10';
+  labelRenderer.domElement.style.color = '#ffffff';
+}
+
 // 创建渲染函数
 function render() {
   const elapsed = clock.getElapsedTime();
@@ -104,6 +133,10 @@ function render() {
 
   cantrols && cantrols.update();
   renderer.render(scene, camera);
+
+  // 114.2.3 labelRenderer渲染
+  labelRenderer.render(scene, camera);
+
   requestAnimationFrame(render);
 };
 
@@ -154,6 +187,8 @@ function onWindowResize() {
 // 添加画布进DOM
 function appendCanvas() {
   container.value.appendChild(renderer.domElement);
+  // 114.2.2 添加进DOM
+  container.value.appendChild(labelRenderer.domElement);
 }
 
 onMounted(() => {

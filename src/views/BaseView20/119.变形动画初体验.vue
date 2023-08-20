@@ -1,4 +1,4 @@
-<!-- 120.开花形变 -->
+<!-- 119.变形动画初体验 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -54,6 +54,11 @@ function createCode() {
     scene.environment = texture;
   });
 
+  // 119.5 参数
+  const params = {
+    value: 0, // 初始值为0
+  };
+
   // 119.1 加载压缩的glb模型
   const gltfLoader = new GLTFLoader();
   const dracoLoader = new DRACOLoader();
@@ -61,7 +66,33 @@ function createCode() {
   dracoLoader.setDecoderConfig({ type: "js" });
   dracoLoader.preload();
   gltfLoader.setDRACOLoader(dracoLoader);
+  gltfLoader.load("./model/sphere/sphere1.glb", function (gltf1) {
+    let sphere1 = gltf1.scene.getObjectByName('棱角球');
 
+    gltfLoader.load("./model/sphere/sphere2.glb", function (gltf2) {
+      let sphere2 = gltf2.scene.getObjectByName('棱角球');
+
+      // 119.2 给sphere1添加需要变形的位置数据
+      sphere1.geometry.morphAttributes.position = [];
+      sphere1.geometry.morphAttributes.position.push(
+        sphere2.geometry.attributes.position
+      );
+      // 119.3 更新morphTargets，使其不对对象产生影响（必须加上这句代码，否则前两句代码报错）
+      sphere1.updateMorphTargets();
+      // 119.4 使用补间动画完成形变
+      gsap.to(params, {
+        value: 1, // 改变value
+        duration: 2,
+        repeat: -1,
+        yoyo: true,
+        onUpdate() {
+          sphere1.morphTargetInfluences[0] = params.value;
+        }
+      });
+    });
+
+    scene.add(gltf1.scene);
+  });
 }
 
 // 创建场景

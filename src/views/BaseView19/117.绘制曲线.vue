@@ -1,4 +1,4 @@
-<!-- 118.物体沿着曲线运动-->
+<!-- 117.绘制曲线 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -40,9 +40,7 @@ let scene, camera, renderer, cantrols;
 // 业务常量/变量
 const EARTH_RADIUS = 1;
 const MOON_RADIUS = 0.27;
-let earth = null;
 let moon = null;
-let curve = null;
 
 init();
 
@@ -66,7 +64,7 @@ function createCode() {
 
 // 117.1 绘制曲线
 function cerateCurve() {
-  curve = new THREE.EllipseCurve(
+  const curve = new THREE.EllipseCurve(
     0, 0,            // ax, aY
     8, 5,          // xRadius, yRadius
     0, 2 * Math.PI,  // aStartAngle, aEndAngle
@@ -78,6 +76,7 @@ function cerateCurve() {
   const geometry = new THREE.BufferGeometry().setFromPoints(points);
   const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
   const ellipse = new THREE.Line(geometry, material);
+  ellipse.rotation.x = Math.PI / 2 - 0.2;
 
   scene.add(ellipse);
 }
@@ -88,7 +87,7 @@ function createEarth() {
   const earthMaterial = new THREE.MeshPhongMaterial({
     map: textureLoader.load("textures/planets/earth_atmos_2048.jpg"),
   });
-  earth = new THREE.Mesh(earthGeometry, earthMaterial);
+  const earth = new THREE.Mesh(earthGeometry, earthMaterial);
   scene.add(earth);
 }
 
@@ -127,17 +126,7 @@ function render() {
   const elapsed = clock.getElapsedTime();
 
   // 114.0 让月球绕地球转
-  // moon.position.set(Math.sin(elapsed) * 5, 0, Math.cos(elapsed) * 5);
-
-  // 118.1 获取0~1范围内的时间
-  const time = elapsed / 3 % 1;
-  // 118.2 获取曲线的位置 time 必需是0~1
-  const point = curve.getPoint(time);
-  moon.position.set(point.x, point.y, point.z);
-
-  // 118.3 让相机在曲线上看地球
-  // camera.position.set(point.x, point.y, point.z);
-  // camera.lookAt(earth.position);
+  moon.position.set(Math.sin(elapsed) * 5, 0, Math.cos(elapsed) * 5);
 
   cantrols && cantrols.update();
   renderer.render(scene, camera);

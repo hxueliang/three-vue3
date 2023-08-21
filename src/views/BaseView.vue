@@ -22,8 +22,8 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
-const innerWidth = window.innerWidth;
-const innerHeight = window.innerHeight;
+innerWidth = window.innerWidth;
+innerHeight = window.innerHeight;
 const container = ref(null);
 
 const gui = new GUI();
@@ -38,7 +38,6 @@ init();
 function init() {
   createScene();
   createCamera();
-  createCode();
   createRenderer();
   createAxes();
   // createAmbientLight();
@@ -120,8 +119,8 @@ function createDirLight(x = 0, y = 0, z = 10, strength = 1, color = '#ffffff', c
 
 // 监听视口变化
 function onWindowResize() {
-  const innerWidth = window.innerWidth;
-  const innerHeight = window.innerHeight;
+  innerWidth = window.innerWidth;
+  innerHeight = window.innerHeight;
   renderer.setSize(innerWidth, innerHeight);
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
@@ -133,6 +132,7 @@ function appendCanvas() {
 }
 
 onMounted(() => {
+  createCode();
   appendCanvas();
   createControls();
   render();

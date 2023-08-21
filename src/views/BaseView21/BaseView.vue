@@ -22,11 +22,11 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
-const innerWidth = window.innerWidth;
-const innerHeight = window.innerHeight;
+let innerWidth = window.innerWidth;
+let innerHeight = window.innerHeight;
 const container = ref(null);
 
-const gui = new GUI();
+// const gui = new GUI();
 const clock = new THREE.Clock();
 const textureLoader = new THREE.TextureLoader();
 
@@ -37,15 +37,51 @@ init();
 // 初始化
 function init() {
   createScene();
-  createCamera();
-  createCode();
+  createCamera(0, 0, 0);
   createRenderer();
   window.addEventListener('resize', onWindowResize);
 }
 
 // 业务代码
 function createCode() {
+  // 121.1.1 创建客厅
+  const geometry = new THREE.BoxGeometry(10, 10, 10);
+  geometry.scale(1, 1, -1); // 让镜头到盒子内部
+  const textureUrl = './imgs/livingroom/';
+  const roomIndex = 0;
+  const textureNames = [
+    `${roomIndex}_l`,
+    `${roomIndex}_r`,
+    `${roomIndex}_u`,
+    `${roomIndex}_d`,
+    `${roomIndex}_b`,
+    `${roomIndex}_f`,
+  ];
+  // 121.1.2 创建6个页面的材质
+  const textureBox = textureNames.map((item, index) => {
+    console.log(item);
+    const texture = new THREE.TextureLoader().load(textureUrl + item + ".jpg");
+    // 上下两张贴图方向不对，要旋转一下
+    if ([`${roomIndex}_u`, `${roomIndex}_d`].includes(item)) {
+      texture.rotation = Math.PI;
+      texture.center = new THREE.Vector2(0.5, 0.5);
+    }
+    return new THREE.MeshBasicMaterial({ map: texture });
+  });
+  const cube = new THREE.Mesh(geometry, textureBox);
+  scene.add(cube);
 
+  // 121.2 监听鼠标事件，实现拖动画面
+  let isMouseDown = false;
+  container.value.addEventListener('mousedown', _ => isMouseDown = true, false);
+  container.value.addEventListener('mouseup', _ => isMouseDown = false, false);
+  container.value.addEventListener('mouseout', _ => isMouseDown = false, false);
+  container.value.addEventListener('mousemove', event => {
+    if (!isMouseDown) { return; }
+    camera.rotation.y += event.movementX * 0.002;
+    camera.rotation.x += event.movementY * 0.002;
+    camera.rotation.order = 'YXZ'; // 顺序
+  }, false);
 }
 
 // 创建场景
@@ -113,8 +149,8 @@ function createDirLight(x = 0, y = 0, z = 10, strength = 1, color = '#ffffff', c
 
 // 监听视口变化
 function onWindowResize() {
-  const innerWidth = window.innerWidth;
-  const innerHeight = window.innerHeight;
+  innerWidth = window.innerWidth;
+  innerHeight = window.innerHeight;
   renderer.setSize(innerWidth, innerHeight);
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
@@ -126,6 +162,7 @@ function appendCanvas() {
 }
 
 onMounted(() => {
+  createCode();
   appendCanvas();
   render();
 });

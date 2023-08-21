@@ -1,4 +1,4 @@
-<!-- 121.全景看房_客厅 -->
+<!-- 121.全景看房_切换房间 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -44,33 +44,47 @@ function init() {
 
 // 业务代码
 function createCode() {
-  // 121.1.1 创建客厅
-  const geometry = new THREE.BoxGeometry(10, 10, 10);
-  geometry.scale(1, 1, -1); // 让镜头到盒子内部
-  const textureUrl = './imgs/livingroom/';
-  const roomIndex = 0;
-  const textureNames = [
-    `${roomIndex}_l`,
-    `${roomIndex}_r`,
-    `${roomIndex}_u`,
-    `${roomIndex}_d`,
-    `${roomIndex}_b`,
-    `${roomIndex}_f`,
-  ];
-  // 121.1.2 创建6个页面的材质
-  const textureBox = textureNames.map((item, index) => {
-    console.log(item);
-    const texture = new THREE.TextureLoader().load(textureUrl + item + ".jpg");
-    // 上下两张贴图方向不对，要旋转一下
-    if ([`${roomIndex}_u`, `${roomIndex}_d`].includes(item)) {
-      texture.rotation = Math.PI;
-      texture.center = new THREE.Vector2(0.5, 0.5);
-    }
-    return new THREE.MeshBasicMaterial({ map: texture });
-  });
-  const cube = new THREE.Mesh(geometry, textureBox);
-  scene.add(cube);
+  addMouseEvent();
+  const livingroom = new Room('livingroom', 0, './imgs/livingroom/');
+}
 
+// 121.0.1 创建房间工厂
+class Room {
+  constructor(
+    name,
+    roomIndex,
+    textureUrl,
+  ) {
+    this.name = name;
+    // 121.1.1 创建客厅
+    const geometry = new THREE.BoxGeometry(10, 10, 10);
+    geometry.scale(1, 1, -1); // 让镜头到盒子内部
+    const textureNames = [
+      `${roomIndex}_l`,
+      `${roomIndex}_r`,
+      `${roomIndex}_u`,
+      `${roomIndex}_d`,
+      `${roomIndex}_b`,
+      `${roomIndex}_f`,
+    ];
+    // 121.1.2 创建6个页面的材质
+    const textureBox = textureNames.map((item, index) => {
+      console.log(item);
+      const texture = new THREE.TextureLoader().load(textureUrl + item + ".jpg");
+      // 上下两张贴图方向不对，要旋转一下
+      if ([`${roomIndex}_u`, `${roomIndex}_d`].includes(item)) {
+        texture.rotation = Math.PI;
+        texture.center = new THREE.Vector2(0.5, 0.5);
+      }
+      return new THREE.MeshBasicMaterial({ map: texture });
+    });
+    const cube = new THREE.Mesh(geometry, textureBox);
+    scene.add(cube);
+  }
+}
+
+// 121.0.2 监听鼠标事件
+function addMouseEvent() {
   // 121.2 监听鼠标事件，实现拖动画面
   let isMouseDown = false;
   container.value.addEventListener('mousedown', _ => isMouseDown = true, false);

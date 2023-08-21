@@ -45,7 +45,9 @@ function init() {
 // 业务代码
 function createCode() {
   addMouseEvent();
-  const livingroom = new Room('livingroom', 0, './imgs/livingroom/');
+  createLivingroom();
+  createKitchen();
+  createBalcony();
 }
 
 // 121.0.1 创建房间工厂
@@ -54,6 +56,8 @@ class Room {
     name,
     roomIndex,
     textureUrl,
+    position = new THREE.Vector3(0, 0, 0),
+    euler = new THREE.Euler(0, 0, 0),
   ) {
     this.name = name;
     // 121.1.1 创建客厅
@@ -69,7 +73,6 @@ class Room {
     ];
     // 121.1.2 创建6个页面的材质
     const textureBox = textureNames.map((item, index) => {
-      console.log(item);
       const texture = new THREE.TextureLoader().load(textureUrl + item + ".jpg");
       // 上下两张贴图方向不对，要旋转一下
       if ([`${roomIndex}_u`, `${roomIndex}_d`].includes(item)) {
@@ -79,6 +82,8 @@ class Room {
       return new THREE.MeshBasicMaterial({ map: texture });
     });
     const cube = new THREE.Mesh(geometry, textureBox);
+    cube.position.copy(position);
+    cube.rotation.copy(euler);
     scene.add(cube);
   }
 }
@@ -96,6 +101,119 @@ function addMouseEvent() {
     camera.rotation.x += event.movementY * 0.002;
     camera.rotation.order = 'YXZ'; // 顺序
   }, false);
+}
+
+// 121.1 创建客厅
+function createLivingroom() {
+  const livingroom = new Room('客厅', 0, './imgs/livingroom/');
+}
+
+// 121.2.0 创建精灵
+class SpriteText {
+  constructor(text, position) {
+    this.callbacks = [];
+    const canvas = document.createElement("canvas");
+    canvas.width = 1024;
+    canvas.height = 1024;
+    const context = canvas.getContext("2d");
+    context.fillStyle = "rgba(100, 100, 100, 0.7)";
+    context.fillRect(0, 256, 1024, 512);
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.font = "bold 200px Arial";
+    context.fillStyle = "white";
+    context.fillText(text, 512, 512);
+    let texture = new THREE.CanvasTexture(canvas);
+
+    const material = new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+      depthWrite: false,
+    });
+    const sprite = new THREE.Sprite(material);
+    sprite.scale.set(0.5, 0.5, 0.5);
+    sprite.position.copy(position);
+    this.sprite = sprite;
+    scene.add(sprite);
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    window.addEventListener('click', event => {
+      mouse.x = event.clientX / window.innerWidth * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight * 2 - 1);
+      raycaster.setFromCamera(mouse, camera);
+      let intersects = raycaster.intersectObject(sprite);
+      if (intersects.length > 0) {
+        this.callbacks.forEach(callback => {
+          callback();
+        });
+      }
+    });
+  }
+
+  onClick(callback) {
+    this.callbacks.push(callback);
+  }
+}
+
+// 121.2 创建厨房
+function createKitchen() {
+  const kitchenPosition = new THREE.Vector3(-5, 0, -10);
+  const kitchenEuler = new THREE.Euler(0, -Math.PI / 2, 0);
+  const kitchen = new Room('厨房', 3, './imgs/kitchen/', kitchenPosition, kitchenEuler);
+  // 121.2.1 创建厨房文字
+  const kitchenTextPosition = new THREE.Vector3(-1.5, 0, -4);
+  const kitchenText = new SpriteText('厨房', kitchenTextPosition);
+  // 121.2.2 让相机移动到厨房
+  kitchenText.onClick(() => {
+    gsap.to(camera.position, {
+      x: kitchenPosition.x,
+      y: kitchenPosition.y,
+      z: kitchenPosition.z,
+      duration: 1,
+    });
+  });
+  // 121.2.3 创建厨房回到客厅
+  const kitchenBackTextPosition = new THREE.Vector3(-4, 0, -6);
+  const kitchenBackText = new SpriteText('客厅', kitchenBackTextPosition);
+  kitchenBackText.onClick(() => {
+    gsap.to(camera.position, {
+      x: 0,
+      y: 0,
+      z: 0,
+      duration: 1,
+    });
+  });
+}
+
+// 121.3 创建阳台
+function createBalcony() {
+  const position = new THREE.Vector3(0, 0, 13);
+  const euler = new THREE.Euler(0, 0, 0);
+  const room = new Room('阳台', 8, './imgs/balcony/', position, euler);
+  // 121.2.1 创建文字
+  const textPosition = new THREE.Vector3(0, 0, 3);
+  const text = new SpriteText('阳台', textPosition);
+  // 121.2.2 让相机移动到
+  text.onClick(() => {
+    gsap.to(camera.position, {
+      x: position.x,
+      y: position.y,
+      z: position.z,
+      duration: 1,
+    });
+  });
+  // 121.2.3 创建回到客厅
+  const backTextPosition = new THREE.Vector3(-1, 0, 11);
+  const backText = new SpriteText('客厅', backTextPosition);
+  backText.onClick(() => {
+    gsap.to(camera.position, {
+      x: 0,
+      y: 0,
+      z: 0,
+      duration: 1,
+    });
+  });
 }
 
 // 创建场景

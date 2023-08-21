@@ -37,7 +37,7 @@ init();
 // 初始化
 function init() {
   createScene();
-  createCamera();
+  createCamera(0, 0, 35);
   createCode();
   createRenderer();
   createAxes();
@@ -61,6 +61,104 @@ function createCode() {
   dracoLoader.setDecoderConfig({ type: "js" });
   dracoLoader.preload();
   gltfLoader.setDRACOLoader(dracoLoader);
+
+  // 120.0 gsap参数
+  const params = {
+    value1: 0,
+    value2: 0,
+  };
+
+  // 120.1 导入状态1模型
+  let stem, petal, stem1, petal1, stem2, petal2;
+  gltfLoader.load("./model/flower/f4.glb", function (gltf1) {
+    gltf1.scene.rotation.x = Math.PI;
+    gltf1.scene.position.y -= 6;
+    gltf1.scene.traverse((item) => {
+      // 修复模型导入后，看不到水
+      if (item.material && item.material.name == "Water") {
+        item.material = new THREE.MeshStandardMaterial({
+          color: "skyblue",
+          depthWrite: false,
+          transparent: true,
+          depthTest: false,
+          opacity: 0.5,
+        });
+      }
+      if (item.material && item.material.name == "Stem") {
+        stem = item;
+      }
+      if (item.material && item.material.name == "Petal") {
+        petal = item;
+      }
+    });
+    // 120.2 导入状态2模型
+    gltfLoader.load("./model/flower/f2.glb", function (gltf2) {
+      gltf2.scene.traverse((item) => {
+        if (item.material && item.material.name == "Stem") {
+          stem1 = item;
+          stem.geometry.morphAttributes.position = [];
+          stem.geometry.morphAttributes.position.push(
+            stem1.geometry.attributes.position
+          );
+          stem.updateMorphTargets();
+        }
+        if (item.material && item.material.name == "Petal") {
+          petal1 = item;
+          petal.geometry.morphAttributes.position = [];
+          petal.geometry.morphAttributes.position.push(
+            petal1.geometry.attributes.position
+          );
+          petal.updateMorphTargets();
+        }
+        // 120.4 导入状态3模型
+        gltfLoader.load("./model/flower/f1.glb", function (gltf3) {
+          gltf3.scene.traverse((item) => {
+            if (item.material && item.material.name == "Stem") {
+              stem2 = item;
+              stem.geometry.morphAttributes.position.push(
+                stem2.geometry.attributes.position
+              );
+              stem.updateMorphTargets();
+            }
+            if (item.material && item.material.name == "Petal") {
+              petal2 = item;
+              petal.geometry.morphAttributes.position.push(
+                petal2.geometry.attributes.position
+              );
+              petal.updateMorphTargets();
+            }
+          });
+
+          // 120.3 使用gsap完成形变
+          gsap.to(params, {
+            value1: 1,
+            duration: 2,
+            onUpdate() {
+              stem.morphTargetInfluences[0] = params.value1;
+              petal.morphTargetInfluences[0] = params.value1;
+            },
+            // 120.5 第一段变形完成后，再开始第二段变形
+            onComplete: function () {
+              gsap.to(params, {
+                value2: 1,
+                duration: 4,
+                onUpdate: function () {
+                  stem.morphTargetInfluences[1] = params.value2;
+                  petal.morphTargetInfluences[1] = params.value2;
+                },
+              });
+            },
+          });
+
+        });
+      });
+
+
+    });
+
+
+    scene.add(gltf1.scene);
+  });
 
 }
 

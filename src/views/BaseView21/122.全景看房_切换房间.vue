@@ -1,18 +1,6 @@
-<!-- 123.全景看房_场景地图_进度_loading -->
+<!-- 122.全景看房_切换房间 -->
 <template>
   <div class="container" ref="container"></div>
-  <!-- 123.0 地置和地图 -->
-  <div class="map">
-    <div class="tag" ref="tagDiv"></div>
-    <img src="../../assets/imgs/room/map.gif" alt="" />
-  </div>
-  <!-- 123.0 进度和loading -->
-  <div class="loading" v-if="progress != 100"></div>
-  <div class="progress" v-if="progress != 100">
-    <img src="./assets/loading.gif" alt="" />
-    <span>新房奔跑中：{{ progress }}%</span>
-  </div>
-  <div class="title">老陈VR全景看房</div>
 </template>
 
 <script setup>
@@ -37,9 +25,6 @@ import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
 const container = ref(null);
-// 123.0 初始化
-const tagDiv = ref(null);
-const progress = ref(0);
 
 // const gui = new GUI();
 const clock = new THREE.Clock();
@@ -319,67 +304,6 @@ onMounted(() => {
 .container {
   width: 100vw;
   height: 100vh;
-}
-
-// 123.0 图地和loading
-.map {
-  width: 300px;
-  height: 260px;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  overflow: hidden;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-
-  img {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
-
-  .tag {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 30px;
-    height: 30px;
-    background-image: url(../../assets/imgs/room/location.png);
-    background-size: cover;
-    z-index: 1;
-  }
-
-  .loading {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-image: url(../../assets/imgs/room/loading.png);
-    background-size: cover;
-    filter: blur(50px);
-    z-index: 100;
-  }
-
-  .progress {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 101;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 20px;
-    color: #fff;
-
-    img {
-      padding: 0 15px;
-    }
-  }
 }
 </style>
 <style>

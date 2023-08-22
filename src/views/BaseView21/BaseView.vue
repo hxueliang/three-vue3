@@ -1,4 +1,4 @@
-<!-- 123.全景看房_场景地图_进度_loading -->
+<!-- 123.全景看房_场景地图 -->
 <template>
   <div class="container" ref="container"></div>
   <!-- 123.0 地置和地图 -->
@@ -9,7 +9,7 @@
   <!-- 123.0 进度和loading -->
   <div class="loading" v-if="progress != 100"></div>
   <div class="progress" v-if="progress != 100">
-    <img src="./assets/loading.gif" alt="" />
+    <img src="../../assets/imgs/room/loading.gif" alt="" />
     <span>新房奔跑中：{{ progress }}%</span>
   </div>
   <div class="title">老陈VR全景看房</div>
@@ -121,6 +121,8 @@ function addMouseEvent() {
 // 121.1 创建客厅
 function createLivingroom() {
   const livingroom = new Room('客厅', 0, './imgs/livingroom/');
+  // 123.1.1 初始化tag在客厅
+  tagDiv.value.style.cssText = `transform: translate(100px, 115px);`;
 }
 
 // 121.2.0 创建精灵
@@ -187,6 +189,7 @@ function createKitchen() {
       z: kitchenPosition.z,
       duration: 1,
     });
+    moveTag('厨房');
   });
   // 121.2.3 创建厨房回到客厅
   const kitchenBackTextPosition = new THREE.Vector3(-4, 0, -6);
@@ -198,6 +201,7 @@ function createKitchen() {
       z: 0,
       duration: 1,
     });
+    moveTag('客厅');
   });
 }
 
@@ -217,6 +221,7 @@ function createBalcony() {
       z: position.z,
       duration: 1,
     });
+    moveTag('阳台');
   });
   // 121.2.3 创建回到客厅
   const backTextPosition = new THREE.Vector3(-1, 0, 11);
@@ -228,7 +233,26 @@ function createBalcony() {
       z: 0,
       duration: 1,
     });
+    moveTag('客厅');
   });
+}
+
+// 123.1 移动位置的方法
+function moveTag(name) {
+  let positionMap = {
+    客厅: [100, 115],
+    厨房: [185, 170],
+    阳台: [66, 64],
+  };
+  if (positionMap[name]) {
+    gsap.to(tagDiv.value, {
+      x: positionMap[name][0],
+      y: positionMap[name][1],
+      duration: 0.5,
+      ease: 'power3.inOut',
+    });
+
+  }
 }
 
 // 创建场景

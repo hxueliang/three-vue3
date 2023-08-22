@@ -42,6 +42,8 @@ export default function WallShaderMaterial(panorama) {
         float theta = acos(nPos.y) / PI;
         // [-PI,PI] + PI => [0, 2PI] / 2PI => [0, 1]
         float phi = (atan(nPos.z, nPos.x) + PI) / (2.0 * PI);
+        // 微调
+        phi += 0.75;
         // 全境图的颜色采样
         vec4 pColor = texture2D(uPanorama, vec2(phi, theta));
 

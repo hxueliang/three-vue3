@@ -24,6 +24,8 @@ import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
 import RoomShapeMesh from "./threeMesh/RoomShapeMesh.js";
 import WallShaderMaterial from "./threeMesh/WallShaderMaterial.js";
+import Wall from "./threeMesh/Wall.js";
+import { DoubleSide } from 'three';
 
 innerWidth = window.innerWidth;
 innerHeight = window.innerHeight;
@@ -63,10 +65,14 @@ function createCode() {
     .then(res => res.json())
     .then(obj => {
       console.log(obj);
-      const { objData: { roomList } } = obj;
+      const {
+        objData: { roomList },
+        wallRelation,
+      } = obj;
       roomList.forEach(room => {
         // 创建地面
         let roomMesh = new RoomShapeMesh(room);
+        roomMesh.material.side = DoubleSide;
         let roomMesh2 = new RoomShapeMesh(room, true);
         scene.add(roomMesh, roomMesh2);
         panoramaLocation = obj.panoramaLocation;
@@ -83,6 +89,19 @@ function createCode() {
         roomMesh2.material = idToPanorama[room.roomId].material.clone();
         roomMesh2.material.side = THREE.FrontSide;
         // console.log(idToPanorama);
+      });
+
+      // 创建墙
+      wallRelation.forEach(wall => {
+        const wallPoints = wall.wallPoints;
+        const faceRelation = wall.faceRelation;
+
+        faceRelation.forEach((item) => {
+          item.panorama = idToPanorama[item.roomId];
+        });
+
+        const mesh = new Wall(wallPoints, faceRelation);
+        scene.add(mesh);
       });
     });
 }

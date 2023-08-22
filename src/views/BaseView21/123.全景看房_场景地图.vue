@@ -1,4 +1,4 @@
-<!-- 124.全景看房_进度_loading -->
+<!-- 123.全景看房_场景地图 -->
 <template>
   <div class="container" ref="container"></div>
   <!-- 123.0 地置和地图 -->
@@ -63,7 +63,6 @@ function createCode() {
   createLivingroom();
   createKitchen();
   createBalcony();
-  loadingManager();
 }
 
 // 121.0.1 创建房间工厂
@@ -256,14 +255,6 @@ function moveTag(name) {
   }
 }
 
-// 124.1 加载管理
-function loadingManager() {
-  THREE.DefaultLoadingManager.onProgress = (item, num, total) => {
-    let progressValue = ((num / total) * 100).toFixed(2);
-    progress.value = progressValue;
-  };
-}
-
 // 创建场景
 function createScene() {
   scene = new THREE.Scene();
@@ -383,35 +374,35 @@ onMounted(() => {
     background-size: cover;
     z-index: 1;
   }
-}
 
-.loading {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-image: url(../../assets/imgs/room/loading.png);
-  background-size: cover;
-  filter: blur(50px);
-  z-index: 100;
-}
+  .loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url(../../assets/imgs/room/loading.png);
+    background-size: cover;
+    filter: blur(50px);
+    z-index: 100;
+  }
 
-.progress {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 101;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 20px;
-  color: #fff;
+  .progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 101;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    color: #fff;
 
-  img {
-    padding: 0 15px;
+    img {
+      padding: 0 15px;
+    }
   }
 }
 </style>

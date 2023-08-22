@@ -1,4 +1,4 @@
-<!-- 126.户型数据生成地面 -->
+<!-- 126.通过户型数据生成地面 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -22,11 +22,14 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
+import RoomShapeMesh from "./threeMesh/RoomShapeMesh.js";
+import WallShaderMaterial from "./threeMesh/WallShaderMaterial.js";
+
 innerWidth = window.innerWidth;
 innerHeight = window.innerHeight;
 const container = ref(null);
 
-const gui = new GUI();
+// const gui = new GUI();
 const clock = new THREE.Clock();
 const textureLoader = new THREE.TextureLoader();
 
@@ -39,16 +42,49 @@ function init() {
   createScene();
   createCamera(0, 2, 5.5);
   createRenderer();
-  createAxes();
   window.addEventListener('resize', onWindowResize);
 }
 
 // 业务代码
 function createCode() {
+  // 126.1 加载环境贴图
   const texture = textureLoader.load('./imgs/room720/HdrSkyCloudy004_JPG_2K.jpg');
+  texture.colorSpace = THREE.SRGBColorSpace;
   texture.mapping = THREE.EquirectangularReflectionMapping;
   scene.background = texture;
   scene.environment = texture;
+
+  // 126.2 加载户型数据
+  const BASE_RUL = 'https://test-1251830808.cos.ap-guangzhou.myqcloud.com/three_course/';
+  // id到全境图的映射
+  let idToPanorama = {};
+  let panoramaLocation;
+  fetch(`${BASE_RUL}/demo720.json`)
+    .then(res => res.json())
+    .then(obj => {
+      console.log(obj);
+      const { objData: { roomList } } = obj;
+      roomList.forEach(room => {
+        // 创建地面
+        let roomMesh = new RoomShapeMesh(room);
+        let roomMesh2 = new RoomShapeMesh(room, true);
+        scene.add(roomMesh, roomMesh2);
+        panoramaLocation = obj.panoramaLocation;
+        // 房间到全景图的映射
+        panoramaLocation.forEach(panorama => {
+          if (panorama.roomId === room.roomId) {
+            let material = new WallShaderMaterial(panorama);
+            panorama.material = material;
+            idToPanorama[room.roomId] = panorama;
+          }
+        });
+        roomMesh.material = idToPanorama[room.roomId].material;
+        roomMesh.material.side = THREE.DoubleSide;
+        roomMesh2.material = idToPanorama[room.roomId].material.clone();
+        roomMesh2.material.side = THREE.FrontSide;
+        // console.log(idToPanorama);
+      });
+    });
 }
 
 // 创建场景

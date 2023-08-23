@@ -1,4 +1,4 @@
-<!-- 126.通过户型数据生成地面 -->
+<!-- 126.通过数据生成3d户型 -->
 <template>
   <div class="container" ref="container"></div>
   <button class="btn" @click="changeRoom">切换房间</button>

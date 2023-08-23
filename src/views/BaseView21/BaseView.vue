@@ -1,6 +1,7 @@
 <!-- 126.通过户型数据生成地面 -->
 <template>
   <div class="container" ref="container"></div>
+  <button class="btn" @click="changeRoom">切换房间</button>
 </template>
 
 <script setup>
@@ -35,7 +36,7 @@ const container = ref(null);
 const clock = new THREE.Clock();
 const textureLoader = new THREE.TextureLoader();
 
-let scene, camera, renderer, cantrols;
+let scene, camera, renderer, controls;
 
 init();
 
@@ -60,7 +61,6 @@ function createCode() {
   const BASE_RUL = 'https://test-1251830808.cos.ap-guangzhou.myqcloud.com/three_course/';
   // id到全境图的映射
   let idToPanorama = {};
-  let panoramaLocation;
   fetch(`${BASE_RUL}/demo720.json`)
     .then(res => res.json())
     .then(obj => {
@@ -106,6 +106,45 @@ function createCode() {
     });
 }
 
+// 切换房间
+let roomIndex = 0;
+let timeline = gsap.timeline();
+let dir = new THREE.Vector3();
+let panoramaLocation;
+function changeRoom() {
+  let room = panoramaLocation[roomIndex];
+  dir = camera.position
+    .clone()
+    .sub(
+      new THREE.Vector3(
+        room.point[0].x / 100,
+        room.point[0].z / 100,
+        room.point[0].y / 100
+      )
+    )
+    .normalize();
+  timeline.to(camera.position, {
+    duration: 1,
+    x: room.point[0].x / 100 + dir.x * 0.01,
+    y: room.point[0].z / 100,
+    z: room.point[0].y / 100 + dir.z * 0.01,
+  });
+  camera.lookAt(
+    room.point[0].x / 100,
+    room.point[0].z / 100,
+    room.point[0].y / 100
+  );
+  controls.target.set(
+    room.point[0].x / 100,
+    room.point[0].z / 100,
+    room.point[0].y / 100
+  );
+  roomIndex++;
+  if (roomIndex >= panoramaLocation.length) {
+    roomIndex = 0;
+  }
+}
+
 // 创建场景
 function createScene() {
   scene = new THREE.Scene();
@@ -129,16 +168,16 @@ function createRenderer() {
 function render() {
   const elapsed = clock.getElapsedTime();
 
-  cantrols && cantrols.update();
+  controls && controls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(render);
 };
 
 // 创建控制器
 function createControls() {
-  cantrols = new OrbitControls(camera, container.value);
-  cantrols.enableDamping = true;
-  cantrols.dampingFactor = 0.05;
+  controls = new OrbitControls(camera, container.value);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
 }
 
 // 添加坐标轴辅助器
@@ -203,6 +242,17 @@ canvas {
   position: fixed;
   left: 0;
   top: 0;
+}
+
+.btn {
+  position: fixed;
+  left: 50px;
+  top: 50px;
+  background: skyblue;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1000;
 }
 </style>
 <style>

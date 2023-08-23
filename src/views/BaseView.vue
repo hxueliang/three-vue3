@@ -30,7 +30,7 @@ const gui = new GUI();
 const clock = new THREE.Clock();
 const textureLoader = new THREE.TextureLoader();
 
-let scene, camera, renderer, cantrols;
+let scene, camera, renderer, controls;
 
 init();
 
@@ -77,16 +77,16 @@ function createRenderer() {
 function render() {
   const elapsed = clock.getElapsedTime();
 
-  cantrols && cantrols.update();
+  controls && controls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(render);
 };
 
 // 创建控制器
 function createControls() {
-  cantrols = new OrbitControls(camera, container.value);
-  cantrols.enableDamping = true;
-  cantrols.dampingFactor = 0.05;
+  controls = new OrbitControls(camera, container.value);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
 }
 
 // 添加坐标轴辅助器

@@ -4,6 +4,12 @@ export default function modifyCityMaterial(mesh) {
   mesh.material.onBeforeCompile = shader => {
     console.log(shader.vertexShader);
     console.log(shader.fragmentShader);
+    shader.fragmentShader = shader.fragmentShader.replace(
+      `#include <dithering_fragment>`,
+      `#include <dithering_fragment>
+      //#end#
+        `
+    );
     addGradualColor(shader, mesh);
   };
 }
@@ -38,13 +44,14 @@ function addGradualColor(shader, mesh) {
       `
   );
   shader.fragmentShader = shader.fragmentShader.replace(
-    `#include <dithering_fragment>`,
-    `#include <dithering_fragment>
+    `//#end#`,
+    `
       vec4 distGradualColor = gl_FragColor;
       float gradualMix = (vPosition.y + uHeight / 2.0) / uHeight;
       vec3 gradualColor = mix(distGradualColor.xyz, uTopColor, gradualMix);
 
       gl_FragColor = vec4(gradualColor, 1);
+      //#end#
       `
   );
 }

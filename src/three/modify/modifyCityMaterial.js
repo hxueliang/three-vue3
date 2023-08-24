@@ -14,6 +14,7 @@ export default function modifyCityMaterial(mesh) {
     addGradualColor(shader, mesh);
     addSpread(shader);
     addLightLine(shader);
+    addToTopLine(shader);
   };
 }
 
@@ -129,3 +130,38 @@ function addLightLine(shader) {
     repeat: -1,
   });
 }
+
+// 添加从下到上扫描效果
+function addToTopLine(shader) {
+  shader.uniforms.uToTopLineTime = { value: 0 };
+  shader.uniforms.uToTopLineWidth = { value: 40 };
+
+  shader.fragmentShader = shader.fragmentShader.replace(
+    `#include <common>`,
+    `#include <common>
+      uniform float uToTopLineTime;
+      uniform float uToTopLineWidth;
+      `
+  );
+  shader.fragmentShader = shader.fragmentShader.replace(
+    `//#end#`,
+    `
+      // 扩散范围函数
+      float y = vPosition.y - uToTopLineTime;
+      float toTopLineMix = -y * y + uToTopLineWidth;
+
+      if(toTopLineMix > 0.0) {
+        gl_FragColor = mix(gl_FragColor, vec4(0.8, 0.8, 1, 1), toTopLineMix / uToTopLineWidth);
+      }
+      
+      //#end#
+      `
+  );
+  gsap.to(shader.uniforms.uToTopLineTime, {
+    value: 500,
+    duration: 2,
+    ease: 'none',
+    repeat: -1,
+  });
+}
+

@@ -3,8 +3,8 @@ import gsap from "gsap";
 
 export default function modifyCityMaterial(mesh) {
   mesh.material.onBeforeCompile = shader => {
-    console.log(shader.vertexShader);
-    console.log(shader.fragmentShader);
+    // console.log(shader.vertexShader);
+    // console.log(shader.fragmentShader);
     shader.fragmentShader = shader.fragmentShader.replace(
       `#include <dithering_fragment>`,
       `#include <dithering_fragment>

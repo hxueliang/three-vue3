@@ -3,6 +3,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import scene from '../scene';
 import modifyCityMaterial from '../modify/modifyCityMaterial';
 import FlyLine from './FlyLine';
+import FlyLineShader from './FlyLineShader';
 
 
 export default function createCity() {
@@ -24,4 +25,8 @@ export default function createCity() {
   // 添加飞线，用管道几何体实现
   const flyLine = new FlyLine();
   scene.add(flyLine.mesh);
+
+  // 添加飞线，用着色器实现
+  const flyLineShader = new FlyLineShader();
+  scene.add(flyLineShader.mesh);
 }

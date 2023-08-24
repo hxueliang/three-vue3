@@ -1,4 +1,7 @@
-<!-- 127.项目基础代码结构分解 -->
+<!-- 127.智慧城市 -->
+<!-- 下载模型 https://cadmapper.com/pro/home -->
+<!-- window 打开模型 Autodesk 3ds Max -->
+<!-- mac 打开模型 Rhino -->
 <template>
   <Scene></Scene>
 </template>

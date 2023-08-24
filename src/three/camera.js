@@ -6,6 +6,6 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   300
 );
-camera.position.set(0, 0, 10);
+camera.position.set(0, 8, 20);
 
 export default camera;

@@ -10,7 +10,6 @@ import * as THREE from 'three';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 
 import '@/three/init';
-
 import scene from '@/three/scene';
 import camera from '@/three/camera';
 import renderer from '@/three/renderer';
@@ -18,16 +17,14 @@ import axesHelper from '@/three/axesHelper';
 import controls from '@/three/controls';
 import animate from '@/three/animate';
 import gui from '@/three/gui';
+import createMesh from '@/three/createMesh';
 
 const sceneRef = ref(null);
 
 scene.add(camera);
 scene.add(axesHelper);
 
-const geometry = new THREE.PlaneGeometry(1, 1);
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-const plane = new THREE.Mesh(geometry, material);
-scene.add(plane);
+createMesh();
 
 onMounted(() => {
   sceneRef.value.appendChild(renderer.domElement);

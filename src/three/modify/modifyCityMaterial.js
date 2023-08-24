@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import gsap from "gsap";
 
 export default function modifyCityMaterial(mesh) {
   mesh.material.onBeforeCompile = shader => {
@@ -11,6 +12,7 @@ export default function modifyCityMaterial(mesh) {
         `
     );
     addGradualColor(shader, mesh);
+    addSpread(shader);
   };
 }
 
@@ -54,4 +56,41 @@ function addGradualColor(shader, mesh) {
       //#end#
       `
   );
+}
+
+// 添加扩散特效
+function addSpread(shader) {
+  shader.uniforms.uSpreadCenter = { value: new THREE.Vector2(0, 0) };
+  shader.uniforms.uSpreadTime = { value: 0 };
+  shader.uniforms.uSpreadWidth = { value: 40 };
+
+  shader.fragmentShader = shader.fragmentShader.replace(
+    `#include <common>`,
+    `#include <common>
+      uniform vec2 uSpreadCenter;
+      uniform float uSpreadTime;
+      uniform float uSpreadWidth;
+      `
+  );
+  shader.fragmentShader = shader.fragmentShader.replace(
+    `//#end#`,
+    `
+      float spreadRaidus = distance(vPosition.xz, uSpreadCenter);
+      // 扩散范围函数
+      float r = spreadRaidus - uSpreadTime;
+      float spreadIndex = -r * r + uSpreadWidth;
+
+      if(spreadIndex > 0.0) {
+        gl_FragColor = mix(gl_FragColor, vec4(1,1,1,1), spreadIndex / uSpreadWidth);
+      }
+      
+      //#end#
+      `
+  );
+  gsap.to(shader.uniforms.uSpreadTime, {
+    value: 800,
+    duration: 2,
+    ease: 'none',
+    repeat: -1,
+  });
 }

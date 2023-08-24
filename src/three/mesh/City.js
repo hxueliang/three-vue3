@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import scene from '../scene';
 import modifyCityMaterial from '../modify/modifyCityMaterial';
+import FlyLine from './FlyLine';
 
 
 export default function createCity() {
@@ -19,4 +20,8 @@ export default function createCity() {
     });
     scene.add(gltfScene);
   });
+
+  // 添加飞线，用管道几何体实现
+  const flyLine = new FlyLine();
+  scene.add(flyLine.mesh);
 }

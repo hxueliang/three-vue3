@@ -5,6 +5,7 @@ import modifyCityMaterial from '../modify/modifyCityMaterial';
 import FlyLine from './FlyLine';
 import FlyLineShader from './FlyLineShader';
 import MeshLine from './MeshLine';
+import LightWall from './LightWall';
 
 
 export default function createCity() {
@@ -37,4 +38,8 @@ export default function createCity() {
   // 添加飞线，用着色器实现
   const flyLineShader = new FlyLineShader();
   scene.add(flyLineShader.mesh);
+
+  // 添加光墙
+  const lightWall = new LightWall();
+  scene.add(lightWall.mesh);
 }

@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import gsap from 'gsap';
 import * as THREE from 'three';
 
@@ -18,8 +18,10 @@ import controls from '@/three/controls';
 import animate from '@/three/animate';
 // import gui from '@/three/gui';
 import createMesh from '@/three/createMesh';
+import AlarmSprite from '@/three/mesh/AlarmSprite';
 
 const sceneRef = ref(null);
+const props = defineProps(['eventList']);
 
 scene.add(camera);
 scene.add(axesHelper);
@@ -30,6 +32,29 @@ onMounted(() => {
   sceneRef.value.appendChild(renderer.domElement);
   animate();
 });
+
+const eventListMesh = [];
+
+watch(
+  () => props.eventList,
+  value => {
+    console.log(value);
+    eventListMesh.forEach(item => {
+      item.remove();
+    });
+    props.eventList.forEach(item => {
+      const position = {
+        x: item.position.x / 5 - 10,
+        z: item.position.y / 5 - 10,
+      };
+
+      const alarmSprite = new AlarmSprite(item.name, position);
+      scene.add(alarmSprite.mesh);
+      eventListMesh.push(alarmSprite);
+    });
+
+  }
+);
 </script>
 
 <style lang="less" scope>

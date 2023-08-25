@@ -3,7 +3,7 @@
 <!-- window 打开模型 Autodesk 3ds Max -->
 <!-- mac 打开模型 Rhino -->
 <template>
-  <Scene></Scene>
+  <Scene :eventList="eventList"></Scene>
   <Screen :dataInfo="dataInfo" :eventList="eventList"></Screen>
 </template>
 
@@ -31,7 +31,7 @@ onMounted(async () => {
   setInterval(() => {
     getNewInfo();
     getEventList();
-  }, 10000);
+  }, 5000);
 });
 
 const getNewInfo = async () => {

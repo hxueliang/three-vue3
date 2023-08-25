@@ -46,8 +46,8 @@ export default function createCity() {
   // scene.add(lightWall.mesh);
 
   // 添加雷达
-  const lightRader = new LightRadar();
-  scene.add(lightRader.mesh);
+  // const lightRader = new LightRadar();
+  // scene.add(lightRader.mesh);
 
   // 添加警告图标
   // const alarmSprite = new AlarmSprite();

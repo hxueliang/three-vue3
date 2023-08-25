@@ -21,6 +21,7 @@ import createMesh from '@/three/createMesh';
 import AlarmSprite from '@/three/mesh/AlarmSprite';
 import LightWall from '@/three/mesh/LightWall';
 import FlyLineShader from '@/three/mesh/FlyLineShader';
+import LightRadar from '@/three/mesh/LightRadar';
 
 const sceneRef = ref(null);
 const props = defineProps(['eventList']);
@@ -50,6 +51,11 @@ const mapFn = {
     const flyLine = new FlyLineShader(position, randomColor);
     scene.add(flyLine.mesh);
     eventListMesh.push(flyLine);
+  },
+  电力: position => {
+    const lightRadar = new LightRadar(position, 0xffff00);
+    scene.add(lightRadar.mesh);
+    eventListMesh.push(lightRadar);
   },
 };
 

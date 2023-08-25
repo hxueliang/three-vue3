@@ -19,6 +19,7 @@ import animate from '@/three/animate';
 // import gui from '@/three/gui';
 import createMesh from '@/three/createMesh';
 import AlarmSprite from '@/three/mesh/AlarmSprite';
+import LightWall from '@/three/mesh/LightWall';
 
 const sceneRef = ref(null);
 const props = defineProps(['eventList']);
@@ -32,6 +33,14 @@ onMounted(() => {
   sceneRef.value.appendChild(renderer.domElement);
   animate();
 });
+
+const mapFn = {
+  火警: position => {
+    const lightWall = new LightWall(position, 1, 1.5);
+    scene.add(lightWall.mesh);
+    eventListMesh.push(lightWall);
+  },
+};
 
 const eventListMesh = [];
 
@@ -51,8 +60,11 @@ watch(
       const alarmSprite = new AlarmSprite(item.name, position);
       scene.add(alarmSprite.mesh);
       eventListMesh.push(alarmSprite);
-    });
 
+      const fn = mapFn[item.name];
+      fn && fn(position);
+
+    });
   }
 );
 </script>

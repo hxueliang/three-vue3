@@ -42,8 +42,8 @@ export default function createCity() {
   scene.add(flyLineShader.mesh);
 
   // 添加光墙
-  const lightWall = new LightWall();
-  scene.add(lightWall.mesh);
+  // const lightWall = new LightWall();
+  // scene.add(lightWall.mesh);
 
   // 添加雷达
   const lightRader = new LightRadar();

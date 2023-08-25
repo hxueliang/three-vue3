@@ -7,6 +7,7 @@ import FlyLineShader from './FlyLineShader';
 import MeshLine from './MeshLine';
 import LightWall from './LightWall';
 import LightRadar from './LightRadar';
+import AlarmSprite from './AlarmSprite';
 
 
 export default function createCity() {
@@ -47,4 +48,20 @@ export default function createCity() {
   // 添加雷达
   const lightRader = new LightRadar();
   scene.add(lightRader.mesh);
+
+  // 添加警告图标
+  const alarmSprite = new AlarmSprite();
+  scene.add(alarmSprite.mesh);
+  let div = null;
+  alarmSprite.onClick(event => {
+    if (!div) {
+      div = document.createElement('div');
+      div.innerHTML = '305有火灾';
+      div.style.cssText = 'position: fixed; color: #f00;';
+      document.body.appendChild(div);
+    } else {
+      document.body.removeChild(div);
+      div = null;
+    }
+  });
 }

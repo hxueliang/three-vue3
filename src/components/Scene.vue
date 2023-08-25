@@ -20,6 +20,7 @@ import animate from '@/three/animate';
 import createMesh from '@/three/createMesh';
 import AlarmSprite from '@/three/mesh/AlarmSprite';
 import LightWall from '@/three/mesh/LightWall';
+import FlyLineShader from '@/three/mesh/FlyLineShader';
 
 const sceneRef = ref(null);
 const props = defineProps(['eventList']);
@@ -39,6 +40,16 @@ const mapFn = {
     const lightWall = new LightWall(position, 1, 1.5);
     scene.add(lightWall.mesh);
     eventListMesh.push(lightWall);
+  },
+  治安: position => {
+    const randomColor = new THREE.Color(
+      Math.random(),
+      Math.random(),
+      Math.random(),
+    ).getHex();
+    const flyLine = new FlyLineShader(position, randomColor);
+    scene.add(flyLine.mesh);
+    eventListMesh.push(flyLine);
   },
 };
 

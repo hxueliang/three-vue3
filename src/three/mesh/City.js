@@ -34,12 +34,12 @@ export default function createCity() {
   });
 
   // 添加飞线，用管道几何体实现
-  const flyLine = new FlyLine();
-  scene.add(flyLine.mesh);
+  // const flyLine = new FlyLine();
+  // scene.add(flyLine.mesh);
 
   // 添加飞线，用着色器实现
-  const flyLineShader = new FlyLineShader();
-  scene.add(flyLineShader.mesh);
+  // const flyLineShader = new FlyLineShader();
+  // scene.add(flyLineShader.mesh);
 
   // 添加光墙
   // const lightWall = new LightWall();

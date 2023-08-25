@@ -24,7 +24,7 @@ export default function createCity() {
         // 给建筑物描边
         if (item.name === 'Layerbuildings') {
           const meshLine = new MeshLine(item.geometry);
-          const scaleX = item.scale.x * 1.01;
+          const scaleX = item.scale.x;
           meshLine.mesh.scale.set(scaleX, scaleX, scaleX);
           scene.add(meshLine.mesh);
         }

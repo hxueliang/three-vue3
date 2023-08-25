@@ -16,7 +16,7 @@ import renderer from '@/three/renderer';
 import axesHelper from '@/three/axesHelper';
 import controls from '@/three/controls';
 import animate from '@/three/animate';
-import gui from '@/three/gui';
+// import gui from '@/three/gui';
 import createMesh from '@/three/createMesh';
 
 const sceneRef = ref(null);

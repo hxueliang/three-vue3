@@ -4,6 +4,7 @@
 <!-- mac 打开模型 Rhino -->
 <template>
   <Scene></Scene>
+  <Screen></Screen>
 </template>
 
 <script setup>
@@ -11,6 +12,7 @@ import { ref, onMounted } from 'vue';
 import * as THREE from 'three';
 
 import Scene from '@/components/Scene.vue';
+import Screen from '@/components/Screen.vue';
 
 </script>
 

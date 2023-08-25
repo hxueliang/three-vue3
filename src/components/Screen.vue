@@ -14,12 +14,36 @@
           <div class="footerBorder"></div>
         </div>
       </div>
+      <div class="right">
+        <div class="cityEvent list">
+          <h3>
+            <span>事件列表</span>
+          </h3>
+          <ul>
+            <li v-for="({ name, time, type }, i) in props.eventList" :key="i">
+              <h1>
+                <div>
+                  <img class="icon" :src="imgs[name]" />
+                  <span>{{ name }}</span>
+                </div>
+                <span class="time">{{ time }}</span>
+              </h1>
+              <p>{{ type }}</p>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-const props = defineProps(['dataInfo']);
+const props = defineProps(['dataInfo', 'eventList']);
+const imgs = {
+  电力: require('@/assets/bg/dianli.svg'),
+  火警: require('@/assets/bg/fire.svg'),
+  治安: require('@/assets/bg/jingcha.svg'),
+};
 
 const toFixInt = number => number.toFixed(0);
 

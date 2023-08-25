@@ -4,13 +4,13 @@
 <!-- mac 打开模型 Rhino -->
 <template>
   <Scene></Scene>
-  <Screen :dataInfo="dataInfo"></Screen>
+  <Screen :dataInfo="dataInfo" :eventList="eventList"></Screen>
 </template>
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue';
 import * as THREE from 'three';
-import { getSmartCityInfo } from '@/api/city';
+import { getSmartCityInfo, getSmartCityList } from '@/api/city';
 import { gsap } from 'gsap';
 
 import Scene from '@/components/Scene.vue';
@@ -23,12 +23,17 @@ const dataInfo = reactive({
   test: { number: 0 },
 });
 
+const eventList = ref([]);
+
 onMounted(async () => {
   getNewInfo();
+  getEventList();
   setInterval(() => {
     getNewInfo();
+    getEventList();
   }, 10000);
 });
+
 const getNewInfo = async () => {
   const res = await getSmartCityInfo();
   const { data } = res.data;
@@ -45,8 +50,13 @@ const getNewInfo = async () => {
       duration: 1,
     });
   }
-}
+};
 
+const getEventList = async () => {
+  const res = await getSmartCityList();
+  const { list } = res.data;
+  eventList.value = list;
+}
 
 </script>
 

@@ -4,7 +4,7 @@ import vertex from '@/shader/fly-line/vertex.glsl';
 import fragment from '@/shader/fly-line/fragment.glsl';
 
 export default class FlyLineShader {
-  constructor(position = { x: 0, z: 0 }, color = 0xffff00) {
+  constructor(position = { x: 0, z: 0 }, scale = 0.01, color = 0xffff00) {
     let linePoints = [
       new THREE.Vector3(0, 0, 0),
       new THREE.Vector3(position.x / 2, 4, position.z / 2),
@@ -28,6 +28,7 @@ export default class FlyLineShader {
         uTime: { value: 0 },
         uColor: { value: new THREE.Color(color) },
         uLength: { value: points.length },
+        uScale: { value: scale },
       },
       vertexShader: vertex,
       fragmentShader: fragment,

@@ -3,6 +3,7 @@ attribute float aSize;
 uniform float uTime;
 uniform vec3 uColor;
 uniform float uLength;
+uniform float uScale;
 
 varying float vSize;
 
@@ -14,7 +15,7 @@ void main(){
   if(vSize < 0.0) {
     vSize = vSize + uLength;
   }
-  vSize = (vSize - 500.0) *  0.1;
+  vSize = (vSize - 500.0) * uScale;
 
   gl_PointSize = -vSize / viewPosition.z;
 }

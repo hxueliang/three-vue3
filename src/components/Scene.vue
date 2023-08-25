@@ -48,7 +48,7 @@ const mapFn = {
       Math.random(),
       Math.random(),
     ).getHex();
-    const flyLine = new FlyLineShader(position, randomColor);
+    const flyLine = new FlyLineShader(position, 0.3, randomColor);
     scene.add(flyLine.mesh);
     eventListMesh.push(flyLine);
   },

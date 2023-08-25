@@ -4,15 +4,49 @@
 <!-- mac 打开模型 Rhino -->
 <template>
   <Scene></Scene>
-  <Screen></Screen>
+  <Screen :dataInfo="dataInfo"></Screen>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive } from 'vue';
 import * as THREE from 'three';
+import { getSmartCityInfo } from '@/api/city';
+import { gsap } from 'gsap';
 
 import Scene from '@/components/Scene.vue';
 import Screen from '@/components/Screen.vue';
+
+const dataInfo = reactive({
+  iot: { number: 0 },
+  event: { number: 0 },
+  power: { number: 0 },
+  test: { number: 0 },
+});
+
+onMounted(async () => {
+  getNewInfo();
+  setInterval(() => {
+    getNewInfo();
+  }, 10000);
+});
+const getNewInfo = async () => {
+  const res = await getSmartCityInfo();
+  const { data } = res.data;
+  // dataInfo.iot = data.iot;
+  // dataInfo.event = data.event;
+  // dataInfo.power = data.power;
+  // dataInfo.test = data.test;
+  for (let key in data) {
+    dataInfo[key].name = data[key].name;
+    dataInfo[key].unit = data[key].unit;
+
+    gsap.to(dataInfo[key], {
+      number: data[key].number,
+      duration: 1,
+    });
+  }
+}
+
 
 </script>
 

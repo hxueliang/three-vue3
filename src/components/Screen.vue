@@ -3,13 +3,13 @@
     <div class="header">大浪智慧城市管理系统平台</div>
     <div class="main">
       <div class="left">
-        <div class="cityEvent">
+        <div class="cityEvent" v-for="({ name, number, unit }) in props.dataInfo" :key="name">
           <h3>
-            <span>治安事件</span>
+            <span>{{ name }}</span>
           </h3>
           <h1>
             <img src="../assets/bg/bar.svg" class="icon">
-            <span>1000（台）</span>
+            <span>{{ toFixInt(number) }}（{{ unit }}）</span>
           </h1>
           <div class="footerBorder"></div>
         </div>
@@ -18,7 +18,12 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+const props = defineProps(['dataInfo']);
+
+const toFixInt = number => number.toFixed(0);
+
+</script>
 
 <style scoped>
 #screen {

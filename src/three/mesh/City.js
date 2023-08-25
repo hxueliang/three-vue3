@@ -4,6 +4,7 @@ import scene from '../scene';
 import modifyCityMaterial from '../modify/modifyCityMaterial';
 import FlyLine from './FlyLine';
 import FlyLineShader from './FlyLineShader';
+import MeshLine from './MeshLine';
 
 
 export default function createCity() {
@@ -17,6 +18,13 @@ export default function createCity() {
       if (item.type === 'Mesh') {
         item.material = material;
         modifyCityMaterial(item);
+        // 给建筑物描边
+        if (item.name === 'Layerbuildings') {
+          const meshLine = new MeshLine(item.geometry);
+          const scaleX = item.scale.x * 1.01;
+          meshLine.mesh.scale.set(scaleX, scaleX, scaleX);
+          scene.add(meshLine.mesh);
+        }
       }
     });
     scene.add(gltfScene);

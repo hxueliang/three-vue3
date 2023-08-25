@@ -6,6 +6,7 @@ import FlyLine from './FlyLine';
 import FlyLineShader from './FlyLineShader';
 import MeshLine from './MeshLine';
 import LightWall from './LightWall';
+import LightRadar from './LightRadar';
 
 
 export default function createCity() {
@@ -42,4 +43,8 @@ export default function createCity() {
   // 添加光墙
   const lightWall = new LightWall();
   scene.add(lightWall.mesh);
+
+  // 添加雷达
+  const lightRader = new LightRadar();
+  scene.add(lightRader.mesh);
 }

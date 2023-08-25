@@ -29,6 +29,7 @@
 
   left: 0;
   top: 0;
+  pointer-events: none;
   display: flex;
   flex-direction: column;
 }
@@ -187,6 +188,7 @@ h1 span.time {
 }
 
 .cityEvent.list ul {
+  pointer-events: auto;
   cursor: pointer;
 }
 

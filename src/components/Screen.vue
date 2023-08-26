@@ -40,7 +40,7 @@
 
 <script setup>
 import eventHub from '@/utils/event-hub';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps(['dataInfo', 'eventList']);
 const imgs = {
@@ -60,7 +60,12 @@ eventHub.on('spriteClick', data => {
 const toggleEvent = (id, i) => {
   currentActive.value = i;
   eventHub.emit('eventToggle', { id });
-}
+};
+
+watch(
+  () => props.eventList,
+  () => currentActive = ref(null)
+);
 
 </script>
 

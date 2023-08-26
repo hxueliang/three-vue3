@@ -22,6 +22,7 @@ import AlarmSprite from '@/three/mesh/AlarmSprite';
 import LightWall from '@/three/mesh/LightWall';
 import FlyLineShader from '@/three/mesh/FlyLineShader';
 import LightRadar from '@/three/mesh/LightRadar';
+import eventHub from '@/utils/event-hub';
 
 const sceneRef = ref(null);
 const props = defineProps(['eventList']);
@@ -64,17 +65,19 @@ const eventListMesh = [];
 watch(
   () => props.eventList,
   value => {
-    console.log(value);
     eventListMesh.forEach(item => {
       item.remove();
     });
-    props.eventList.forEach(item => {
+    props.eventList.forEach((item, i) => {
       const position = {
         x: item.position.x / 5 - 10,
         z: item.position.y / 5 - 10,
       };
 
       const alarmSprite = new AlarmSprite(item.name, position);
+      alarmSprite.onClick(() => {
+        eventHub.emit('spriteClick', { event: item, i });
+      });
       scene.add(alarmSprite.mesh);
       eventListMesh.push(alarmSprite);
 

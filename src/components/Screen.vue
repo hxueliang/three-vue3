@@ -20,11 +20,12 @@
             <span>事件列表</span>
           </h3>
           <ul>
-            <li v-for="({ name, time, type }, i) in props.eventList" :key="i">
+            <li v-for="({ name, time, type, id }, i) in props.eventList" :key="id"
+              :class="{ active: i === currentActive }">
               <h1>
                 <div>
                   <img class="icon" :src="imgs[name]" />
-                  <span>{{ name }}</span>
+                  <span>{{ name }}{{ i }}-{{ currentActive }}</span>
                 </div>
                 <span class="time">{{ time }}</span>
               </h1>
@@ -38,6 +39,9 @@
 </template>
 
 <script setup>
+import eventHub from '@/utils/event-hub';
+import { ref } from 'vue';
+
 const props = defineProps(['dataInfo', 'eventList']);
 const imgs = {
   电力: require('@/assets/bg/dianli.svg'),
@@ -46,6 +50,12 @@ const imgs = {
 };
 
 const toFixInt = number => number.toFixed(0);
+
+let currentActive = ref(null);
+
+eventHub.on('spriteClick', data => {
+  currentActive.value = data.i;
+});
 
 </script>
 

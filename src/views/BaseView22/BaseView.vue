@@ -31,7 +31,7 @@ onMounted(async () => {
   setInterval(() => {
     getNewInfo();
     getEventList();
-  }, 5000);
+  }, 10000);
 });
 
 const getNewInfo = async () => {
@@ -56,7 +56,7 @@ const getEventList = async () => {
   const res = await getSmartCityList();
   const { list } = res.data;
   list.forEach(item => {
-    item.id = item.id || Math.random;
+    item.id = item.id || Math.random();
   });
   eventList.value = list;
 }

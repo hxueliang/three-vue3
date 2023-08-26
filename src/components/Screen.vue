@@ -21,7 +21,7 @@
           </h3>
           <ul>
             <li v-for="({ name, time, type, id }, i) in props.eventList" :key="id"
-              :class="{ active: i === currentActive }">
+              :class="{ active: i === currentActive }" @click="toggleEvent(id, i)">
               <h1>
                 <div>
                   <img class="icon" :src="imgs[name]" />
@@ -56,6 +56,11 @@ let currentActive = ref(null);
 eventHub.on('spriteClick', data => {
   currentActive.value = data.i;
 });
+
+const toggleEvent = (id, i) => {
+  currentActive.value = i;
+  eventHub.emit('eventToggle', { id });
+}
 
 </script>
 

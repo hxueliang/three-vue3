@@ -38,23 +38,26 @@ onMounted(() => {
 });
 
 const mapFn = {
-  火警: position => {
+  火警: (position, id) => {
     const lightWall = new LightWall(position, 1, 1.5);
+    lightWall.id = id;
     scene.add(lightWall.mesh);
     eventListMesh.push(lightWall);
   },
-  治安: position => {
+  治安: (position, id) => {
     const randomColor = new THREE.Color(
       Math.random(),
       Math.random(),
       Math.random(),
     ).getHex();
     const flyLine = new FlyLineShader(position, 0.3, randomColor);
+    flyLine.id = id;
     scene.add(flyLine.mesh);
     eventListMesh.push(flyLine);
   },
-  电力: position => {
+  电力: (position, id) => {
     const lightRadar = new LightRadar(position, 0xffff00);
+    lightRadar.id = id;
     scene.add(lightRadar.mesh);
     eventListMesh.push(lightRadar);
   },
@@ -79,14 +82,32 @@ watch(
         eventHub.emit('spriteClick', { event: item, i });
       });
       scene.add(alarmSprite.mesh);
+      alarmSprite.id = item.id;
       eventListMesh.push(alarmSprite);
 
       const fn = mapFn[item.name];
-      fn && fn(position);
+      fn && fn(position, item.id);
 
     });
   }
 );
+
+eventHub.on('eventToggle', ({ id }) => {
+  eventListMesh.forEach(item => {
+    const show = item.id === id;
+    item.mesh.visible = show;
+    if (show) {
+      // controls.target.set(...item.mesh.position);
+      const { x, y, z } = item.mesh.position;
+      gsap.to(controls.target, {
+        x,
+        y,
+        z,
+        duration: 1,
+      });
+    }
+  });
+});
 </script>
 
 <style lang="less" scope>

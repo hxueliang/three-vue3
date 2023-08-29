@@ -7,3 +7,7 @@ export default function createMesh() {
   // 创建城市
   area = new Area(scene);
 }
+
+export function updateMesh(time) {
+  area.update(time);
+}

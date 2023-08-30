@@ -1,6 +1,9 @@
 import * as THREE from 'three';
+import { ref } from 'vue';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
+
+import eventHub from '@/utils/event-hub';
 
 export default class Area {
   constructor(scene) {
@@ -11,7 +14,7 @@ export default class Area {
     gltfLoader.load('./model/area/area.glb', gltf => {
       console.log(gltf);
       scene.add(gltf.scene);
-
+      this.gltf = gltf;
       gltf.scene.traverse(child => {
         if (child.name === '热气球') {
           // 创建动画混合器，动画混合器是用于场景中特定对象的动画的播放器
@@ -25,6 +28,14 @@ export default class Area {
         }
 
       });
+    });
+
+    eventHub.on("actionClick", (i) => {
+      console.log(i);
+      // this.action.reset();
+      this.clip = this.gltf.animations[i];
+      this.action = this.mixer.clipAction(this.clip);
+      this.action.play();
     });
   }
 

@@ -11,7 +11,7 @@ const clock = new THREE.Clock();
 export default function animate() {
   const time = clock.getDelta();
 
-  updateMesh(time / 4);
+  updateMesh(time * 10);
 
   controls && controls.update();
   renderer.render(scene, camera);

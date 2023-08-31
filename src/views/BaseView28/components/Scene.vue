@@ -8,7 +8,7 @@ import * as THREE from 'three';
 
 import '../three/init';
 import scene from '../three/scene';
-import camera from '../three/camera';
+import CameraModule from '../three/camera';
 import renderer from '../three/renderer';
 import axesHelper from '../three/axesHelper';
 import controls from '../three/controls';
@@ -18,7 +18,7 @@ import createMesh from '../three/createMesh';
 
 const sceneRef = ref(null);
 
-scene.add(camera);
+scene.add(CameraModule.activeCamera);
 scene.add(axesHelper);
 
 createMesh();

@@ -17,6 +17,24 @@
           </h1>
           <div class="footerBorder"></div>
         </div>
+        <div class="cityEvent actionList">
+          <h3>
+            <span>相机控制</span>
+          </h3>
+          <h1 @click="toggleCamera('小汽车摄像机')">
+            <img src="../../../assets/bg/bar.svg" class="icon">
+            <span>小汽车相机</span>
+          </h1>
+          <h1 @click="toggleCamera('Camera')">
+            <img src="../../../assets/bg/bar.svg" class="icon">
+            <span>全境相机</span>
+          </h1>
+          <h1 @click="toggleCamera('default')">
+            <img src="../../../assets/bg/bar.svg" class="icon">
+            <span>默认相机</span>
+          </h1>
+          <div class="footerBorder"></div>
+        </div>
       </div>
       <div class="right">
         <div class="cityEvent list">
@@ -68,6 +86,10 @@ const toggleEvent = (id, i) => {
 
 const toggleAction = i => {
   eventHub.emit('actionClick', i);
+};
+
+const toggleCamera = name => {
+  eventHub.emit('toggleCamera', name);
 };
 
 

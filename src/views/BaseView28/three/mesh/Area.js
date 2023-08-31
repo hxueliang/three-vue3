@@ -5,6 +5,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 
 import eventHub from '@/utils/event-hub';
+import CameraModule from '../camera';
 
 export default class Area {
   constructor(scene) {
@@ -30,6 +31,7 @@ export default class Area {
 
         if (child.name === '汽车园区轨迹') {
           const line = child;
+          line.visible = false;
           const points = [];
           // const points2 = [];
           const { position } = line.geometry.attributes;
@@ -60,6 +62,10 @@ export default class Area {
         if (child.name === 'NURBS_曲线') {
           child.visible = false;
         }
+      });
+
+      gltf.cameras.forEach(camera => {
+        CameraModule.add(camera.name, camera);
       });
     });
 

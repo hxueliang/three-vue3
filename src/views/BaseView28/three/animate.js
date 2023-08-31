@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import scene from './scene';
 import CameraModule from './camera';
 import renderer from './renderer';
-import controls from './controls';
+import controlsModule from './controls';
 
 import { updateMesh } from '../three/createMesh';
 
@@ -13,7 +13,7 @@ export default function animate() {
 
   updateMesh(time * 10);
 
-  controls && controls.update();
+  controlsModule.controls && controlsModule.controls.update(time);
   renderer.render(scene, CameraModule.activeCamera);
   requestAnimationFrame(animate);
 };

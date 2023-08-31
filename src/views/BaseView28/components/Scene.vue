@@ -11,7 +11,6 @@ import scene from '../three/scene';
 import CameraModule from '../three/camera';
 import renderer from '../three/renderer';
 import axesHelper from '../three/axesHelper';
-import controls from '../three/controls';
 import animate from '../three/animate';
 
 import createMesh from '../three/createMesh';

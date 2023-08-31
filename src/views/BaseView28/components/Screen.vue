@@ -3,7 +3,7 @@
     <div class="header">大浪智慧城市管理系统平台</div>
     <div class="main">
       <div class="left">
-        <div class="cityEvent actionList">
+        <div class="cityEvent list">
           <h3>
             <span>热气球控制</span>
           </h3>
@@ -17,7 +17,7 @@
           </h1>
           <div class="footerBorder"></div>
         </div>
-        <div class="cityEvent actionList">
+        <div class="cityEvent list">
           <h3>
             <span>相机控制</span>
           </h3>
@@ -39,21 +39,24 @@
       <div class="right">
         <div class="cityEvent list">
           <h3>
-            <span>事件列表</span>
+            <span>切换观览模式</span>
           </h3>
-          <ul>
-            <li v-for="({ name, time, type, id }, i) in props.eventList" :key="id"
-              :class="{ active: i === currentActive }" @click="toggleEvent(id, i)">
-              <h1>
-                <div>
-                  <img class="icon" :src="imgs[name]" />
-                  <span>{{ name }}{{ i }}-{{ currentActive }}</span>
-                </div>
-                <span class="time">{{ time }}</span>
-              </h1>
-              <p>{{ type }}</p>
-            </li>
-          </ul>
+          <h1 @click="toggleControls('Orbit')">
+            <img src="../../../assets/bg/bar.svg" class="icon">
+            <span>轨道模式</span>
+          </h1>
+          <h1 @click="toggleControls('Trackball')">
+            <img src="../../../assets/bg/bar.svg" class="icon">
+            <span>轨迹球模式</span>
+          </h1>
+          <h1 @click="toggleControls('Fly')">
+            <img src="../../../assets/bg/bar.svg" class="icon">
+            <span>飞行模式</span>
+          </h1>
+          <h1 @click="toggleControls('FirstPerson')">
+            <img src="../../../assets/bg/bar.svg" class="icon">
+            <span>第一人称模式</span>
+          </h1>
         </div>
       </div>
     </div>
@@ -73,17 +76,6 @@ const imgs = {
 
 const toFixInt = number => number.toFixed(0);
 
-let currentActive = ref(null);
-
-eventHub.on('spriteClick', data => {
-  currentActive.value = data.i;
-});
-
-const toggleEvent = (id, i) => {
-  currentActive.value = i;
-  eventHub.emit('eventToggle', { id });
-};
-
 const toggleAction = i => {
   eventHub.emit('actionClick', i);
 };
@@ -92,11 +84,9 @@ const toggleCamera = name => {
   eventHub.emit('toggleCamera', name);
 };
 
-
-watch(
-  () => props.eventList,
-  () => currentActive = ref(null)
-);
+const toggleControls = name => {
+  eventHub.emit('toggleControls', name);
+};
 
 </script>
 
@@ -267,8 +257,7 @@ h1 span.time {
   padding: 0.1rem 0.3rem;
 }
 
-.cityEvent.list ul,
-.actionList {
+.cityEvent.list {
   pointer-events: auto;
   cursor: pointer;
 }

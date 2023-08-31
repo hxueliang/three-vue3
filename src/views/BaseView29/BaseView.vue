@@ -41,7 +41,7 @@ init();
 // 初始化
 function init() {
   createScene();
-  createCamera(0, 2, 5.5);
+  createCamera(1, 3, 15);
   createRenderer();
   window.addEventListener('resize', onWindowResize);
 }
@@ -54,6 +54,17 @@ function createCode() {
     scene.environment = envMap;
   });
 
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderPath('./draco/');
+  gltfLoader.setDRACOLoader(dracoLoader);
+  gltfLoader.load('./model/mobile/tail.glb', gltf => {
+    scene.add(gltf.scene);
+
+    mixer = new THREE.AnimationMixer(gltf.scene);
+    const clip = gltf.animations[0];
+    const action = mixer.clipAction(clip);
+    action.play();
+  });
 }
 
 // 创建场景
@@ -77,7 +88,9 @@ function createRenderer() {
 
 // 创建渲染函数
 function render() {
-  const elapsed = clock.getElapsedTime();
+  const time = clock.getDelta();
+
+  mixer && mixer.update(time);
 
   controls && controls.update();
   renderer.render(scene, camera);

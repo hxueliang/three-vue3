@@ -6,6 +6,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 
 import eventHub from '@/utils/event-hub';
 import CameraModule from '../camera';
+import ControlsModule from '../controls';
 
 export default class Area {
   constructor(scene) {
@@ -59,6 +60,14 @@ export default class Area {
           this.car = child;
         }
 
+        if (child.name === '美女') {
+          this.women = child;
+        }
+
+        if (child.name === '男人') {
+          this.man = child;
+        }
+
         if (child.name === 'NURBS_曲线') {
           child.visible = false;
         }
@@ -74,6 +83,32 @@ export default class Area {
       this.clip = this.gltf.animations[i];
       this.action = this.mixer.clipAction(this.clip);
       this.action.play();
+    });
+
+    const map = {
+      美女: 'women',
+      男人: 'man'
+    };
+    eventHub.on('toggleCameraPosition', name => {
+      if (!map[name]) {
+        return;
+      }
+      const meshPosition = this[map[name]].position.clone();
+      const { x, y, z } = meshPosition;
+      gsap.to(ControlsModule.controls.target, {
+        x,
+        y,
+        z,
+        duration: 1,
+        onComplete() {
+          gsap.to(CameraModule.activeCamera.position, {
+            x: x + 0.3,
+            y: y + 0.2,
+            z: z + 0.1,
+            duration: 2,
+          });
+        }
+      });
     });
   }
 

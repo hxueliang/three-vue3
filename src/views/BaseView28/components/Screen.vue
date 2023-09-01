@@ -58,6 +58,19 @@
             <span>第一人称模式</span>
           </h1>
         </div>
+        <div class="cityEvent list">
+          <h3>
+            <span>改变相机视角到指定位置</span>
+          </h3>
+          <h1 @click="toggleCameraPosition('美女')">
+            <img src="../../../assets/bg/bar.svg" class="icon">
+            <span>美女位置</span>
+          </h1>
+          <h1 @click="toggleCameraPosition('男人')">
+            <img src="../../../assets/bg/bar.svg" class="icon">
+            <span>男人位置</span>
+          </h1>
+        </div>
       </div>
     </div>
   </div>
@@ -87,6 +100,10 @@ const toggleCamera = name => {
 const toggleControls = name => {
   eventHub.emit('toggleControls', name);
 };
+
+const toggleCameraPosition = name => {
+  eventHub.emit('toggleCameraPosition', name);
+}
 
 </script>
 

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import scene from './scene';
 import CameraModule from './camera';
-import renderer from './renderer';
+import { renderer, css3dRenderer } from './renderer';
 import controlsModule from './controls';
 
 import { updateMesh } from './createMesh';
@@ -15,5 +15,6 @@ export default function animate() {
 
   controlsModule.controls && controlsModule.controls.update(time);
   renderer.render(scene, CameraModule.activeCamera);
+  css3dRenderer.render(scene, CameraModule.activeCamera);
   requestAnimationFrame(animate);
 };

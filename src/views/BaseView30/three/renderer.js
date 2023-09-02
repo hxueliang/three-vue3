@@ -1,4 +1,7 @@
 import * as THREE from 'three';
+import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer.js';
+
+const { innerWidth, innerHeight } = window;
 
 const renderer = new THREE.WebGLRenderer({
   alpha: true,
@@ -7,8 +10,16 @@ const renderer = new THREE.WebGLRenderer({
   logarithmicDepthBuffer: true,
   physicallyCorrectLights: true,
 });
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 0.1;
 
-export default renderer;
+const css3dRenderer = new CSS3DRenderer();
+css3dRenderer.setSize(innerWidth, innerHeight);
+// document.getElementById('cssrender').appendChild(css3dRenderer.domElement);
+document.querySelector('#cssrender').appendChild(css3dRenderer.domElement);
+
+export {
+  renderer,
+  css3dRenderer
+};

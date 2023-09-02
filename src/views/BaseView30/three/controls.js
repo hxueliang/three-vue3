@@ -1,4 +1,4 @@
-import renderer from './renderer';
+import { renderer } from './renderer';
 import CameraModule from './camera';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls';

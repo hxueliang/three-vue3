@@ -7,7 +7,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-camera.position.set(0, 80, 150);
+camera.position.set(100, 100, 300);
 
 class CameraModule {
   constructor() {

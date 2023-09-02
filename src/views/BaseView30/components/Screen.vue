@@ -4,13 +4,31 @@
     <div class="main">
       <div class="left">
         <div class="cityEvent list">
-          <h3>
-            <span></span>
-          </h3>
-          <h1>
+          <h3 @click="showMesh('showWall')">
             <img src="../../../assets/bg/bar.svg" class="icon">
-            <span></span>
-          </h1>
+            <span>厂房外形展示</span>
+          </h3>
+          <div class="footerBorder"></div>
+        </div>
+        <div class="cityEvent list">
+          <h3 @click="showMesh('showAll')">
+            <img src="../../../assets/bg/bar.svg" class="icon">
+            <span>厂房分层展开</span>
+          </h3>
+          <div class="footerBorder"></div>
+        </div>
+        <div class="cityEvent list">
+          <h3 @click="showMesh('showFloor1')">
+            <img src="../../../assets/bg/bar.svg" class="icon">
+            <span>展示第一层楼</span>
+          </h3>
+          <div class="footerBorder"></div>
+        </div>
+        <div class="cityEvent list">
+          <h3 @click="showMesh('showFloor2')">
+            <img src="../../../assets/bg/bar.svg" class="icon">
+            <span>展示第二层楼</span>
+          </h3>
           <div class="footerBorder"></div>
         </div>
       </div>
@@ -33,6 +51,10 @@
 <script setup>
 import eventHub from '@/utils/event-hub';
 import { ref, watch } from 'vue';
+
+const showMesh = meshType => {
+  eventHub.emit(meshType);
+}
 
 </script>
 
@@ -182,6 +204,8 @@ h3 {
   display: flex;
   align-items: center;
   padding: 0.3rem 0.3rem;
+  /* 防止高光背景导致看不见白色文字 */
+  text-shadow: 0 0 5px #000;
 }
 
 h1>div {

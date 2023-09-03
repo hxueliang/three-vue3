@@ -11,6 +11,8 @@ import eventHub from '@/utils/event-hub';
 import CameraModule from '../camera';
 import ControlsModule from '../controls';
 
+import vertexShader from '@/shader/fighter/vertex.glsl';
+import fragmentShader from '@/shader/fighter/fragment.glsl';
 
 export default class Factory {
   constructor(scene) {
@@ -161,10 +163,18 @@ export default class Factory {
 
       object3D.children.forEach(child => {
         if (child.isMesh) {
-          const material = new THREE.PointsMaterial({
-            color: new THREE.Color(Math.random(), Math.random(), Math.random()),
-            size: 0.1,
-            map: texture,
+          const color = new THREE.Color(
+            Math.random(),
+            Math.random(),
+            Math.random()
+          );
+          const material = new THREE.ShaderMaterial({
+            uniforms: {
+              uColor: { value: color },
+              uTexture: { value: texture },
+            },
+            vertexShader,
+            fragmentShader,
             transparent: true,
             depthWrite: false,
             blending: THREE.AdditiveBlending,

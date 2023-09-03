@@ -26,7 +26,7 @@ export default class Factory {
     this.floor2Tags = [];
     // 二楼
     gltfLoader.load('./model/factory/factory-floor2.glb', gltf => {
-      console.log(gltf.scene);
+      // console.log(gltf.scene);
       this.floor2Group = gltf.scene;
       gltf.scene.traverse(child => {
         if (child.isMesh) {
@@ -34,7 +34,7 @@ export default class Factory {
           child.material.emissiveIntensity = 10;
         }
         if (child.type === 'Object3D' && child.children.length === 0) {
-          console.log(child.name);
+          // console.log(child.name);
           const css3dObject = this.createTag(child);
           css3dObject.visible = false;
           this.floor2Tags.push(css3dObject);
@@ -93,6 +93,7 @@ export default class Factory {
         }
       });
 
+      this.showFighterTest();
     });
 
     this.initEvent();
@@ -132,6 +133,14 @@ export default class Factory {
 
   showFighter(bool) {
     this.fighterGroup.visible = bool;
+  }
+
+  // 只显示飞机，方便调试代码
+  showFighterTest() {
+    this.floor1Group && (this.floor1Group.visible = false);
+    this.floor2Group && (this.floor2Group.visible = false);
+    this.wallGroup && (this.wallGroup.visible = false);
+    this.fighterGroup.visible = true;
   }
 
   initEvent() {
@@ -203,7 +212,7 @@ export default class Factory {
         }
       }
 
-      console.log(positions);
+      // console.log(positions);
       let n = 0;
       this.fighterGroup.traverse(child => {
         if (child.isMesh && positions[n]) {
@@ -227,6 +236,7 @@ export default class Factory {
     });
 
     eventHub.on('recoverFighter', () => {
+      console.log('恢复飞机');
       let n = 0;
       this.fighterGroup.traverse(child => {
         if (child.isMesh && child.srcPosition) {
@@ -238,6 +248,18 @@ export default class Factory {
           n++;
         }
       });
+    });
+
+    eventHub.on('pointsFighter', () => {
+
+    });
+
+    eventHub.on('pointsBlast', () => {
+
+    });
+
+    eventHub.on('pointsRecover', () => {
+
     });
   }
 

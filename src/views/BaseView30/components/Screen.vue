@@ -35,7 +35,7 @@
       <div class="right">
         <div class="cityEvent list">
           <h3>
-            <span>飞机</span>
+            <span>飞机零件展示</span>
           </h3>
           <h1 @click="flatFighter('plane')">
             <img src="../../../assets/bg/bar.svg" class="icon">
@@ -45,10 +45,27 @@
             <img src="../../../assets/bg/bar.svg" class="icon">
             <span>直线展示</span>
           </h1>
-          <div class="footerBorder"></div>
           <h1 @click="recoverFighter">
             <img src="../../../assets/bg/bar.svg" class="icon">
             <span>恢复模型</span>
+          </h1>
+          <div class="footerBorder"></div>
+        </div>
+        <div class="cityEvent list">
+          <h3>
+            <span>飞机粒子展示</span>
+          </h3>
+          <h1 @click="pointsFighter">
+            <img src="../../../assets/bg/bar.svg" class="icon">
+            <span>粒子特效</span>
+          </h1>
+          <h1 @click="pointsBlast">
+            <img src="../../../assets/bg/bar.svg" class="icon">
+            <span>粒子爆炸</span>
+          </h1>
+          <h1 @click="pointsRecover">
+            <img src="../../../assets/bg/bar.svg" class="icon">
+            <span>粒子复原</span>
           </h1>
           <div class="footerBorder"></div>
         </div>
@@ -71,7 +88,19 @@ const flatFighter = (type) => {
 
 const recoverFighter = () => {
   eventHub.emit('recoverFighter');
-}
+};
+
+const pointsFighter = () => {
+  eventHub.emit('pointsFighter');
+};
+
+const pointsBlast = () => {
+  eventHub.emit('pointsBlast');
+};
+
+const pointsRecover = () => {
+  eventHub.emit('pointsRecover');
+};
 
 </script>
 

@@ -172,6 +172,7 @@ export default class Factory {
             uniforms: {
               uColor: { value: color },
               uTexture: { value: texture },
+              uTime: { value: 0 },
             },
             vertexShader,
             fragmentShader,
@@ -192,6 +193,47 @@ export default class Factory {
     createPoints(this.fighterGroup, group);
 
     return group;
+  }
+
+  pointsBlast() {
+    if (!this.fighterPointsGroup) {
+      console.log('先点击粒子特效');
+      return;
+    }
+    this.fighterPointsGroup.traverse((child) => {
+      if (!child.isPoints) { return; }
+      const randomPositionArray = new Float32Array(
+        child.geometry.attributes.position.count * 3
+      );
+      for (let i = 0; i < child.geometry.attributes.position.count; i++) {
+        randomPositionArray[i * 3 + 0] = (Math.random() * 2 - 1) * 10;
+        randomPositionArray[i * 3 + 1] = (Math.random() * 2 - 1) * 10;
+        randomPositionArray[i * 3 + 2] = (Math.random() * 2 - 1) * 10;
+      }
+      child.geometry.setAttribute(
+        'aPosition',
+        new THREE.BufferAttribute(randomPositionArray, 3)
+      );
+      gsap.to(child.material.uniforms.uTime, {
+        value: 10,
+        duration: 5,
+      });
+
+    });
+  }
+
+  pointsRecover() {
+    if (!this.fighterPointsGroup) {
+      console.log('先点击粒子特效');
+      return;
+    }
+    this.fighterPointsGroup.traverse((child) => {
+      if (!child.isPoints) { return; }
+      gsap.to(child.material.uniforms.uTime, {
+        value: 0,
+        duration: 5,
+      });
+    });
   }
 
   initEvent() {
@@ -306,11 +348,11 @@ export default class Factory {
     });
 
     eventHub.on('pointsBlast', () => {
-
+      this.pointsBlast();
     });
 
     eventHub.on('pointsRecover', () => {
-
+      this.pointsRecover();
     });
   }
 

@@ -143,6 +143,32 @@ export default class Factory {
     this.fighterGroup.visible = true;
   }
 
+  createPoints() {
+    // 创建点组件
+    if (!this.fighterPointsGroup) {
+      this.fighterPointsGroup = this.transformPoints();
+      this.scene.add(this.fighterPointsGroup);
+    }
+  }
+
+  transformPoints() {
+    const group = new THREE.Group();
+    this.fighterGroup.traverse(child => {
+      if (child.isMesh) {
+        const material = new THREE.PointsMaterial({
+          color: new THREE.Color(Math.random(), Math.random(), Math.random()),
+          size: 0.1,
+        });
+        const pointsMesh = new THREE.Points(child.geometry, material);
+        pointsMesh.position.copy(child.position);
+        pointsMesh.rotation.copy(child.rotation);
+        pointsMesh.scale.copy(child.scale);
+        group.add(pointsMesh);
+      }
+    });
+    return group;
+  }
+
   initEvent() {
     eventHub.on('showFloor1', () => {
       this.showFloor1(true);
@@ -251,7 +277,7 @@ export default class Factory {
     });
 
     eventHub.on('pointsFighter', () => {
-
+      this.createPoints();
     });
 
     eventHub.on('pointsBlast', () => {

@@ -31,7 +31,7 @@ export default class Factory {
       gltf.scene.traverse(child => {
         if (child.isMesh) {
           // 放射光强度。调节发光颜色。默认为1。
-          child.material.emissiveIntensity = 20;
+          child.material.emissiveIntensity = 10;
         }
         if (child.type === 'Object3D' && child.children.length === 0) {
           console.log(child.name);
@@ -58,6 +58,41 @@ export default class Factory {
       scene.add(gltf.scene);
       this.wallGroup = gltf.scene;
       this.wallGroup.aPosition = this.wallGroup.position.clone();
+    });
+
+    // 战斗机
+    gltfLoader.load('./model/factory/fighter.glb', gltf => {
+      this.scene.add(gltf.scene);
+      this.fighterGroup = gltf.scene;
+      this.fighterGroup.position.set(6, 58, 2);
+
+      this.fighterGroup.visible = false;
+      this.fighterGroup.aPosition = this.fighterGroup.position.clone();
+
+      this.fighterGroup.traverse(child => {
+        if (child.isMesh) {
+          child.material.emissiveIntensity = 15;
+        }
+      });
+
+      // 创建射线
+      this.raycaster = new THREE.Raycaster();
+      this.mouse = new THREE.Vector2();
+
+      // 事件的监听
+      window.addEventListener("click", (event) => {
+        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = -(event.clientY / window.innerWidth) * 2 + 1;
+
+        this.raycaster.setFromCamera(this.mouse, CameraModule.activeCamera);
+
+        const intersects = this.raycaster.intersectObject(this.fighterGroup);
+        // console.log(intersects);
+        if (intersects.length > 0) {
+          this.showFloor2(!this.floor2Group.visible);
+        }
+      });
+
     });
 
     this.initEvent();
@@ -95,15 +130,21 @@ export default class Factory {
     this.wallGroup.visible = bool;
   }
 
+  showFighter(bool) {
+    this.fighterGroup.visible = bool;
+  }
+
   initEvent() {
     eventHub.on('showFloor1', () => {
       this.showFloor1(true);
       this.showFloor2(false);
+      this.showFighter(false);
       this.showWall(false);
     });
 
     eventHub.on('showFloor2', () => {
       this.showFloor2(true);
+      this.showFighter(true);
       this.showFloor1(false);
       this.showWall(false);
       this.floor2GroupPositionRestore();
@@ -116,6 +157,7 @@ export default class Factory {
       this.showWall(true);
       this.showFloor1(false);
       this.showFloor2(false);
+      this.showFighter(false);
     });
 
     eventHub.on('showAll', () => {
@@ -125,6 +167,7 @@ export default class Factory {
       this.showWall(true);
       this.showFloor1(true);
       this.showFloor2(true);
+      this.showFighter(true);
 
       gsap.to(this.wallGroup.position, {
         y: 200,
@@ -133,6 +176,12 @@ export default class Factory {
 
       gsap.to(this.floor2Group.position, {
         y: 60,
+        duration: 1,
+        delay: 1
+      });
+
+      gsap.to(this.fighterGroup.position, {
+        y: 120,
         duration: 1,
         delay: 1
       });
@@ -147,6 +196,8 @@ export default class Factory {
   floor2GroupPositionRestore() {
     var { x, y, z } = this.floor2Group.aPosition;
     this.floor2Group.position.set(x, y, z);
+    var { x, y, z } = this.fighterGroup.aPosition;
+    this.fighterGroup.position.set(x, y, z);
   }
 
   update(time) {

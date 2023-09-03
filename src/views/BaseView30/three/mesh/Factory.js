@@ -152,40 +152,29 @@ export default class Factory {
   }
 
   transformPoints() {
+    const texture = new THREE.TextureLoader().load("./texture/particles/1.png");
     const group = new THREE.Group();
-    /*
-    this.fighterGroup.traverse(child => {
-      if (child.isMesh) {
-        const material = new THREE.PointsMaterial({
-          color: new THREE.Color(Math.random(), Math.random(), Math.random()),
-          size: 0.1,
-        });
-        const pointsMesh = new THREE.Points(child.geometry, material);
-        pointsMesh.position.copy(child.position);
-        pointsMesh.rotation.copy(child.rotation);
-        pointsMesh.scale.copy(child.scale);
-        group.add(pointsMesh);
-      }
-    });
-    */
-
     function createPoints(object3D, newObject3D) {
       if (!object3D.children || object3D.children.length <= 0) {
         return;
       }
 
-      object3D.children.forEach(child => { // object3D.children.forEach 代替 this.fighterGroup.traverse
+      object3D.children.forEach(child => {
         if (child.isMesh) {
           const material = new THREE.PointsMaterial({
             color: new THREE.Color(Math.random(), Math.random(), Math.random()),
             size: 0.1,
+            map: texture,
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
           });
           const pointsMesh = new THREE.Points(child.geometry, material);
           pointsMesh.position.copy(child.position);
           pointsMesh.rotation.copy(child.rotation);
           pointsMesh.scale.copy(child.scale);
-          newObject3D.add(pointsMesh); // newObject3D 代替 group
-          createPoints(child, pointsMesh); // 新增
+          newObject3D.add(pointsMesh);
+          createPoints(child, pointsMesh);
         }
       });
 

@@ -153,6 +153,7 @@ export default class Factory {
 
   transformPoints() {
     const group = new THREE.Group();
+    /*
     this.fighterGroup.traverse(child => {
       if (child.isMesh) {
         const material = new THREE.PointsMaterial({
@@ -166,6 +167,31 @@ export default class Factory {
         group.add(pointsMesh);
       }
     });
+    */
+
+    function createPoints(object3D, newObject3D) {
+      if (!object3D.children || object3D.children.length <= 0) {
+        return;
+      }
+
+      object3D.children.forEach(child => { // object3D.children.forEach 代替 this.fighterGroup.traverse
+        if (child.isMesh) {
+          const material = new THREE.PointsMaterial({
+            color: new THREE.Color(Math.random(), Math.random(), Math.random()),
+            size: 0.1,
+          });
+          const pointsMesh = new THREE.Points(child.geometry, material);
+          pointsMesh.position.copy(child.position);
+          pointsMesh.rotation.copy(child.rotation);
+          pointsMesh.scale.copy(child.scale);
+          newObject3D.add(pointsMesh); // newObject3D 代替 group
+          createPoints(child, pointsMesh); // 新增
+        }
+      });
+
+    }
+    createPoints(this.fighterGroup, group);
+
     return group;
   }
 

@@ -186,6 +186,59 @@ export default class Factory {
         delay: 1
       });
     });
+
+    eventHub.on('flatFighter', type => {
+      // 将飞机展成平面
+      // 获取平面位置
+      const positions = [];
+      if (type === 'plane') {
+        for (let x = 0; x < 5; x++) {
+          for (let z = 0; z < 5; z++) {
+            positions.push(new THREE.Vector3(x * 2 - 2, 0, z * 2 - 3));
+          }
+        }
+      } else if (type === 'line') {
+        for (let x = 0; x < 22; x++) {
+          positions.push(new THREE.Vector3(x * 2 - 11.5, 0, 0));
+        }
+      }
+
+      console.log(positions);
+      let n = 0;
+      this.fighterGroup.traverse(child => {
+        if (child.isMesh && positions[n]) {
+          const vec3 = positions[n];
+          const vec3Multiply20 = vec3.multiplyScalar(10);
+          !child.srcPosition && (child.srcPosition = child.position.clone());
+
+          // 复制到位置，无动画效果
+          // child.position.copy(vec3Multiply20);
+
+          // 移到到位置，有动画效果
+          const { x, y, z } = vec3Multiply20;
+          gsap.to(child.position, {
+            x, y, z,
+            duration: 1
+          });
+
+          n++;
+        }
+      });
+    });
+
+    eventHub.on('recoverFighter', () => {
+      let n = 0;
+      this.fighterGroup.traverse(child => {
+        if (child.isMesh && child.srcPosition) {
+          const { x, y, z } = child.srcPosition;
+          gsap.to(child.position, {
+            x, y, z,
+            duration: 2
+          });
+          n++;
+        }
+      });
+    });
   }
 
   wallPositionRestore() {

@@ -35,11 +35,20 @@
       <div class="right">
         <div class="cityEvent list">
           <h3>
-            <span></span>
+            <span>飞机</span>
           </h3>
-          <h1>
+          <h1 @click="flatFighter('plane')">
             <img src="../../../assets/bg/bar.svg" class="icon">
-            <span></span>
+            <span>平面展示</span>
+          </h1>
+          <h1 @click="flatFighter('line')">
+            <img src="../../../assets/bg/bar.svg" class="icon">
+            <span>直线展示</span>
+          </h1>
+          <div class="footerBorder"></div>
+          <h1 @click="recoverFighter">
+            <img src="../../../assets/bg/bar.svg" class="icon">
+            <span>恢复模型</span>
           </h1>
           <div class="footerBorder"></div>
         </div>
@@ -54,6 +63,14 @@ import { ref, watch } from 'vue';
 
 const showMesh = meshType => {
   eventHub.emit(meshType);
+};
+
+const flatFighter = (type) => {
+  eventHub.emit('flatFighter', type);
+};
+
+const recoverFighter = () => {
+  eventHub.emit('recoverFighter');
 }
 
 </script>

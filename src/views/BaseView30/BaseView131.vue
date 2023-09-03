@@ -24,6 +24,10 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass.js";
+
 innerWidth = window.innerWidth;
 innerHeight = window.innerHeight;
 const container = ref(null);
@@ -35,6 +39,8 @@ const textureLoader = new THREE.TextureLoader();
 let scene, camera, renderer, controls;
 
 let sphere, torusKnot, cube;
+
+let composer;
 
 init();
 
@@ -52,6 +58,35 @@ function createCode() {
   createSphere();
   createTorusKnot();
   createBox();
+
+  createEffect();
+}
+
+// 添加后期处理
+function createEffect() {
+  // 创建 效果合成器
+  composer = new EffectComposer(renderer);
+  // 实现化RenderPass
+  const renderPass = new RenderPass(scene, camera);
+  // 添加渲染通道
+  composer.addPass(renderPass);
+
+  // 创建 轮廓过程
+  const outlinePass = new OutlinePass(
+    new THREE.Vector2(innerWidth, innerHeight),
+    scene,
+    camera
+  );
+  // 设置选中的物体
+  outlinePass.selectedObjects = [torusKnot];
+  // 将传入的过程添加到过程链
+  composer.addPass(outlinePass);
+
+  // 切换选中的物体
+  window.addEventListener('click', () => {
+    const { length } = outlinePass.selectedObjects;
+    outlinePass.selectedObjects = length === 1 ? [sphere, cube] : [torusKnot];
+  });
 }
 
 // 创建球
@@ -104,7 +139,10 @@ function render() {
   const elapsed = clock.getElapsedTime();
 
   controls && controls.update();
-  renderer.render(scene, camera);
+
+  // 使用composer渲染
+  composer.render();
+
   requestAnimationFrame(render);
 };
 

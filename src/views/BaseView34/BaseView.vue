@@ -33,6 +33,8 @@ const textureLoader = new THREE.TextureLoader();
 
 let scene, camera, renderer, controls, stats;
 
+let capsule;
+
 init();
 
 // 初始化
@@ -48,6 +50,7 @@ function init() {
 // 业务代码
 function createCode() {
   createPlane();
+  createCapsule();
 }
 
 // 创建平面
@@ -61,6 +64,18 @@ function createPlane() {
   plane.receiveShadow = true;
   plane.rotation.x = -Math.PI / 2;
   scene.add(plane);
+}
+
+// 创建一个胶囊物体
+function createCapsule() {
+  const geometry = new THREE.CapsuleGeometry(0.35, 1, 4, 8);
+  const material = new THREE.MeshBasicMaterial({
+    color: 0x0000ff,
+    side: THREE.DoubleSide,
+  });
+  capsule = new THREE.Mesh(geometry, material);
+  capsule.position.set(0, (0.35 + 1 + 0.35) / 2, 0);
+  scene.add(capsule);
 }
 
 // 创建场景

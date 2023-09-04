@@ -122,7 +122,7 @@ function createCapsule() {
   camera.lookAt(capsule.position);
   capsule.add(camera);
   // 控制器设置中心为胶囊位置
-  controls.target = capsule.position;
+  controls && (controls.target = capsule.position);
 
   const body = createCapsuleBody();
   capsule.add(body);
@@ -359,7 +359,6 @@ function appendStats() {
 onMounted(() => {
   appendCanvas();
   appendStats();
-  createControls();
   createCode();
   render();
 });

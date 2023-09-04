@@ -81,6 +81,7 @@ function createCode() {
   cerateOctree();
   initKeyEvent();
   initMouseMoveEvent();
+  initMouseDownEvent();
 }
 
 // 创建平面
@@ -212,6 +213,14 @@ function initMouseMoveEvent() {
     // 设置胶囊旋转
     capsule.rotation.y -= mouseDeltaX * 0.00001;
   });
+}
+
+// 监听鼠标按下事件
+function initMouseDownEvent() {
+  window.addEventListener('mousedown', event => {
+    // 锁定鼠标指针
+    document.body.requestPointerLock();
+  }, false);
 }
 
 // 根据键盘状态更新玩家速度

@@ -186,7 +186,7 @@ function updateKeyState(event, isDown) {
 // 根据键盘状态更新玩家速度
 function controlPlayer(time) {
   if (keyStates.w) {
-    playerDirection.z = 10;
+    playerDirection.z = 1;
     const capsuleFront = new THREE.Vector3(0, 0, 0);
     // 获取胶囊正前面的方向
     // getWorldDirection是将表示该物体在世界空间中Z轴正方向的矢量，保存到capsuleFront

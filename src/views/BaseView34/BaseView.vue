@@ -42,6 +42,8 @@ let stats, capsule, plane, group, worldOctree;
 const gravity = -9.8;
 // 玩家速度
 const playerVelocity = new THREE.Vector3(0, 0, 0);
+// 玩家方向
+const playerDirection = new THREE.Vector3(0, 0, 0);
 // 玩家是否在地面上
 let playerOnFloor = false;
 // 创建一个人的碰撞体（胶囊形）
@@ -150,6 +152,7 @@ function resetPlayer() {
     playerCollider.end.set(0, 2 + 1.35, 0);
     playerCollider.radius = 0.35;
     playerVelocity.set(0, 0, 0);
+    playerDirection.set(0, 0, 0);
   }
 }
 
@@ -167,6 +170,21 @@ function updateKeyState(event, isDown) {
     return;
   }
   keyStates[event.key] = isDown;
+}
+
+// 根据键盘状态更新玩家速度
+function controlPlayer(time) {
+  if (keyStates.w) {
+    playerDirection.z = 10;
+    const capsuleFront = new THREE.Vector3(0, 0, 0);
+    // 获取胶囊正前面的方向
+    // getWorldDirection是将表示该物体在世界空间中Z轴正方向的矢量，保存到capsuleFront
+    capsule.getWorldDirection(capsuleFront);
+    // 计算玩家速度
+    // multiplyScalar将该向量与所传入的标量进行相乘
+    // add将传入的向量和这个向量相加
+    playerVelocity.add(capsuleFront.multiplyScalar(time));
+  }
 }
 
 // 创建场景
@@ -201,6 +219,7 @@ function createRenderer() {
 function render() {
   const time = clock.getDelta();
 
+  controlPlayer(time);
   updatePlayer(time);
   resetPlayer();
 

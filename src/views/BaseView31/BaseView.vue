@@ -125,6 +125,9 @@ function toCreateMesh(coordinate, province, name) {
   const mesh = createMesh(coordinate);
   mesh.name = name;
   province.add(mesh);
+
+  const line = createLine(coordinate);
+  province.add(line);
 }
 
 // 使用d3的坐标转换方法
@@ -154,6 +157,26 @@ function createMesh(polygon) {
     opacity: 0.5,
   });
   return new THREE.Mesh(geometry, meterial);
+}
+
+// 根据经纬度划线
+function createLine(polygon) {
+  const pointArray = [];
+  polygon.forEach((row, i) => {
+    const coordinate = properties(row);
+    const [longitude, latitude] = coordinate;
+    pointArray.push(new THREE.Vector3(longitude, -latitude, 10));
+  });
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setFromPoints(pointArray);
+
+  const color = new THREE.Color(Math.random() * 0xffffff);
+  const material = new THREE.LineBasicMaterial({
+    color,
+  });
+
+  return new THREE.Line(geometry, material);
 }
 
 // 创建场景

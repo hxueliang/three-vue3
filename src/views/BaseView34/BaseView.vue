@@ -9,6 +9,7 @@ import gsap from 'gsap';
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
@@ -30,7 +31,7 @@ const gui = new GUI();
 const clock = new THREE.Clock();
 const textureLoader = new THREE.TextureLoader();
 
-let scene, camera, renderer, controls;
+let scene, camera, renderer, controls, stats;
 
 init();
 
@@ -39,21 +40,35 @@ function init() {
   createScene();
   createCamera(0, 5, 10);
   createRenderer();
+  createStats();
   createAxes();
   window.addEventListener('resize', onWindowResize);
 }
 
 // 业务代码
 function createCode() {
-  const geometry = new THREE.PlaneGeometry(1, 1);
-  const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+  createPlane();
+}
+
+// 创建平面
+function createPlane() {
+  const geometry = new THREE.PlaneGeometry(20, 20, 1, 1);
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xfffffff,
+    side: THREE.DoubleSide,
+  });
   const plane = new THREE.Mesh(geometry, material);
+  plane.receiveShadow = true;
+  plane.rotation.x = -Math.PI / 2;
   scene.add(plane);
 }
 
 // 创建场景
 function createScene() {
   scene = new THREE.Scene();
+  // 新增
+  scene.background = new THREE.Color(0x88ccee);
+  scene.fog = new THREE.Fog(0x88ccee, 0, 50);
 }
 
 // 创建相机
@@ -68,6 +83,12 @@ function createCamera(x = 0, y = 0, z = 10) {
 function createRenderer() {
   renderer = new THREE.WebGLRenderer({ alpha: true });
   renderer.setSize(innerWidth, innerHeight);
+  // 新增
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.VSMShadowMap;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
 }
 
 // 创建渲染函数
@@ -78,6 +99,13 @@ function render() {
   renderer.render(scene, camera);
   requestAnimationFrame(render);
 };
+
+// 创建性能监控
+function createStats() {
+  stats = new Stats();
+  stats.domElement.style.position = 'absolute';
+  stats.domElement.style.top = '0';
+}
 
 // 创建控制器
 function createControls() {
@@ -128,9 +156,15 @@ function appendCanvas() {
   container.value.appendChild(renderer.domElement);
 }
 
+// 添加stats进DOM
+function appendStats() {
+  container.value.appendChild(stats.domElement);
+}
+
 onMounted(() => {
   createCode();
   appendCanvas();
+  appendStats();
   createControls();
   render();
 });

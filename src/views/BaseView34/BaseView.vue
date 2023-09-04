@@ -198,6 +198,25 @@ function controlPlayer(time) {
     capsule.getWorldDirection(capsuleFront);
     playerVelocity.add(capsuleFront.multiplyScalar(-time));
   }
+  if (keyStates.a) {
+    playerDirection.z = 1;
+    const capsuleFront = new THREE.Vector3(0, 0, 0);
+    capsule.getWorldDirection(capsuleFront);
+    // 计算侧方向
+    // 正前方向和正上方向可以确定一个面，求叉积，得到侧方向
+    // capsuleFront正前方向
+    // capsule.up正上方向
+    // cross将该向量设置为它本身与传入的向量v的叉积
+    capsuleFront.cross(capsule.up);
+    playerVelocity.add(capsuleFront.multiplyScalar(-time));
+  }
+  if (keyStates.d) {
+    playerDirection.z = 1;
+    const capsuleFront = new THREE.Vector3(0, 0, 0);
+    capsule.getWorldDirection(capsuleFront);
+    capsuleFront.cross(capsule.up);
+    playerVelocity.add(capsuleFront.multiplyScalar(time));
+  }
 }
 
 // 创建场景

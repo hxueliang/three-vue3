@@ -24,6 +24,7 @@ import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
 import { Capsule } from 'three/examples/jsm/math/Capsule.js';
+import { Octree } from 'three/examples/jsm/math/Octree.js';
 
 innerWidth = window.innerWidth;
 innerHeight = window.innerHeight;
@@ -33,14 +34,16 @@ const gui = new GUI();
 const clock = new THREE.Clock();
 const textureLoader = new THREE.TextureLoader();
 
-let scene, camera, renderer, controls, stats;
+let scene, camera, renderer, controls;
 
-let capsule;
+let stats, capsule, plane, group, worldOctree;
 
 // 设置重力
 const gravity = -9.8;
 // 玩家速度
 const playerVelocity = new THREE.Vector3(0, 0, 0);
+// 玩家是否在地面上
+let playerOnFloor = false;
 
 init();
 
@@ -58,6 +61,7 @@ function init() {
 function createCode() {
   createPlane();
   createCapsule();
+  cerateOctree();
 }
 
 // 创建平面
@@ -67,10 +71,9 @@ function createPlane() {
     color: 0xfffffff,
     side: THREE.DoubleSide,
   });
-  const plane = new THREE.Mesh(geometry, material);
+  plane = new THREE.Mesh(geometry, material);
   plane.receiveShadow = true;
   plane.rotation.x = -Math.PI / 2;
-  scene.add(plane);
 }
 
 // 创建一个胶囊物体
@@ -100,6 +103,30 @@ function updatePlayer(deltaTime) {
   playerCollider.translate(playerMoveDistance);
   // 设置胶囊位置 
   playerCollider.getCenter(capsule.position);
+
+  playerCollisions();
+}
+
+// 碰撞检测组
+function cerateOctree() {
+  group = new THREE.Group();
+  group.add(plane);
+  scene.add(group);
+
+  worldOctree = new Octree();
+  worldOctree.fromGraphNode(group);
+}
+
+// 玩家碰撞检测
+function playerCollisions() {
+  const result = worldOctree.capsuleIntersect(playerCollider);
+  // 默认不在地面上
+  playerOnFloor = false;
+  if (result) {
+    playerOnFloor = result.normal.y > 0;
+    // playerCollider，延法向方移动陷入深度(回到碰撞表面)
+    playerCollider.translate(result.normal.multiplyScalar(result.depth));
+  }
 }
 
 // 重置玩家信息

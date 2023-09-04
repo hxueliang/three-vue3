@@ -23,6 +23,8 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
+import { Capsule } from 'three/examples/jsm/math/Capsule.js';
+
 innerWidth = window.innerWidth;
 innerHeight = window.innerHeight;
 const container = ref(null);
@@ -34,6 +36,11 @@ const textureLoader = new THREE.TextureLoader();
 let scene, camera, renderer, controls, stats;
 
 let capsule;
+
+// 设置重力
+const gravity = -9.8;
+// 玩家速度
+const playerVelocity = new THREE.Vector3(0, 0, 0);
 
 init();
 
@@ -78,6 +85,23 @@ function createCapsule() {
   scene.add(capsule);
 }
 
+// 创建一个人的碰撞体（胶囊形）
+const playerCollider = new Capsule(
+  new THREE.Vector3(0, 0.35, 0),
+  new THREE.Vector3(0, 1.35, 0),
+  0.35
+);
+
+// 更新玩家数据
+function updatePlayer(deltaTime) {
+  playerVelocity.y += gravity * deltaTime;
+  // 计算玩家移动的距离
+  const playerMoveDistance = playerVelocity.clone().multiplyScalar(deltaTime);
+  playerCollider.translate(playerMoveDistance);
+  // 设置胶囊位置 
+  playerCollider.getCenter(capsule.position);
+}
+
 // 创建场景
 function createScene() {
   scene = new THREE.Scene();
@@ -108,7 +132,9 @@ function createRenderer() {
 
 // 创建渲染函数
 function render() {
-  const elapsed = clock.getElapsedTime();
+  const time = clock.getDelta();
+
+  updatePlayer(time);
 
   controls && controls.update();
   renderer.render(scene, camera);

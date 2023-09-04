@@ -102,6 +102,16 @@ function updatePlayer(deltaTime) {
   playerCollider.getCenter(capsule.position);
 }
 
+// 重置玩家信息
+function resetPlayer() {
+  if (capsule.position.y < -20) {
+    playerCollider.start.set(0, 2 + 0.35, 0);
+    playerCollider.end.set(0, 2 + 1.35, 0);
+    playerCollider.radius = 0.35;
+    playerVelocity.set(0, 0, 0);
+  }
+}
+
 // 创建场景
 function createScene() {
   scene = new THREE.Scene();
@@ -135,6 +145,7 @@ function render() {
   const time = clock.getDelta();
 
   updatePlayer(time);
+  resetPlayer();
 
   controls && controls.update();
   renderer.render(scene, camera);

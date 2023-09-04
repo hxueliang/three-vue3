@@ -50,6 +50,14 @@ const playerCollider = new Capsule(
   new THREE.Vector3(0, 1.35, 0),
   0.35
 );
+// 按键状态
+const keyStates = {
+  'w': false,
+  'a': false,
+  's': false,
+  'd': false,
+  ' ': false,
+};
 
 init();
 
@@ -68,6 +76,7 @@ function createCode() {
   createPlane();
   createCapsule();
   cerateOctree();
+  initEvent();
 }
 
 // 创建平面
@@ -142,6 +151,22 @@ function resetPlayer() {
     playerCollider.radius = 0.35;
     playerVelocity.set(0, 0, 0);
   }
+}
+
+// 事件监听
+function initEvent() {
+  const isDown = true;
+  document.addEventListener('keydown', event => updateKeyState(event, isDown), false);
+  document.addEventListener('keyup', event => updateKeyState(event, !isDown), false);
+}
+
+// 跟据键盘事件更新按键状态
+function updateKeyState(event, isDown) {
+  const { key } = event;
+  if (!(key in keyStates)) {
+    return;
+  }
+  keyStates[event.key] = isDown;
 }
 
 // 创建场景

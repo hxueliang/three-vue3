@@ -34,6 +34,9 @@ const textureLoader = new THREE.TextureLoader();
 
 let scene, camera, renderer, controls;
 
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
 init();
 
 // 初始化
@@ -54,6 +57,33 @@ function createCode() {
     console.log(json);
     operationData(json);
   });
+
+  window.addEventListener('click', event => clickEvent(event));
+}
+
+// 保存上一次选中的物体
+let prevMesh = null;
+
+// 鼠标点击事件
+function clickEvent(event) {
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(map.children);
+  if (intersects.length > 0) {
+    const [first] = intersects;
+    const { object } = first;
+    if (prevMesh) {
+      prevMesh.material.color.copy(prevMesh.material.srcColor);
+    }
+    prevMesh = object;
+    prevMesh.material.srcColor = prevMesh.material.color.clone();
+    object.material.color.set(0xffffff);
+  } else if (prevMesh) {
+    prevMesh.material.color.copy(prevMesh.material.srcColor);
+    prevMesh = null;
+  }
+
 }
 
 // 存放所有省份
@@ -72,18 +102,14 @@ function operationData(json) {
 
     if (type === 'Polygon') {
       coordinates.forEach(coordinate => {
-        const mesh = createMesh(coordinate);
-        mesh.name = name;
-        province.add(mesh);
+        toCreateMesh(coordinate, province, name);
       });
     }
 
     if (type === 'MultiPolygon') {
       coordinates.forEach(item => {
         item.forEach(coordinate => {
-          const mesh = createMesh(coordinate);
-          mesh.name = name;
-          province.add(mesh);
+          toCreateMesh(coordinate, province, name);
         });
       });
     }
@@ -92,6 +118,13 @@ function operationData(json) {
   });
 
   scene.add(map);
+}
+
+// 创建物体
+function toCreateMesh(coordinate, province, name) {
+  const mesh = createMesh(coordinate);
+  mesh.name = name;
+  province.add(mesh);
 }
 
 // 使用d3的坐标转换方法

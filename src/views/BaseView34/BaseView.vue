@@ -26,8 +26,8 @@ import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 import { Capsule } from 'three/examples/jsm/math/Capsule.js';
 import { Octree } from 'three/examples/jsm/math/Octree.js';
 
-innerWidth = window.innerWidth;
-innerHeight = window.innerHeight;
+let innerWidth = window.innerWidth;
+let innerHeight = window.innerHeight;
 const container = ref(null);
 
 const gui = new GUI();
@@ -80,6 +80,7 @@ function createCode() {
   createCapsule();
   cerateOctree();
   initKeyEvent();
+  initMouseMoveEvent();
 }
 
 // 创建平面
@@ -92,6 +93,18 @@ function createPlane() {
   plane = new THREE.Mesh(geometry, material);
   plane.receiveShadow = true;
   plane.rotation.x = -Math.PI / 2;
+}
+
+// 创建一个平面，作为胶囊的身体，便于查看胶囊旋转
+function createCapsuleBody() {
+  const geometry = new THREE.PlaneGeometry(1, 0.5);
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xff0000,
+    side: THREE.DoubleSide,
+  });
+  const plane = new THREE.Mesh(geometry, material);
+  plane.position.set(0, 0.3, 0);
+  return plane;
 }
 
 // 创建一个胶囊物体
@@ -110,6 +123,9 @@ function createCapsule() {
   capsule.add(camera);
   // 控制器设置中心为胶囊位置
   controls.target = capsule.position;
+
+  const body = createCapsuleBody();
+  capsule.add(body);
 
   scene.add(capsule);
 }
@@ -185,6 +201,17 @@ function updateKeyState(event, isDown) {
   }
   keyStates[event.key] = isDown;
   keyStates.isDown = isDown;
+}
+
+// 监听鼠标移动事件
+function initMouseMoveEvent() {
+  window.addEventListener('mousemove', event => {
+    // 根据鼠标在屏的移动，来旋转胶囊
+    const { clientX: mouseX, clientY: mouseY } = event;
+    const mouseDeltaX = mouseX - innerWidth / 2;
+    // 设置胶囊旋转
+    capsule.rotation.y -= mouseDeltaX * 0.00001;
+  });
 }
 
 // 根据键盘状态更新玩家速度

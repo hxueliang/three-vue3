@@ -103,6 +103,14 @@ function createCapsule() {
   });
   capsule = new THREE.Mesh(geometry, material);
   capsule.position.set(0, (0.35 + 1 + 0.35) / 2, 0);
+  // 实现相机跟随胶囊移动
+  // 将相机作为胶囊的子元素
+  camera.position.set(0, 2, -5);
+  camera.lookAt(capsule.position);
+  capsule.add(camera);
+  // 控制器设置中心为胶囊位置
+  controls.target = capsule.position;
+
   scene.add(capsule);
 }
 
@@ -322,10 +330,10 @@ function appendStats() {
 }
 
 onMounted(() => {
-  createCode();
   appendCanvas();
   appendStats();
   createControls();
+  createCode();
   render();
 });
 </script>

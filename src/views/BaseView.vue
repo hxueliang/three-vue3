@@ -61,7 +61,7 @@ function createScene() {
 
 // 创建相机
 function createCamera(x = 0, y = 0, z = 10) {
-  camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 300);
+  camera = new THREE.PerspectiveCamera(25, innerWidth / innerHeight, 0.1, 3000);
   camera.position.set(x, y, z);
   scene.add(camera);
 }

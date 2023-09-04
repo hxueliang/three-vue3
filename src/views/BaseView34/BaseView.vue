@@ -116,10 +116,6 @@ function updatePlayer(deltaTime) {
     // 停止键按的时，设置摩擦力，让胶囊自己停下来
     // addScaledVector将所传入的向量v与标量s相乘，所得的乘积和这个向量相加
     keyStates.isDown || playerVelocity.addScaledVector(playerVelocity, damping);
-    // 因为会一直得到趋近于0，但又一直不等于0，所以手动重置为0
-    playerVelocity.x < 0.001 && (playerVelocity.x = 0);
-    playerVelocity.y < 0.001 && (playerVelocity.y = 0);
-    playerVelocity.z < 0.001 && (playerVelocity.z = 0);
   } else {
     // 否则，下降速度随时间推移，不断增大
     playerVelocity.y += gravity * deltaTime;
@@ -195,6 +191,12 @@ function controlPlayer(time) {
     // multiplyScalar将该向量与所传入的标量进行相乘
     // add将传入的向量和这个向量相加
     playerVelocity.add(capsuleFront.multiplyScalar(time));
+  }
+  if (keyStates.s) {
+    playerDirection.z = 1;
+    const capsuleFront = new THREE.Vector3(0, 0, 0);
+    capsule.getWorldDirection(capsuleFront);
+    playerVelocity.add(capsuleFront.multiplyScalar(-time));
   }
 }
 

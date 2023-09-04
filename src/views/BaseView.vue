@@ -22,8 +22,8 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
-innerWidth = window.innerWidth;
-innerHeight = window.innerHeight;
+let innerWidth = window.innerWidth;
+let innerHeight = window.innerHeight;
 const container = ref(null);
 
 const gui = new GUI();

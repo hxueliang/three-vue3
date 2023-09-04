@@ -8,6 +8,7 @@ import { ref, onMounted } from 'vue';
 import gsap from 'gsap';
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
+import * as d3 from 'd3';
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -21,6 +22,7 @@ import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
+import { MeshBasicMaterial } from 'three';
 
 innerWidth = window.innerWidth;
 innerHeight = window.innerHeight;
@@ -37,7 +39,7 @@ init();
 // 初始化
 function init() {
   createScene();
-  createCamera();
+  createCamera(0, 0, 500);
   createRenderer();
   createAxes();
   window.addEventListener('resize', onWindowResize);
@@ -45,6 +47,80 @@ function init() {
 
 // 业务代码
 function createCode() {
+  // 加载geojson文件
+  const loader = new THREE.FileLoader();
+  loader.load('./json/100000_full.json', data => {
+    const json = JSON.parse(data);
+    console.log(json);
+    operationData(json);
+  });
+}
+
+// 存放所有省份
+const map = new THREE.Object3D();
+
+// 操作数据
+function operationData(json) {
+  const { features } = json;
+  features.forEach(feature => {
+    // 创建省份mesh
+    const province = new THREE.Object3D();
+    const { name } = feature.properties;
+    // 获取经纬度坐标
+    const { geometry } = feature;
+    const { coordinates, type } = geometry;
+
+    if (type === 'Polygon') {
+      coordinates.forEach(coordinate => {
+        const mesh = createMesh(coordinate);
+        mesh.name = name;
+        province.add(mesh);
+      });
+    }
+
+    if (type === 'MultiPolygon') {
+      coordinates.forEach(item => {
+        item.forEach(coordinate => {
+          const mesh = createMesh(coordinate);
+          mesh.name = name;
+          province.add(mesh);
+        });
+      });
+    }
+
+    map.add(province);
+  });
+
+  scene.add(map);
+}
+
+// 使用d3的坐标转换方法
+// 设置geoMercator的中心坐标
+// geoMercator可以将球型坐标置换为平面坐标
+// translate将中心转称到(0,0,0)
+const properties = d3.geoMercator().center([116.5, 38.5]).translate([0, 0, 0]);
+
+// 创建物体
+function createMesh(polygon) {
+  const shape = new THREE.Shape();
+  polygon.forEach((row, i) => {
+    const coordinate = properties(row);
+    const [longitude, latitude] = coordinate;
+    if (i === 0) {
+      shape.moveTo(longitude, -latitude); // 由于y轴方向是相反的，所有要取反
+    }
+    shape.lineTo(longitude, -latitude);
+  });
+
+  // 根据形状，挤出几何体
+  const geometry = new THREE.ExtrudeGeometry(shape, { depth: 5 });
+  const color = new THREE.Color(Math.random() * 0xffffff);
+  const meterial = new MeshBasicMaterial({
+    color,
+    transparent: true,
+    opacity: 0.5,
+  });
+  return new THREE.Mesh(geometry, meterial);
 }
 
 // 创建场景
@@ -54,7 +130,7 @@ function createScene() {
 
 // 创建相机
 function createCamera(x = 0, y = 0, z = 10) {
-  camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 300);
+  camera = new THREE.PerspectiveCamera(25, innerWidth / innerHeight, 0.1, 5000);
   camera.position.set(x, y, z);
   scene.add(camera);
 }

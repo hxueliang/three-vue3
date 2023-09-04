@@ -59,6 +59,7 @@ const keyStates = {
   's': false,
   'd': false,
   ' ': false,
+  'isDown': false,
 };
 
 init();
@@ -107,9 +108,18 @@ function createCapsule() {
 
 // 更新玩家数据
 function updatePlayer(deltaTime) {
+  // 阻尼，可以理解为胶囊与地面的摩擦系数
+  let damping = -0.08;
   if (playerOnFloor) {
     // 如果玩家已经在地面上，让下降速度重置为0
     playerVelocity.y = 0;
+    // 停止键按的时，设置摩擦力，让胶囊自己停下来
+    // addScaledVector将所传入的向量v与标量s相乘，所得的乘积和这个向量相加
+    keyStates.isDown || playerVelocity.addScaledVector(playerVelocity, damping);
+    // 因为会一直得到趋近于0，但又一直不等于0，所以手动重置为0
+    playerVelocity.x < 0.001 && (playerVelocity.x = 0);
+    playerVelocity.y < 0.001 && (playerVelocity.y = 0);
+    playerVelocity.z < 0.001 && (playerVelocity.z = 0);
   } else {
     // 否则，下降速度随时间推移，不断增大
     playerVelocity.y += gravity * deltaTime;
@@ -170,6 +180,7 @@ function updateKeyState(event, isDown) {
     return;
   }
   keyStates[event.key] = isDown;
+  keyStates.isDown = isDown;
 }
 
 // 根据键盘状态更新玩家速度

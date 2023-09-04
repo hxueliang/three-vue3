@@ -44,6 +44,12 @@ const gravity = -9.8;
 const playerVelocity = new THREE.Vector3(0, 0, 0);
 // 玩家是否在地面上
 let playerOnFloor = false;
+// 创建一个人的碰撞体（胶囊形）
+const playerCollider = new Capsule(
+  new THREE.Vector3(0, 0.35, 0),
+  new THREE.Vector3(0, 1.35, 0),
+  0.35
+);
 
 init();
 
@@ -87,13 +93,6 @@ function createCapsule() {
   capsule.position.set(0, (0.35 + 1 + 0.35) / 2, 0);
   scene.add(capsule);
 }
-
-// 创建一个人的碰撞体（胶囊形）
-const playerCollider = new Capsule(
-  new THREE.Vector3(0, 0.35, 0),
-  new THREE.Vector3(0, 1.35, 0),
-  0.35
-);
 
 // 更新玩家数据
 function updatePlayer(deltaTime) {

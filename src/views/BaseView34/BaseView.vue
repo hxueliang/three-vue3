@@ -79,7 +79,7 @@ function createCode() {
   createPlane();
   createCapsule();
   cerateOctree();
-  initEvent();
+  initKeyEvent();
 }
 
 // 创建平面
@@ -170,8 +170,8 @@ function resetPlayer() {
   }
 }
 
-// 事件监听
-function initEvent() {
+// 监听键盘按下事件
+function initKeyEvent() {
   const isDown = true;
   document.addEventListener('keydown', event => updateKeyState(event, isDown), false);
   document.addEventListener('keyup', event => updateKeyState(event, !isDown), false);

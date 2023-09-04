@@ -97,7 +97,13 @@ const playerCollider = new Capsule(
 
 // 更新玩家数据
 function updatePlayer(deltaTime) {
-  playerVelocity.y += gravity * deltaTime;
+  if (playerOnFloor) {
+    // 如果玩家已经在地面上，让下降速度重置为0
+    playerVelocity.y = 0;
+  } else {
+    // 否则，下降速度随时间推移，不断增大
+    playerVelocity.y += gravity * deltaTime;
+  }
   // 计算玩家移动的距离
   const playerMoveDistance = playerVelocity.clone().multiplyScalar(deltaTime);
   playerCollider.translate(playerMoveDistance);

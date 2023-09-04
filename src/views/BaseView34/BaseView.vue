@@ -261,6 +261,9 @@ function controlPlayer(time) {
     capsuleFront.cross(capsule.up);
     playerVelocity.add(capsuleFront.multiplyScalar(time));
   }
+  if (keyStates[' ']) {
+    playerVelocity.y = 15;
+  }
 }
 
 // 创建场景

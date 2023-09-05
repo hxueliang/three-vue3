@@ -40,7 +40,7 @@ const router = createRouter({
     {
       path: '/baseView',
       name: 'baseView',
-      component: () => import('../views/BaseView34/BaseView137.vue')
+      component: () => import('../views/BaseView34/BaseView138.vue')
     },
   ]
 });

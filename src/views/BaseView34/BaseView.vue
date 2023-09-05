@@ -34,12 +34,24 @@ const container = ref(null);
 const gui = new GUI();
 const clock = new THREE.Clock();
 const textureLoader = new THREE.TextureLoader();
+const gltfLoader = new GLTFLoader();
 
 let scene, camera, renderer, controls;
 
 let backCamera, activeCamera;
 
 let stats, capsule, plane, group, worldOctree, emptyMesh;
+
+// 机器人物体
+let robot;
+// 动作混合器
+let mixer = null;
+// 动画map
+let actions = {};
+// 激活的动作
+let activeAction = null;
+// 可以循环做的动作
+const loopArr = ['Idle', 'Running', 'Walking'];
 
 // 设置重力
 const gravity = -9.8;
@@ -92,6 +104,7 @@ function init() {
   createRenderer();
   createStats();
   createAxes();
+  createHemisphereLight();
   window.addEventListener('resize', onWindowResize);
 }
 
@@ -101,6 +114,7 @@ function createCode() {
   createStaircase();
   createLod();
   createCapsule();
+  createRobot();
   cerateOctree();
   initKeyEvent();
   initMouseMoveEvent();
@@ -164,26 +178,9 @@ function createCube(i, x = 0, y = 1, width = 1, height = 0.2, depth = 1) {
 
 }
 
-// 创建一个平面，作为胶囊的身体，便于查看胶囊旋转
-function createCapsuleBody() {
-  const geometry = new THREE.PlaneGeometry(1, 0.5);
-  const material = new THREE.MeshBasicMaterial({
-    color: 0xff0000,
-    side: THREE.DoubleSide,
-  });
-  const plane = new THREE.Mesh(geometry, material);
-  plane.position.set(0, 0.3, 0);
-  return plane;
-}
-
 // 创建一个胶囊物体
 function createCapsule() {
-  const geometry = new THREE.CapsuleGeometry(0.35, 1, 4, 8);
-  const material = new THREE.MeshBasicMaterial({
-    color: 0x0000ff,
-    side: THREE.DoubleSide,
-  });
-  capsule = new THREE.Mesh(geometry, material);
+  capsule = new THREE.Object3D();
   capsule.position.set(0, (0.35 + 1 + 0.35) / 2, 0);
   // 实现相机跟随胶囊移动
   // 将相机作为胶囊的子元素
@@ -200,10 +197,36 @@ function createCapsule() {
   // 控制器设置中心为胶囊位置
   controls && (controls.target = capsule.position);
 
-  const body = createCapsuleBody();
-  capsule.add(body);
-
   scene.add(capsule);
+}
+
+// 创建机器人
+function createRobot() {
+  gltfLoader.load('./model/metaverse/robotExpressive.glb', gltf => {
+    console.log(gltf);
+    const { animations, scene: robotScene } = gltf;
+    robot = robotScene;
+    robot.scale.set(0.5, 0.5, 0.5);
+    robot.position.set(0, -0.75, 0);
+    capsule.add(robot); // 做为胶囊的子物体
+
+    mixer = new THREE.AnimationMixer(robot);
+    animations.forEach(animation => {
+      const { name } = animation;
+      actions[name] = mixer.clipAction(animation);
+      if (loopArr.includes(name)) {
+        actions[name].clampWhenFinished = false;
+        actions[name].loop = THREE.LoopRepeat;
+      } else {
+        actions[name].clampWhenFinished = true; // 动画将在最后一帧之后自动暂停
+        actions[name].loop = THREE.LoopOnce; // 执行一次
+      }
+    });
+    activeAction = actions['Idle'];
+    activeAction.play();
+    console.log(actions);
+
+  });
 }
 
 // 更新玩家数据
@@ -404,6 +427,8 @@ function render() {
   updatePlayer(time);
   resetPlayer();
 
+  mixer && mixer.update(time);
+
   controls && controls.update();
   renderer.render(scene, activeCamera);
   requestAnimationFrame(render);
@@ -449,6 +474,12 @@ function createDirLight(x = 0, y = 0, z = 10, strength = 1, color = '#ffffff', c
   dirLight.castShadow = castShadow;
   dirLight.position.set(x, y, z);
   scene.add(dirLight);
+}
+
+// 添加环境光
+function createHemisphereLight(strength = 1, color = '#ffffff') {
+  const hemisphereLight = new THREE.HemisphereLight(color, strength);
+  scene.add(hemisphereLight);
 }
 
 // 监听视口变化

@@ -37,7 +37,7 @@ const textureLoader = new THREE.TextureLoader();
 
 let scene, camera, renderer, controls;
 
-let stats, capsule, plane, group, worldOctree;
+let stats, capsule, plane, group, worldOctree, emptyMesh;
 
 // 设置重力
 const gravity = -9.8;
@@ -185,7 +185,11 @@ function createCapsule() {
   // 将相机作为胶囊的子元素
   camera.position.set(0, 4, -10);
   camera.lookAt(capsule.position);
-  capsule.add(camera);
+  // 创建空物体，创建相机的上下方向
+  // 胶囊-空物体-相机
+  emptyMesh = new THREE.Object3D();
+  emptyMesh.add(camera);
+  capsule.add(emptyMesh);
   // 控制器设置中心为胶囊位置
   controls && (controls.target = capsule.position);
 
@@ -281,6 +285,15 @@ function initMouseMoveEvent(close) {
     // 设置胶囊旋转
     // movementX鼠标在水平方向上的移动值
     capsule.rotation.y -= event.movementX * 0.003;
+    // 通过控制空物体上下方向，改变相机上下方向
+    emptyMesh.rotation.x += event.movementY * 0.003;
+    // 限制上下方向最大小角度
+    if (emptyMesh.rotation.x > Math.PI / 4) {
+      emptyMesh.rotation.x = Math.PI / 4;
+    }
+    if (emptyMesh.rotation.x < -Math.PI / 8) {
+      emptyMesh.rotation.x = -Math.PI / 8;
+    }
   });
 }
 

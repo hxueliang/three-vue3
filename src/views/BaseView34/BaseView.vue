@@ -301,13 +301,18 @@ function initKeyEvent() {
 // 跟据键盘事件更新按键状态
 function updateKeyState(event, isDown) {
   const { key } = event;
-  if (!(key in keyStates)) {
-    return;
-  }
+  // if (!(key in keyStates)) {
+  //   return;
+  // }
   keyStates[event.key] = isDown;
   keyStates.isDown = isDown;
+  // 按键抬起事件
+  !isDown && keyUpEvent(event);
+}
+
+function keyUpEvent(event) {
   // 抬超v键时切换相机视角
-  if (!isDown && event.key === 'v') {
+  if (event.key === 'v') {
     activeCamera = activeCamera === camera ? backCamera : camera;
   }
 }
@@ -322,8 +327,8 @@ function initMouseMoveEvent(close) {
     // 通过控制空物体上下方向，改变相机上下方向
     emptyMesh.rotation.x += event.movementY * 0.003;
     // 限制上下方向最大小角度
-    if (emptyMesh.rotation.x > Math.PI / 4) {
-      emptyMesh.rotation.x = Math.PI / 4;
+    if (emptyMesh.rotation.x > Math.PI / 8) {
+      emptyMesh.rotation.x = Math.PI / 8;
     }
     if (emptyMesh.rotation.x < -Math.PI / 8) {
       emptyMesh.rotation.x = -Math.PI / 8;

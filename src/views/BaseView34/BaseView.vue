@@ -25,6 +25,7 @@ import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
 import { Capsule } from 'three/examples/jsm/math/Capsule.js';
 import { Octree } from 'three/examples/jsm/math/Octree.js';
+import { OctreeHelper } from 'three/examples/jsm/helpers/OctreeHelper.js';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -95,7 +96,7 @@ function createCode() {
   createPlane();
   createStaircase();
   createCapsule();
-  cerateOctree();
+  cerateOctree({ helper: true });
   initKeyEvent();
   initMouseMoveEvent();
   initMouseDownEvent();
@@ -198,14 +199,20 @@ function updatePlayer(deltaTime) {
   playerCollisions();
 }
 
-// 碰撞检测组
-function cerateOctree() {
+// 创建八叉树，用于碰撞检测组
+function cerateOctree({ helper } = {}) {
   group = new THREE.Group();
   group.add(plane);
   scene.add(group);
 
   worldOctree = new Octree();
   worldOctree.fromGraphNode(group);
+
+  if (helper) {
+    // 创建OctreeHelper
+    const octreeHelper = new OctreeHelper(worldOctree);
+    scene.add(octreeHelper);
+  }
 }
 
 // 玩家碰撞检测

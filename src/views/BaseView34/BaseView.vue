@@ -95,6 +95,7 @@ function init() {
 function createCode() {
   createPlane();
   createStaircase();
+  createLod();
   createCapsule();
   cerateOctree();
   initKeyEvent();
@@ -122,6 +123,24 @@ function createStaircase() {
 
   const x = 2.5, y = 1, width = 6, height = 0.2, depth = 1;
   createCube(i, x, y, width, height, depth);
+}
+
+// 多细节层次
+function createLod() {
+  // 多细节层次
+  const lod = new THREE.LOD();
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xff0000,
+    wireframe: true,
+  });
+  for (let i = 0; i < 4; i++) {
+    const pow = 4 - i;
+    const geometry = new THREE.SphereGeometry(1, 2 ** pow, 2 ** pow);
+    const mesh = new THREE.Mesh(geometry, material);
+    lod.addLevel(mesh, i * 12);
+  }
+  lod.position.set(-10, 0, 10);
+  scene.add(lod);
 }
 
 // 创建台阶
@@ -423,7 +442,7 @@ onMounted(() => {
   appendCanvas();
   appendStats();
   createCode();
-  createControls();
+  // createControls();
   render();
 });
 </script>

@@ -250,6 +250,16 @@ function updatePlayer(deltaTime) {
   playerCollider.getCenter(capsule.position);
 
   playerCollisions();
+
+  // 如果有水平移动，则设置相应动画
+  const moveVelocity = Math.abs(playerVelocity.x) + Math.abs(playerVelocity.z);
+  if (moveVelocity > 2.5) {
+    toAction('Running');
+  } else if (moveVelocity > 0.1) {
+    toAction('Walking');
+  } else {
+    toAction('Idle');
+  }
 }
 
 // 创建八叉树，用于碰撞检测组
@@ -322,6 +332,9 @@ function keyUpEvent(event) {
 
 // 执行动画
 function toAction(actionName) {
+  if (!activeAction) {
+    return;
+  }
   let prevAction = activeAction;
   activeAction = actions[actionName];
   if (prevAction !== activeAction) {

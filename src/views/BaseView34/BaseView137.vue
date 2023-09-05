@@ -143,6 +143,8 @@ function createRenderer() {
 function render() {
   const elapsed = clock.getElapsedTime();
 
+  stats.update();
+
   // 4.更新cubeCamera
   cubeCamera.update(renderer, scene);
 

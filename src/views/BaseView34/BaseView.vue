@@ -96,7 +96,7 @@ function createCode() {
   createPlane();
   createStaircase();
   createCapsule();
-  cerateOctree({ helper: true });
+  cerateOctree();
   initKeyEvent();
   initMouseMoveEvent();
   initMouseDownEvent();
@@ -259,11 +259,9 @@ function updateKeyState(event, isDown) {
 function initMouseMoveEvent(close) {
   window.addEventListener('mousemove', event => {
     if (close) { return; }
-    // 根据鼠标在屏的移动，来旋转胶囊
-    const { clientX: mouseX, clientY: mouseY } = event;
-    const mouseDeltaX = mouseX - innerWidth / 2;
     // 设置胶囊旋转
-    capsule.rotation.y -= mouseDeltaX * 0.00001;
+    // movementX鼠标在水平方向上的移动值
+    capsule.rotation.y -= event.movementX * 0.003;
   });
 }
 

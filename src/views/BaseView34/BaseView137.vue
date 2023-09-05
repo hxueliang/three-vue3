@@ -35,6 +35,13 @@ const textureLoader = new THREE.TextureLoader();
 
 let scene, camera, renderer, controls, stats;
 
+// 球材质
+let sphereMaterial;
+// 用来缓存实现纹理
+let cubeRenderTarget;
+// 立方体相机
+let cubeCamera;
+
 init();
 
 // 初始化
@@ -52,6 +59,20 @@ function createCode() {
   initEnv();
   createSphere();
   createCube();
+  createCubeRenderTarget();
+  createCubeCamera();
+}
+
+// 1.创建cubeRenderTarget
+function createCubeRenderTarget() {
+  // 创建cubeRenderTarget，用来缓存实现纹理
+  cubeRenderTarget = new THREE.WebGLCubeRenderTarget(512);
+}
+
+// 2.创建cubeCamera
+function createCubeCamera() {
+  // 创建立方体相机，每次拍摄到的东西缓存到cubeRenderTarget
+  cubeCamera = new THREE.CubeCamera(0.1, 1000, cubeRenderTarget);
 }
 
 // 加载环境贴图
@@ -62,19 +83,21 @@ function initEnv() {
     texture.format = THREE.RGBAFormat;
     scene.background = texture;
     scene.environment = texture;
+    // 3.设置球的材质为实时缓存的材质
+    sphereMaterial.envMap = cubeRenderTarget.texture;
   });
 }
 
 // 创建球
 function createSphere() {
   const geometry = new THREE.SphereGeometry(1, 32, 32);
-  const material = new THREE.MeshPhysicalMaterial({
+  sphereMaterial = new THREE.MeshPhysicalMaterial({
     color: 0xffffff,
     transparent: true,
     roughness: 0,
     metalness: 1,
   });
-  const sphere = new THREE.Mesh(geometry, material);
+  const sphere = new THREE.Mesh(geometry, sphereMaterial);
   scene.add(sphere);
 }
 
@@ -119,6 +142,9 @@ function createRenderer() {
 // 创建渲染函数
 function render() {
   const elapsed = clock.getElapsedTime();
+
+  // 4.更新cubeCamera
+  cubeCamera.update(renderer, scene);
 
   controls && controls.update();
   renderer.render(scene, camera);

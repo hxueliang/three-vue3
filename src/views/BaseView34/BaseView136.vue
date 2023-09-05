@@ -1,5 +1,7 @@
 <!-- 136.打造元宇宙 -->
 <!-- 渲染大量几何体不一样，材质相同的物体 -->
+<!-- 使用BufferGeometryUtils.mergeGeometries -->
+<!-- 将所有材质相同的物体合并为一个物体 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -11,6 +13,7 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
+import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
@@ -42,13 +45,14 @@ function init() {
   createCamera(0, 5, 10);
   createRenderer();
   createStats();
-  createAxes();
+  // createAxes();
   window.addEventListener('resize', onWindowResize);
 }
 
 // 业务代码
 function createCode() {
   createPlane();
+  createTorusKnot(10000);
 }
 
 // 创建平面
@@ -64,12 +68,53 @@ function createPlane() {
   scene.add(plane);
 }
 
+// 创建count个，形状不同，材质相同，的扭结
+function createTorusKnot(count = 1) {
+  const material = new THREE.MeshBasicMaterial({ color: 0x66ff00 });
+  const spaceSize = 100;
+  const geometries = [];
+  for (let i = 0; i < count; i++) {
+    const geometry = new THREE.TorusKnotGeometry(
+      0.5 + Math.random() * 0.5,
+      0.3,
+      50 + parseInt(Math.random() * 50),
+      16,
+    );
+    // 关键的代码
+    const matrix = new THREE.Matrix4();
+    // 随机旋转角度
+    matrix.makeRotationX(Math.random() * 2 * Math.PI);
+    matrix.makeRotationY(Math.random() * 2 * Math.PI);
+    matrix.makeRotationZ(Math.random() * 2 * Math.PI);
+    // 随机缩放
+    matrix.makeScale(
+      Math.random() * 0.5 + 0.5,
+      Math.random() * 0.5 + 0.5,
+      Math.random() * 0.5 + 0.5,
+    );
+    // 随机位置
+    matrix.makeTranslation(
+      Math.random() * spaceSize - spaceSize / 2,
+      Math.random() * spaceSize - spaceSize / 2,
+      Math.random() * spaceSize - spaceSize / 2,
+    );
+    // 让几体应用不同的变换
+    geometry.applyMatrix4(matrix);
+    // 保存几何体
+    geometries.push(geometry);
+  }
+  // 得到合并后的几何体
+  const mergeGeometry = BufferGeometryUtils.mergeGeometries(geometries);
+  const mesh = new THREE.Mesh(mergeGeometry, material);
+  scene.add(mesh);
+}
+
 // 创建场景
 function createScene() {
   scene = new THREE.Scene();
   // 新增
   scene.background = new THREE.Color(0x88ccee);
-  scene.fog = new THREE.Fog(0x88ccee, 0, 50);
+  // scene.fog = new THREE.Fog(0x88ccee, 0, 50);
 }
 
 // 创建相机
@@ -146,6 +191,10 @@ onMounted(() => {
   appendStats();
   createControls();
   render();
+
+  const { calls, triangles } = renderer.info.render;
+  console.log(calls, triangles);
+  //            2     23793954
 });
 </script>
 

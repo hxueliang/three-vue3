@@ -37,6 +37,8 @@ const textureLoader = new THREE.TextureLoader();
 
 let scene, camera, renderer, controls;
 
+let backCamera, activeCamera;
+
 let stats, capsule, plane, group, worldOctree, emptyMesh;
 
 // 设置重力
@@ -61,6 +63,7 @@ const keyStates = {
   'd': false,
   ' ': false,
   'isDown': false,
+  'v': false,
 };
 
 // 给物体描边
@@ -85,6 +88,7 @@ init();
 function init() {
   createScene();
   createCamera(0, 5, 10);
+  createBackCamera(0, 5, -10);
   createRenderer();
   createStats();
   createAxes();
@@ -185,10 +189,13 @@ function createCapsule() {
   // 将相机作为胶囊的子元素
   camera.position.set(0, 4, -10);
   camera.lookAt(capsule.position);
+  backCamera.position.set(0, 4, 10);
+  backCamera.lookAt(capsule.position);
   // 创建空物体，创建相机的上下方向
   // 胶囊-空物体-相机
   emptyMesh = new THREE.Object3D();
   emptyMesh.add(camera);
+  emptyMesh.add(backCamera);
   capsule.add(emptyMesh);
   // 控制器设置中心为胶囊位置
   controls && (controls.target = capsule.position);
@@ -276,6 +283,10 @@ function updateKeyState(event, isDown) {
   }
   keyStates[event.key] = isDown;
   keyStates.isDown = isDown;
+  // 抬超v键时切换相机视角
+  if (!isDown && event.key === 'v') {
+    activeCamera = activeCamera === camera ? backCamera : camera;
+  }
 }
 
 // 监听鼠标移动事件
@@ -361,7 +372,15 @@ function createScene() {
 function createCamera(x = 0, y = 0, z = 10) {
   camera = new THREE.PerspectiveCamera(70, innerWidth / innerHeight, 0.001, 1000);
   camera.position.set(x, y, z);
+  activeCamera = camera;
   scene.add(camera);
+}
+
+// 创建后背相机
+function createBackCamera(x = 0, y = 0, z = -10) {
+  backCamera = new THREE.PerspectiveCamera(70, innerWidth / innerHeight, 0.001, 1000);
+  backCamera.position.set(x, y, z);
+  scene.add(backCamera);
 }
 
 
@@ -386,7 +405,7 @@ function render() {
   resetPlayer();
 
   controls && controls.update();
-  renderer.render(scene, camera);
+  renderer.render(scene, activeCamera);
   requestAnimationFrame(render);
 };
 

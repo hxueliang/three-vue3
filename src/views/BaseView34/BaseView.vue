@@ -62,6 +62,22 @@ const keyStates = {
   'isDown': false,
 };
 
+// 给物体描边
+class MeshLine {
+  constructor(geometry) {
+    const edges = new THREE.EdgesGeometry(geometry);
+    this.material = new THREE.LineBasicMaterial({
+      color: 0xff00ff,
+      transparent: true,
+      opacity: 1,
+      // depthTest: false // 深度测试，若开启则是边框透明的效果
+    });
+    const line = new THREE.LineSegments(edges, this.material);
+    this.geometry = edges;
+    this.mesh = line;
+  }
+}
+
 init();
 
 // 初始化
@@ -77,6 +93,7 @@ function init() {
 // 业务代码
 function createCode() {
   createPlane();
+  createStaircase();
   createCapsule();
   cerateOctree();
   initKeyEvent();
@@ -93,7 +110,34 @@ function createPlane() {
   });
   plane = new THREE.Mesh(geometry, material);
   plane.receiveShadow = true;
-  plane.rotation.x = -Math.PI / 2;
+  plane.rotation.x = -Math.PI / 2; // + 0.2; // 爬坡测试
+}
+
+// 创建楼梯，通过立方体堆叠实现
+function createStaircase() {
+  let i = 0;
+  for (i = 0; i < 10; i++) { createCube(i, 0); }
+  for (i = 0; i < 10; i++) { createCube(i, 5); }
+
+  const x = 2.5, y = 1, width = 6, height = 0.2, depth = 1;
+  createCube(i, x, y, width, height, depth);
+}
+
+// 创建台阶
+function createCube(i, x = 0, y = 1, width = 1, height = 0.2, depth = 1) {
+  // 因为是地面x轴旋转90度，其子元素yz轴互换方向
+  const geometry = new THREE.BoxGeometry(width, depth, height);
+  const material = new THREE.MeshBasicMaterial({ color: 0xffff00, });
+  const cube = new THREE.Mesh(geometry, material);
+  cube.position.y = -(i * 0.3 + y);
+  cube.position.z = i * 0.2 + 0.2;
+  cube.position.x = x;
+  plane.add(cube);
+
+  const meshLine = new MeshLine(cube.geometry);
+  meshLine.mesh.position.copy(cube.position);
+  plane.add(meshLine.mesh);
+
 }
 
 // 创建一个平面，作为胶囊的身体，便于查看胶囊旋转
@@ -119,7 +163,7 @@ function createCapsule() {
   capsule.position.set(0, (0.35 + 1 + 0.35) / 2, 0);
   // 实现相机跟随胶囊移动
   // 将相机作为胶囊的子元素
-  camera.position.set(0, 2, -5);
+  camera.position.set(0, 4, -10);
   camera.lookAt(capsule.position);
   capsule.add(camera);
   // 控制器设置中心为胶囊位置
@@ -205,8 +249,9 @@ function updateKeyState(event, isDown) {
 }
 
 // 监听鼠标移动事件
-function initMouseMoveEvent() {
+function initMouseMoveEvent(close) {
   window.addEventListener('mousemove', event => {
+    if (close) { return; }
     // 根据鼠标在屏的移动，来旋转胶囊
     const { clientX: mouseX, clientY: mouseY } = event;
     const mouseDeltaX = mouseX - innerWidth / 2;
@@ -218,6 +263,7 @@ function initMouseMoveEvent() {
 // 监听鼠标按下事件
 function initMouseDownEvent() {
   window.addEventListener('mousedown', event => {
+    if (controls) { return; }
     // 锁定鼠标指针
     document.body.requestPointerLock();
   }, false);
@@ -284,7 +330,7 @@ function createCamera(x = 0, y = 0, z = 10) {
 
 // 创建渲染器
 function createRenderer() {
-  renderer = new THREE.WebGLRenderer({ alpha: true });
+  renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(innerWidth, innerHeight);
   // 新增
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -372,6 +418,7 @@ onMounted(() => {
   appendCanvas();
   appendStats();
   createCode();
+  createControls();
   render();
 });
 </script>

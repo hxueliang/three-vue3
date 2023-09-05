@@ -1,4 +1,13 @@
 <!-- 135.打造元宇宙 -->
+<!-- 渲染大量几何体、材质相同的物体 -->
+<!-- 实例化网格（InstancedMesh） -->
+<!-- 
+  一种具有实例化渲染支持的特殊版本的Mesh。
+  你可以使用 InstancedMesh
+  来渲染大量具有相同几何体与材质、但具有不同世界变换的物体。
+  使用 InstancedMesh 将帮助你减少 draw call 的数量，
+  从而提升你应用程序的整体渲染性能。
+-->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -41,13 +50,14 @@ function init() {
   createCamera(0, 5, 10);
   createRenderer();
   createStats();
-  createAxes();
+  // createAxes();
   window.addEventListener('resize', onWindowResize);
 }
 
 // 业务代码
 function createCode() {
   createPlane();
+  createTorusKnot(1000);
 }
 
 // 创建平面
@@ -63,12 +73,63 @@ function createPlane() {
   scene.add(plane);
 }
 
+// 创建count个扭结
+function createTorusKnot(count = 1) {
+  const geometry = new THREE.TorusKnotGeometry(1, 0.3, 100, 16);
+  const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+  const spaceSize = 100;
+  /*
+  // 第一种方法
+  for (let i = 0; i < count; i++) {
+    const torusKnot = new THREE.Mesh(geometry, material);
+    torusKnot.position.set(
+      Math.random() * spaceSize - spaceSize / 2,
+      Math.random() * spaceSize - spaceSize / 2,
+      Math.random() * spaceSize - spaceSize / 2,
+    );
+    scene.add(torusKnot);
+  }
+  // */
+
+  // /* 
+  // 第二种方法
+  const instanceMesh = new THREE.InstancedMesh(geometry, material, count);
+  for (let i = 0; i < count; i++) {
+    // 随机位置
+    const position = new THREE.Vector3(
+      Math.random() * spaceSize - spaceSize / 2,
+      Math.random() * spaceSize - spaceSize / 2,
+      Math.random() * spaceSize - spaceSize / 2,
+    );
+    // 随机旋转
+    const rotation = new THREE.Vector3(
+      Math.random() * Math.PI * 2,
+      Math.random() * Math.PI * 2,
+      Math.random() * Math.PI * 2,
+    );
+    // 旋转需要得到4元素
+    const quaternion = new THREE.Quaternion().setFromEuler(rotation);
+    // 随机缩放
+    const scale = new THREE.Vector3(
+      Math.random() * 0.5 + 0.5,
+      Math.random() * 0.5 + 0.5,
+      Math.random() * 0.5 + 0.5,
+    );
+    // 关键的代码
+    const matrix = new THREE.Matrix4();
+    matrix.compose(position, quaternion, scale);
+    instanceMesh.setMatrixAt(i, matrix);
+  }
+  scene.add(instanceMesh);
+  // */
+}
+
 // 创建场景
 function createScene() {
   scene = new THREE.Scene();
   // 新增
   scene.background = new THREE.Color(0x88ccee);
-  scene.fog = new THREE.Fog(0x88ccee, 0, 50);
+  // scene.fog = new THREE.Fog(0x88ccee, 0, 50);
 }
 
 // 创建相机
@@ -145,6 +206,11 @@ onMounted(() => {
   appendStats();
   createControls();
   render();
+
+  const { calls, triangles } = renderer.info.render;
+  console.log(calls, triangles);
+  // 第一种方法： 165   524802
+  // 第二种方法： 2     3200002
 });
 </script>
 

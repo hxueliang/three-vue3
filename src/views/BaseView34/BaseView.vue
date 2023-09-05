@@ -315,6 +315,35 @@ function keyUpEvent(event) {
   if (event.key === 'v') {
     activeCamera = activeCamera === camera ? backCamera : camera;
   }
+  if (event.key === 't') {
+    toAction('Wave');
+  }
+}
+
+// 执行动画
+function toAction(actionName) {
+  let prevAction = activeAction;
+  activeAction = actions[actionName];
+  if (prevAction !== activeAction) {
+    actionOutIn(prevAction, activeAction);
+    // 动画完成，回到Idle动画
+    mixer.addEventListener('finished', () => {
+      let prevAction = activeAction;
+      activeAction = actions['Idle'];
+      actionOutIn(prevAction, activeAction);
+    });
+  }
+}
+
+// 让上一个动画淡出，新的动画渐入
+function actionOutIn(prevAction, activeAction) {
+  prevAction.fadeOut(0.3); // 在传入的时间间隔内，逐渐将此动作的权重由1降至0
+  activeAction
+    .reset()
+    .setEffectiveTimeScale(1) // 设置时间比例为1，以及停用所有的变形
+    .setEffectiveWeight(1) // 设置权重为1，以及停止所有淡入淡出
+    .fadeIn(0.3) // 在传入的时间间隔内，逐渐将此动作的权重由0升到1
+    .play();
 }
 
 // 监听鼠标移动事件

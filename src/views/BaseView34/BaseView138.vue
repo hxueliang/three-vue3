@@ -24,6 +24,7 @@ import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
+import { Reflector } from "three/examples/jsm/objects/Reflector.js";
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -116,8 +117,12 @@ function createCube() {
 // 创建平面
 function createPlane() {
   const geometry = new THREE.PlaneGeometry(10, 10);
-  const material = new THREE.MeshPhysicalMaterial({ color: 0xffffff });
-  const plane = new THREE.Mesh(geometry, material);
+  // 使用Reflector创建平面
+  const plane = new Reflector(geometry, {
+    textureWidth: 1024,
+    textureHeight: 1024,
+    color: 0xffffff,
+  });
   plane.position.z = -2;
   scene.add(plane);
 }

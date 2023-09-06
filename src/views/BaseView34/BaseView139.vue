@@ -29,11 +29,13 @@ let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
 const container = ref(null);
 
-const gui = new GUI();
+// const gui = new GUI();
 const clock = new THREE.Clock();
 const textureLoader = new THREE.TextureLoader();
 
 let scene, camera, renderer, controls, stats;
+
+let plane;
 
 init();
 
@@ -50,6 +52,7 @@ function init() {
 // 业务代码
 function createCode() {
   createPlane();
+  createCanvas();
 }
 
 // 创建平面
@@ -58,9 +61,49 @@ function createPlane() {
   const material = new THREE.MeshBasicMaterial({
     color: 0xffffff,
     side: THREE.DoubleSide,
+    transparent: true,
+    // blending: THREE.AdditiveBlending,
+    depthWrite: false,
   });
-  const plane = new THREE.Mesh(geometry, material);
+  plane = new THREE.Mesh(geometry, material);
   scene.add(plane);
+}
+
+// 创建画布
+function createCanvas() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080;
+  canvas.height = 1080;
+  canvas.style.position = 'absolute';
+  canvas.style.top = '0';
+  canvas.style.left = '0';
+  canvas.style.zIndex = '1';
+  canvas.style.transformOrigin = 'left top';
+  canvas.style.transform = 'scale(0.1)';
+  const context = canvas.getContext('2d');
+
+  const image = new Image();
+  image.src = './textures/universe/chat.png';
+  image.onload = function () {
+    // canvas绘制图片
+    context.drawImage(image, 0, 0, 1080, 1080);
+    // canvas绘制文字
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.font = 'bold 120px Arial';
+    context.fillStyle = 'rgba(0, 255, 255, 1)';
+    context.fillText('Hello World', canvas.width / 2, canvas.height / 2);
+    // 生成canvas纹理
+    const texture = new THREE.CanvasTexture(canvas);
+    // 使用canvas纹理
+    plane.material.map = texture;
+    // 使用透明度贴图
+    plane.material.alphaMap = textureLoader.load('./textures/universe/chat_alpha.png');
+    // 需要重新编译材质
+    plane.material.needsUpdate = true;
+  };
+
+  document.body.appendChild(canvas);
 }
 
 // 加载环境贴图

@@ -42,6 +42,8 @@ let backCamera, activeCamera;
 
 let stats, capsule, plane, group, worldOctree, emptyMesh;
 
+let positionSound1, positionSound2;
+
 // 机器人物体
 let robot;
 // 动作混合器
@@ -112,6 +114,17 @@ function init() {
 function createCode() {
   createPlane();
   createStaircase();
+
+  // 创建位置类型音乐
+  positionSound1 = createSound('./audio/gnzw.mp3');
+  positionSound2 = createSound('./audio/gyz.mp3');
+  // 创建小球
+  const sphere1 = createShpere(-10, 0, -10, 0xffff00);
+  const sphere2 = createShpere(10, 0, 10, 0x0000ff);
+  // 给小球添加音乐
+  sphere1.add(positionSound1);
+  sphere2.add(positionSound2);
+
   createLod();
   createCapsule();
   createRobot();
@@ -131,6 +144,38 @@ function createPlane() {
   plane = new THREE.Mesh(geometry, material);
   plane.receiveShadow = true;
   plane.rotation.x = -Math.PI / 2; // + 0.2; // 爬坡测试
+}
+
+// 创建小球，用来设置声音源
+function createShpere(x = 0, y = 0, z = 0, color = 0xff0000) {
+  const geometry = new THREE.SphereGeometry(1, 32, 16);
+  const material = new THREE.MeshBasicMaterial({
+    color,
+    side: THREE.DoubleSide,
+  });
+  const sphere = new THREE.Mesh(geometry, material);
+  sphere.position.set(x, y, z);
+  scene.add(sphere);
+  return sphere;
+};
+
+// 创建音乐
+function createSound(url) {
+  // 创建一个虚拟的listener，表示在场景中所有相关的音效，他是音频实体构造函数的必须参数
+  const listener = new THREE.AudioListener();
+  // 大多数情况下，listener对象是camera的子对象，Camera的3D变换表示了listener的3D变换
+  camera.add(listener);
+
+  // 创建一个位置相关的音频对象
+  const positionSound = new THREE.PositionalAudio(listener);
+  // 创建音频加载器
+  const audioLoader = new THREE.AudioLoader();
+  audioLoader.load(url, (buffer) => {
+    positionSound.setBuffer(buffer);
+    positionSound.setRefDistance(0.5);
+  });
+
+  return positionSound;
 }
 
 // 创建楼梯，通过立方体堆叠实现
@@ -381,6 +426,9 @@ function initMouseMoveEvent(close) {
 // 监听鼠标按下事件
 function initMouseDownEvent() {
   window.addEventListener('mousedown', event => {
+    // 让音乐播放
+    positionSound1.play();
+    positionSound2.play();
     if (controls) { return; }
     // 锁定鼠标指针
     document.body.requestPointerLock();

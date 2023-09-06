@@ -24,6 +24,7 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 import { Reflector } from "three/examples/jsm/objects/Reflector.js";
+import { CanvasTexture } from 'three';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -36,6 +37,8 @@ const textureLoader = new THREE.TextureLoader();
 let scene, camera, renderer, controls, stats;
 
 let canvas, context, video;
+
+let plane, canvasTexture;
 
 init();
 
@@ -80,20 +83,45 @@ function createVideo() {
   video.play();
 }
 
+// 创建canvas纹理
+function createTexture() {
+  canvasTexture = new THREE.CanvasTexture(canvas);
+}
+
 // 创建平面
 function createPlane() {
   const geometry = new THREE.PlaneGeometry(1, 1, 1, 1);
 
+  createTexture();
   const material = new THREE.MeshBasicMaterial({
     color: 0xffffff,
     side: THREE.DoubleSide,
+    // 使用canvas纹理
+    map: canvasTexture,
+    alphaMap: canvasTexture,
     transparent: true,
     blending: THREE.AdditiveBlending,
     depthWrite: false,
   });
 
-  const plane = new THREE.Mesh(geometry, material);
+  plane = new THREE.Mesh(geometry, material);
   scene.add(plane);
+}
+
+// 绘制视频与文字
+function drawVideoText() {
+  // canvas绘制视频
+  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  // canvas绘制文字
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.font = 'bold 120px Arial';
+  context.fillStyle = 'rgba(0, 255, 255, 1)';
+  context.fillText('Hello World', canvas.width / 2, canvas.height / 2);
+  // 下次使用纹理时触发一次更新
+  canvasTexture.needsUpdate = true;
+  // 需要重新编译材质，些处不更新材质，只更新纹理，也能达到效果
+  plane.material.needsUpdate = true;
 }
 
 // 加载环境贴图
@@ -137,6 +165,8 @@ function createRenderer() {
 // 创建渲染函数
 function render() {
   const elapsed = clock.getElapsedTime();
+
+  drawVideoText();
 
   stats.update();
   controls && controls.update();

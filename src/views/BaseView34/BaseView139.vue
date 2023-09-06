@@ -83,7 +83,7 @@ function createCanvas() {
   const context = canvas.getContext('2d');
 
   const image = new Image();
-  image.src = './textures/universe/chat.png';
+  image.src = './textures/metaverse/chat.png';
   image.onload = function () {
     // canvas绘制图片
     context.drawImage(image, 0, 0, 1080, 1080);
@@ -98,7 +98,7 @@ function createCanvas() {
     // 使用canvas纹理
     plane.material.map = texture;
     // 使用透明度贴图
-    plane.material.alphaMap = textureLoader.load('./textures/universe/chat_alpha.png');
+    plane.material.alphaMap = textureLoader.load('./textures/metaverse/chat_alpha.png');
     // 需要重新编译材质
     plane.material.needsUpdate = true;
   };

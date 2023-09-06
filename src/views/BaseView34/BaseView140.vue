@@ -40,7 +40,7 @@ init();
 // 初始化
 function init() {
   createScene();
-  createCamera(0, 5, 10);
+  createCamera(0, 0, 1);
   createRenderer();
   createStats();
   createAxes();
@@ -54,10 +54,29 @@ function createCode() {
 
 // 创建平面
 function createPlane() {
-  const geometry = new THREE.PlaneGeometry(2, 2, 1, 1);
+  const geometry = new THREE.PlaneGeometry(1, 1, 1, 1);
+
+  // 加载视频
+  const video = document.createElement('video');
+  video.src = './video/keji1.mp4';
+  // 静音，设置静音才能自动播放
+  video.muted = true;
+  video.loop = true;
+  video.play();
+  // 创建视频纹理
+  const texture = new THREE.VideoTexture(video);
+
   const material = new THREE.MeshBasicMaterial({
     color: 0xffffff,
+    side: THREE.DoubleSide,
+    // 使用视频纹理
+    map: texture,
+    alphaMap: texture,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
   });
+
   const plane = new THREE.Mesh(geometry, material);
   scene.add(plane);
 }

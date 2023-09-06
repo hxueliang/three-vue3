@@ -19,7 +19,7 @@ import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
 // 导入gsap
 import gsap from 'gsap';
 
-import Clouds from './Clouds';
+import { Clouds, CloudsPlus } from './Clouds';
 
 export default class ThreePlus {
   constructor(selector) {
@@ -39,7 +39,8 @@ export default class ThreePlus {
     this.initControl();
     this.initEffect();
     this.render();
-    this.addAxis();
+    // this.addAxis();
+    console.log(this.renderer.info);
   }
 
   initScene() {
@@ -191,6 +192,11 @@ export default class ThreePlus {
 
   addClouds() {
     const clouds = new Clouds();
+    this.scene.add(clouds.mesh);
+  }
+
+  addCloudsPlus() {
+    const clouds = new CloudsPlus();
     this.scene.add(clouds.mesh);
   }
 }

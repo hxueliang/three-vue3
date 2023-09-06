@@ -19,6 +19,8 @@ import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
 // 导入gsap
 import gsap from 'gsap';
 
+import Clouds from './Clouds';
+
 export default class ThreePlus {
   constructor(selector) {
     this.mixers = [];
@@ -51,7 +53,7 @@ export default class ThreePlus {
       0.000001,
       10000
     );
-    this.camera.position.set(0, 2, 10);
+    this.camera.position.set(0, 10, 50);
     this.camera.aspect = this.width / this.height;
     this.camera.updateProjectionMatrix();
   }
@@ -185,5 +187,10 @@ export default class ThreePlus {
   addAxis() {
     let axis = new THREE.AxesHelper(5);
     this.scene.add(axis);
+  }
+
+  addClouds() {
+    const clouds = new Clouds();
+    this.scene.add(clouds.mesh);
   }
 }

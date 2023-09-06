@@ -25,6 +25,8 @@ onMounted(() => {
 onMounted(() => {
   let threePlus = new ThreePlus(".canvas-container");
   threePlus.setBg("./hdr/sky11.hdr");
+
+  threePlus.addClouds();
 });
 
 </script>

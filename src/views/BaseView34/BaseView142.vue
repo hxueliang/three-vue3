@@ -28,10 +28,13 @@ onMounted(async () => {
 
   // threePlus.addClouds();
   threePlus.addCloudsPlus();
+
   threePlus.addOcean();
 
   const metaScene = await threePlus.gltfLoader('./model/metaverse/metaScene.glb');
   threePlus.scene.add(metaScene.scene);
+
+  threePlus.setLight();
 });
 
 </script>

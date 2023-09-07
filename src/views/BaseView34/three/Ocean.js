@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { Water } from 'three/examples/jsm/objects/Water2';
 
 export default class Ocean {
-  constructor(radius = 100) {
+  constructor(radius = 1000) {
     const geometry = new THREE.CircleGeometry(radius);
     const material = {
       color: 0x08dbea,
@@ -17,10 +17,10 @@ export default class Ocean {
       `gl_FragColor = vec4( color, 1.0 ) * mix( refractColor, reflectColor, reflectance );`,
       `gl_FragColor = vec4( color, 1.0 ) * mix( refractColor, reflectColor, reflectance );
 
-      // 半经是-100~100,
-      // 所以vToEye.z也是-100~100
+      // 半经是-1000~1000,
+      // 所以vToEye.z也是-1000~1000
       // 得到0~1的值
-      float vToEyeZ = vToEye.z * 0.005 + 0.5;
+      float vToEyeZ = vToEye.z * 0.0005 + 0.5;
       gl_FragColor =  mix(gl_FragColor, vec4(0.05, 0.3, 0.7, 1.0), vToEyeZ);
       `
     );

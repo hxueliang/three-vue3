@@ -22,13 +22,16 @@ onMounted(() => {
   window.addEventListener("resize", resizeFn);
 });
 
-onMounted(() => {
+onMounted(async () => {
   let threePlus = new ThreePlus(".canvas-container");
   threePlus.setBg("./hdr/sky11.hdr");
 
   // threePlus.addClouds();
   threePlus.addCloudsPlus();
   threePlus.addOcean();
+
+  const metaScene = await threePlus.gltfLoader('./model/metaverse/metaScene.glb');
+  threePlus.scene.add(metaScene.scene);
 });
 
 </script>

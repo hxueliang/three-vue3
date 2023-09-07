@@ -74,7 +74,7 @@ export class Clouds {
 
 // 第二种实现方案：calls为4(3个粒子群和1个背景)
 export class CloudsPlus {
-  constructor(height = 10, number = 400, size = 12, scale = 10, autoRotation = true) {
+  constructor(height = 10, number = 400, size = 120, scale = 100, autoRotation = true) {
     this.height = height;
     this.number = number;
     this.size = size;
@@ -103,7 +103,7 @@ export class CloudsPlus {
     const vertices = [];
     for (let i = 0; i < this.number; i++) {
       const randomX = (Math.random() - 0.5) * 2 * this.scale;
-      const randomY = Math.random() * this.height / 2 + this.scale;
+      const randomY = Math.random() * this.height / 2 + this.height;
       const randomZ = (Math.random() - 0.5) * 2 * this.scale;
       vertices.push(randomX, randomY, randomZ);
     }

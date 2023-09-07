@@ -13,6 +13,7 @@ export default class Ocean {
     };
     this.mesh = new Water(geometry, material);
     this.mesh.rotation.x = -Math.PI / 2;
+    this.mesh.position.y = -4.04;
     this.mesh.material.fragmentShader = this.mesh.material.fragmentShader.replace(
       `gl_FragColor = vec4( color, 1.0 ) * mix( refractColor, reflectColor, reflectance );`,
       `gl_FragColor = vec4( color, 1.0 ) * mix( refractColor, reflectColor, reflectance );

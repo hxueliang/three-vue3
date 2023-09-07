@@ -27,12 +27,39 @@ onMounted(async () => {
   threePlus.setBg("./hdr/sky11.hdr");
 
   // threePlus.addClouds();
-  threePlus.addCloudsPlus();
+  // threePlus.addCloudsPlus();
 
-  threePlus.addOcean();
+  // threePlus.addOcean();
 
-  const metaScene = await threePlus.gltfLoader('./model/metaverse/metaScene.glb');
-  threePlus.scene.add(metaScene.scene);
+  const meta = await threePlus.gltfLoader('./model/metaverse/metaScene.glb');
+  const metaScene = meta.scene;
+
+  let planeGroup = new THREE.Group();
+  planeGroup.position.copy(metaScene.children[0].position);
+  metaScene.add(planeGroup);
+
+  metaScene.traverse((child) => {
+    if (!child.isMesh || !child.material) { return; }
+    if (child.material.name.indexOf("KB3D_DLA_ConcreteRiverRock") != -1) {
+      // console.log("地面", child);
+      // child.material.color.set(0x00ffff);
+      // child.material.map = null;
+      planeGroup.add(child.clone());
+      child.visible = false;
+    }
+    if (child.material.name.indexOf("KB3D_DLA_ConcreteScreedTan") != -1) {
+      // console.log("墙", child);
+      planeGroup.add(child.clone());
+      child.visible = false;
+    }
+    if (child.material.name.indexOf("KB3D_DLA_ConcretePittedGrayLight") != -1) {
+      // console.log("光墙", child);
+      planeGroup.add(child.clone());
+      child.visible = false;
+    }
+  });
+  threePlus.addPhysics(planeGroup);
+  threePlus.scene.add(metaScene);
 
   threePlus.setLight();
 });

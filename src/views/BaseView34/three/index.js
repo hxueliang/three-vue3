@@ -21,6 +21,7 @@ import gsap from 'gsap';
 
 import { Clouds, CloudsPlus } from './Clouds';
 import Ocean from './Ocean';
+import Physics from './Physics';
 
 export default class ThreePlus {
   constructor(selector) {
@@ -82,7 +83,7 @@ export default class ThreePlus {
     for (let i = 0; i < this.mixers.length; i++) {
       this.mixers[i].update(deltaTime * 0.2);
     }
-    this.control && this.control.update();
+    this.physics && this.physics.update(deltaTime);
     this.effectComposer.render();
     requestAnimationFrame(this.render.bind(this));
   }
@@ -204,5 +205,10 @@ export default class ThreePlus {
   addOcean() {
     const ocean = new Ocean();
     this.scene.add(ocean.mesh);
+  }
+
+  addPhysics(planeGroup) {
+    this.physics = new Physics(planeGroup, this.scene, this.camera);
+    // this.scene.add(physics);
   }
 }

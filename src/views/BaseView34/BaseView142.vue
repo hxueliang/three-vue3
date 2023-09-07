@@ -28,6 +28,7 @@ onMounted(() => {
 
   // threePlus.addClouds();
   threePlus.addCloudsPlus();
+  threePlus.addOcean();
 });
 
 </script>

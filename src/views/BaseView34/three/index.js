@@ -23,6 +23,7 @@ import { Clouds, CloudsPlus } from './Clouds';
 import Ocean from './Ocean';
 import Physics from './Physics';
 import VideoPlane from './VideoPlane';
+import LightCircle from './LightCircle';
 
 export default class ThreePlus {
   constructor(selector) {
@@ -217,5 +218,9 @@ export default class ThreePlus {
     const videoPlane = new VideoPlane(url, size, position, rotation);
     this.scene.add(videoPlane.mesh);
     return videoPlane;
+  }
+
+  addVLightCircle(position, scale) {
+    new LightCircle(this.scene, position, scale);
   }
 }

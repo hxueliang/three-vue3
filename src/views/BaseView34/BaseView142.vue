@@ -24,7 +24,7 @@ onMounted(() => {
 
 onMounted(async () => {
   let threePlus = new ThreePlus(".canvas-container");
-  // threePlus.setBg("./hdr/sky11.hdr");
+  threePlus.setBg("./hdr/sky11.hdr");
 
   // threePlus.addClouds();
   // threePlus.addCloudsPlus();
@@ -74,6 +74,8 @@ onMounted(async () => {
     new THREE.Vector3(-6, 0, 15),
     new THREE.Vector3(-Math.PI / 2, 0, 0),
   );
+
+  threePlus.addVLightCircle(new THREE.Vector3(-10, 0, 15), 1.5);
 
   threePlus.setLight();
 });

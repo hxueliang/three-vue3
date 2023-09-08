@@ -24,7 +24,7 @@ onMounted(() => {
 
 onMounted(async () => {
   let threePlus = new ThreePlus(".canvas-container");
-  threePlus.setBg("./hdr/sky11.hdr");
+  // threePlus.setBg("./hdr/sky11.hdr");
 
   // threePlus.addClouds();
   // threePlus.addCloudsPlus();
@@ -60,6 +60,20 @@ onMounted(async () => {
   });
   threePlus.addPhysics(planeGroup);
   threePlus.scene.add(metaScene);
+
+  threePlus.addVideoPlane(
+    './video/keji1.mp4',
+    new THREE.Vector2(2, 2),
+    new THREE.Vector3(5, 2, 0),
+    new THREE.Vector3(0, -Math.PI / 2, 0),
+  );
+
+  threePlus.addVideoPlane(
+    './video/opticalArray.mp4',
+    new THREE.Vector2(2, 2),
+    new THREE.Vector3(-6, 0, 15),
+    new THREE.Vector3(-Math.PI / 2, 0, 0),
+  );
 
   threePlus.setLight();
 });

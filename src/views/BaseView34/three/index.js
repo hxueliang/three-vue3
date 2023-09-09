@@ -26,12 +26,14 @@ import VideoPlane from './VideoPlane';
 import LightCircle from './LightCircle';
 import TextVideo from './TextVideo';
 import CanvasPlane from './CanvasPlane';
+import FireSprite from './FireSprite';
 
 export default class ThreePlus {
   constructor(selector) {
     this.mixers = [];
     this.actions = [];
     this.textVideoArrays = [];
+    this.updateMeshArr = [];
     this.clock = new THREE.Clock();
     this.domElement = document.querySelector(selector);
     this.width = this.domElement.clientWidth;
@@ -90,6 +92,7 @@ export default class ThreePlus {
     }
     this.physics && this.physics.update(deltaTime);
     this.textVideoArrays.forEach(item => item.update(deltaTime));
+    this.updateMeshArr.forEach(item => item.update(deltaTime));
     this.effectComposer.render();
     requestAnimationFrame(this.render.bind(this));
   }
@@ -238,5 +241,12 @@ export default class ThreePlus {
   addCanvasPlane(text, position, euler) {
     let canvasPlane = new CanvasPlane(this.scene, text, position, euler);
     return canvasPlane;
+  }
+
+  addFireSprite(position, scale) {
+    const fireSprite = new FireSprite(position, scale);
+    this.scene.add(fireSprite.mesh);
+    this.updateMeshArr.push(fireSprite);
+    return fireSprite;
   }
 }

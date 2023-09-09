@@ -123,6 +123,11 @@ onMounted(async () => {
       lightCircle.mesh.visible = true;
     }
   );
+
+  // 添加火焰
+  threePlus.addFireSprite(
+    new THREE.Vector3(-6.3, 2.4, 25.5)
+  );
 });
 
 </script>

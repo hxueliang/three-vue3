@@ -25,6 +25,7 @@ import Physics from './Physics';
 import VideoPlane from './VideoPlane';
 import LightCircle from './LightCircle';
 import TextVideo from './TextVideo';
+import CanvasPlane from './CanvasPlane';
 
 export default class ThreePlus {
   constructor(selector) {
@@ -232,5 +233,10 @@ export default class ThreePlus {
     let textVideo = new TextVideo(this.scene, url, position, euler);
     this.textVideoArrays.push(textVideo);
     return textVideo;
+  }
+
+  addCanvasPlane(text, position, euler) {
+    let canvasPlane = new CanvasPlane(this.scene, text, position, euler);
+    return canvasPlane;
   }
 }

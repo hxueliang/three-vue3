@@ -5,7 +5,7 @@ export default class VideoPlane {
     url,
     size = new THREE.Vector2(1, 1),
     position = new THREE.Vector3(0, 0, 0),
-    rotation = new THREE.Vector3(0, 0, 0),
+    rotation = new THREE.Euler(0, 0, 0),
   ) {
     const geometry = new THREE.PlaneGeometry(size.x, size.y, 1, 1);
 
@@ -32,6 +32,6 @@ export default class VideoPlane {
 
     this.mesh = new THREE.Mesh(geometry, material);
     this.mesh.position.copy(position);
-    this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
+    this.mesh.rotation.copy(rotation);
   }
 }

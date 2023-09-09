@@ -68,11 +68,28 @@ onMounted(async () => {
     new THREE.Vector3(0, -Math.PI / 2, 0),
   );
 
-  threePlus.addVideoPlane(
+  const videoPlanePosition = new THREE.Vector3(-6, 0, 15);
+  const videoPlane = threePlus.addVideoPlane(
     './video/opticalArray.mp4',
     new THREE.Vector2(2, 2),
-    new THREE.Vector3(-6, 0, 15),
-    new THREE.Vector3(-Math.PI / 2, 0, 0),
+    videoPlanePosition,
+    new THREE.Euler(-Math.PI / 2, 0, 0),
+  );
+  threePlus.physics.onPosition(
+    videoPlanePosition,
+    () => {
+      console.log("触发进入光圈");
+      videoPlane.mesh.visible = false;
+      threePlus.addCanvasPlane(
+        "恭喜到达指定位置",
+        new THREE.Vector3(-6, 1.5, 20),
+        new THREE.Euler(0, Math.PI, 0)
+      );
+    },
+    () => {
+      console.log("触发离开光圈");
+      lightCircle.mesh.visible = true;
+    }
   );
 
   let lightCirclePosition = new THREE.Vector3(-10, 0, 15);
@@ -83,12 +100,10 @@ onMounted(async () => {
     () => {
       console.log("触发进入光圈");
       lightCircle.mesh.visible = false;
-      let canvasPosition = new THREE.Vector3(-6, 1.5, 20);
-      let canvasRotation = new THREE.Euler(0, Math.PI, 0);
       threePlus.addTextVideo(
         "恭喜到达指定位置",
-        canvasPosition,
-        canvasRotation
+        new THREE.Vector3(-10, 1.5, 20),
+        new THREE.Euler(0, Math.PI, 0)
       );
     },
     () => {

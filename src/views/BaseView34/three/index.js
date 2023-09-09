@@ -24,11 +24,13 @@ import Ocean from './Ocean';
 import Physics from './Physics';
 import VideoPlane from './VideoPlane';
 import LightCircle from './LightCircle';
+import TextVideo from './TextVideo';
 
 export default class ThreePlus {
   constructor(selector) {
     this.mixers = [];
     this.actions = [];
+    this.textVideoArrays = [];
     this.clock = new THREE.Clock();
     this.domElement = document.querySelector(selector);
     this.width = this.domElement.clientWidth;
@@ -44,7 +46,7 @@ export default class ThreePlus {
     this.initEffect();
     this.render();
     this.addAxis();
-    console.log(this.renderer.info);
+    // console.log(this.renderer.info);
   }
 
   initScene() {
@@ -86,6 +88,7 @@ export default class ThreePlus {
       this.mixers[i].update(deltaTime * 0.2);
     }
     this.physics && this.physics.update(deltaTime);
+    this.textVideoArrays.forEach(item => item.update(deltaTime));
     this.effectComposer.render();
     requestAnimationFrame(this.render.bind(this));
   }
@@ -211,7 +214,7 @@ export default class ThreePlus {
 
   addPhysics(planeGroup) {
     this.physics = new Physics(planeGroup, this.scene, this.camera);
-    // this.scene.add(physics);
+    return this.physics;
   }
 
   addVideoPlane(url, size, position, rotation) {
@@ -220,7 +223,14 @@ export default class ThreePlus {
     return videoPlane;
   }
 
-  addVLightCircle(position, scale) {
-    new LightCircle(this.scene, position, scale);
+  addLightCircle(position, scale) {
+    const lightCircle = new LightCircle(this.scene, position, scale);
+    return lightCircle;
+  }
+
+  addTextVideo(url, position, euler) {
+    let textVideo = new TextVideo(this.scene, url, position, euler);
+    this.textVideoArrays.push(textVideo);
+    return textVideo;
   }
 }

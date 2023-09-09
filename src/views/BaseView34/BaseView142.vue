@@ -24,7 +24,7 @@ onMounted(() => {
 
 onMounted(async () => {
   let threePlus = new ThreePlus(".canvas-container");
-  threePlus.setBg("./hdr/sky11.hdr");
+  // threePlus.setBg("./hdr/sky11.hdr");
 
   // threePlus.addClouds();
   // threePlus.addCloudsPlus();
@@ -75,7 +75,27 @@ onMounted(async () => {
     new THREE.Vector3(-Math.PI / 2, 0, 0),
   );
 
-  threePlus.addVLightCircle(new THREE.Vector3(-10, 0, 15), 1.5);
+  let lightCirclePosition = new THREE.Vector3(-10, 0, 15);
+  let lightCircle = threePlus.addLightCircle(lightCirclePosition, 1.5);
+  // 监听是否进入光阵
+  threePlus.physics.onPosition(
+    lightCirclePosition,
+    () => {
+      console.log("触发进入光圈");
+      lightCircle.mesh.visible = false;
+      let canvasPosition = new THREE.Vector3(-6, 1.5, 20);
+      let canvasRotation = new THREE.Euler(0, Math.PI, 0);
+      threePlus.addTextVideo(
+        "恭喜到达指定位置",
+        canvasPosition,
+        canvasRotation
+      );
+    },
+    () => {
+      console.log("触发离开光圈");
+      lightCircle.mesh.visible = true;
+    }
+  );
 
   threePlus.setLight();
 });

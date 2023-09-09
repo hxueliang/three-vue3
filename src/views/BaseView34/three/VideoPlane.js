@@ -33,6 +33,5 @@ export default class VideoPlane {
     this.mesh = new THREE.Mesh(geometry, material);
     this.mesh.position.copy(position);
     this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
-    console.log(this.mesh);
   }
 }

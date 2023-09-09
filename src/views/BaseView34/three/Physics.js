@@ -49,6 +49,8 @@ export default class Physics {
       new THREE.Vector3(0, 1.35, 0),
       0.35
     );
+    // 
+    this.eventPositionList = [];
 
     this.createBackCamera(0, 5, -10);
 
@@ -99,7 +101,6 @@ export default class Physics {
   // 创建机器人
   createRobot() {
     gltfLoader.load('./model/metaverse/robotExpressive.glb', gltf => {
-      console.log(gltf);
       const { animations, scene: robotScene } = gltf;
       this.robot = robotScene;
       this.robot.scale.set(0.5, 0.5, 0.5);
@@ -120,8 +121,6 @@ export default class Physics {
       });
       this.activeAction = this.actions['Idle'];
       this.activeAction.play();
-      console.log(this.actions);
-
     });
   }
 
@@ -324,5 +323,33 @@ export default class Physics {
     this.updatePlayer(time);
     this.resetPlayer();
     this.mixer && this.mixer.update(time);
+    this.emitPositionEvent();
+  }
+
+  emitPositionEvent() {
+    this.eventPositionList.forEach((item, i) => {
+      // 计算胶囊距离某个点的距离，是否触发事件
+      const distanceToSquared = this.capsule.position.distanceToSquared(item.position);
+      if (distanceToSquared < item.radius * item.radius && item.isInner == false) {
+        item.isInner = true;
+        item.callback && item.callback(item);
+      }
+
+      if (distanceToSquared >= item.radius * item.radius && item.isInner == true) {
+        item.isInner = false;
+        item.outCallback && item.outCallback(item);
+      }
+    });
+  }
+
+  onPosition(position, callback, outCallback, radius = 2) {
+    position = position.clone();
+    this.eventPositionList.push({
+      position,
+      callback,
+      outCallback,
+      isInner: false,
+      radius,
+    });
   }
 }

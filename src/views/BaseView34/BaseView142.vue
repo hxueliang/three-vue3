@@ -24,20 +24,29 @@ onMounted(() => {
 
 onMounted(async () => {
   let threePlus = new ThreePlus(".canvas-container");
+
+  // 添加环境贴图
   // threePlus.setBg("./hdr/sky11.hdr");
 
+  // 添加灯光
+  threePlus.setLight();
+
+  // 添加云朵
   // threePlus.addClouds();
   // threePlus.addCloudsPlus();
 
+  // 添加海洋
   // threePlus.addOcean();
 
+  // 添加场景模型
   const meta = await threePlus.gltfLoader('./model/metaverse/metaScene.glb');
   const metaScene = meta.scene;
 
+  // 创建地面组
   let planeGroup = new THREE.Group();
   planeGroup.position.copy(metaScene.children[0].position);
   metaScene.add(planeGroup);
-
+  // 循环场景模型，把只指的物体加入地面组
   metaScene.traverse((child) => {
     if (!child.isMesh || !child.material) { return; }
     if (child.material.name.indexOf("KB3D_DLA_ConcreteRiverRock") != -1) {
@@ -61,6 +70,7 @@ onMounted(async () => {
   threePlus.addPhysics(planeGroup);
   threePlus.scene.add(metaScene);
 
+  // 添加视频平面
   threePlus.addVideoPlane(
     './video/keji1.mp4',
     new THREE.Vector2(2, 2),
@@ -68,6 +78,7 @@ onMounted(async () => {
     new THREE.Vector3(0, -Math.PI / 2, 0),
   );
 
+  // 添加光阵，进入光阵触发事件
   const videoPlanePosition = new THREE.Vector3(-6, 0, 15);
   const videoPlane = threePlus.addVideoPlane(
     './video/opticalArray.mp4',
@@ -92,6 +103,7 @@ onMounted(async () => {
     }
   );
 
+  // 添加光阵2，进入光阵触发事件
   let lightCirclePosition = new THREE.Vector3(-10, 0, 15);
   let lightCircle = threePlus.addLightCircle(lightCirclePosition, 1.5);
   // 监听是否进入光阵
@@ -111,8 +123,6 @@ onMounted(async () => {
       lightCircle.mesh.visible = true;
     }
   );
-
-  threePlus.setLight();
 });
 
 </script>

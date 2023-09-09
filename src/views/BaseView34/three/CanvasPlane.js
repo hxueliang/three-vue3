@@ -10,8 +10,8 @@ export default class CanvasPlane {
 
     const canvas = document.createElement('canvas');
     this.canvas = canvas;
-    canvas.width = 1080;
-    canvas.height = 1080;
+    canvas.width = 1024;
+    canvas.height = 1024;
     canvas.style.position = 'absolute';
     canvas.style.top = '0';
     canvas.style.left = '0';
@@ -23,7 +23,7 @@ export default class CanvasPlane {
     const image = new Image();
     image.src = './textures/metaverse/frame2.png';
     image.onload = () => {
-      context.drawImage(image, 0, 0, 1080, 1080);
+      context.drawImage(image, 0, 0, 1024, 1024);
       context.textAlign = 'center';
       context.textBaseline = 'middle';
       context.font = 'bold 120px Arial';

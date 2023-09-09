@@ -11,8 +11,8 @@ export default class TextVideo {
     // 创建canvas对象
     const canvas = document.createElement('canvas');
     this.canvas = canvas;
-    canvas.width = 1080;
-    canvas.height = 1080;
+    canvas.width = 1024;
+    canvas.height = 1024;
     canvas.style.position = 'absolute';
     canvas.style.top = '0';
     canvas.style.left = '0';

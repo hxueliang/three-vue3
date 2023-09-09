@@ -30,6 +30,7 @@ export default class FireSprite {
         iTime: { value: 0 },
         iResolution: { value: new THREE.Vector2(1000, 1000) },
         iMouse: { value: new THREE.Vector2(0, 0) },
+        uFrequency: { value: 0 },
       },
       // 上面复制的字符串，删除修改一些内容，给到vertexShader
       vertexShader: `
@@ -84,9 +85,16 @@ export default class FireSprite {
       sound.play();
     });
     this.mesh.add(sound);
+
+    // 分析音频
+    this.analyser = new THREE.AudioAnalyser(sound, 32);
+
   }
 
   update(time) {
     this.material.uniforms.iTime.value += time;
+    const frequency = this.analyser.getAverageFrequency();
+    // console.log(frequency);
+    this.material.uniforms.uFrequency.value = frequency;
   }
 }

@@ -3,6 +3,7 @@
 uniform float iTime;
 uniform vec3 iResolution;
 uniform vec2 iMouse;
+uniform float uFrequency;
 
 varying vec2 vUv;
 
@@ -150,7 +151,7 @@ void main() {
 	float ypart = vUv.y*1000.0/resolution.y;
 	//
 	float clip = 210.0;
-	float ypartClip = vUv.y*1000.0/clip*0.15;
+	float ypartClip = vUv.y*1000.0/clip*0.4*(1.0-uFrequency/100.0);
 	float ypartClippedFalloff = clamp(2.0-ypartClip,0.0,1.0);
 	float ypartClipped = min(ypartClip,1.0);
 	float ypartClippedn = 1.0-ypartClipped;

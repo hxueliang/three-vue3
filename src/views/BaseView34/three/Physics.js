@@ -82,7 +82,7 @@ export default class Physics {
     this.capsule.position.set(0, (0.35 + 1 + 0.35) / 2, 0);
     // 实现相机跟随胶囊移动
     // 将相机作为胶囊的子元素
-    this.camera.position.set(0, 4, -10);
+    this.camera.position.set(0, 4, -10); // 顶点着色器z轴也要按这里的z值调整
     this.camera.lookAt(this.capsule.position);
     this.backCamera.position.set(0, 4, 10);
     this.backCamera.lookAt(this.capsule.position);

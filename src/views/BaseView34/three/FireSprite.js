@@ -49,6 +49,7 @@ export default class FireSprite {
         rotatedPosition.y = sin( rotation ) * alignedPosition.x + cos( rotation ) * alignedPosition.y;
         mvPosition.xy += rotatedPosition;
         gl_Position = projectionMatrix * mvPosition;
+        // gl_Position.z = - 10.0; // 配置合Physics.js的createCapsule的相机位置调整
       }
       `,
       fragmentShader,

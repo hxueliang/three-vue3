@@ -78,6 +78,7 @@ onMounted(async () => {
     new THREE.Vector3(0, -Math.PI / 2, 0),
   );
 
+  let fireSprite = null;
   // 添加光阵，进入光阵触发事件
   const videoPlanePosition = new THREE.Vector3(-6, 0, 15);
   const videoPlane = threePlus.addVideoPlane(
@@ -96,6 +97,10 @@ onMounted(async () => {
         new THREE.Vector3(-6, 1.5, 20),
         new THREE.Euler(0, Math.PI, 0)
       );
+      // 添加火焰
+      if (!fireSprite) {
+        fireSprite = threePlus.addFireSprite(new THREE.Vector3(-6.3, 2.4, 25.5));
+      }
     },
     () => {
       console.log("触发离开光圈");
@@ -124,10 +129,6 @@ onMounted(async () => {
     }
   );
 
-  // 添加火焰
-  threePlus.addFireSprite(
-    new THREE.Vector3(-6.3, 2.4, 25.5)
-  );
 });
 
 </script>

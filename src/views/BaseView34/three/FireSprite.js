@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import fragmentShader from './shader/fireSprite/fragment.glsl';
 
 export default class FireSprite {
-  constructor(position = new THREE.Vector3(0, 0, 0), scale = 1) {
+  constructor(camera, position = new THREE.Vector3(0, 0, 0), scale = 1) {
+    this.camera = camera;
     /*
     // 浏览复制字符串，给ShaderMaterial使用
     const material = new THREE.SpriteMaterial({
@@ -64,6 +65,25 @@ export default class FireSprite {
     this.mesh = new THREE.Sprite(material);
     this.mesh.position.copy(position);
     this.mesh.scale.set(scale, scale, scale);
+
+    this.addSound();
+  }
+
+  addSound() {
+    const listener = new THREE.AudioListener();
+    this.camera.add(listener);
+    const sound = new THREE.PositionalAudio(listener);
+    const audioLoader = new THREE.AudioLoader();
+
+    audioLoader.load('./audio/gnzw.mp3', buffer => {
+      console.log(buffer);
+      sound.setBuffer(buffer);
+      sound.setRefDistance(3);
+      sound.setLoop(true);
+      sound.setVolume(1);
+      sound.play();
+    });
+    this.mesh.add(sound);
   }
 
   update(time) {

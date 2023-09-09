@@ -244,7 +244,7 @@ export default class ThreePlus {
   }
 
   addFireSprite(position, scale) {
-    const fireSprite = new FireSprite(position, scale);
+    const fireSprite = new FireSprite(this.camera, position, scale);
     this.scene.add(fireSprite.mesh);
     this.updateMeshArr.push(fireSprite);
     return fireSprite;

@@ -203,4 +203,5 @@ void main() {
 	}
 	//
 	gl_FragColor = vec4(max(fire,sparks)+smoke,(1.0-vUv.y));
+  gl_FragColor.a = gl_FragColor.r*(1.0-vUv.y);
 }

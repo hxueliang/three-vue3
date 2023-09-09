@@ -20,6 +20,7 @@ import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
 import gsap from 'gsap';
 
 import Ocean from './Ocean';
+import SphereSky from './SphereSky';
 
 export default class ThreePlus {
   constructor(selector) {
@@ -56,7 +57,7 @@ export default class ThreePlus {
       0.000001,
       10000
     );
-    this.camera.position.set(0, 10, 50);
+    this.camera.position.set(0, 50, -320);
     this.camera.aspect = this.width / this.height;
     this.camera.updateProjectionMatrix();
   }
@@ -71,7 +72,7 @@ export default class ThreePlus {
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.physicallyCorrectLights = true;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 0.05;
+    this.renderer.toneMappingExposure = 0.2;
     this.domElement.appendChild(this.renderer.domElement);
   }
   initControl() {
@@ -124,12 +125,15 @@ export default class ThreePlus {
   }
 
   setBg(url) {
-    this.hdrLoader(url).then((texture) => {
-      texture.mapping = THREE.EquirectangularReflectionMapping;
-      texture.anisotropy = 16;
-      texture.format = THREE.RGBAFormat;
-      this.scene.background = texture;
-      this.scene.environment = texture;
+    return new Promise((resolve, reject) => {
+      this.hdrLoader(url).then((texture) => {
+        texture.mapping = THREE.EquirectangularReflectionMapping;
+        texture.anisotropy = 16;
+        texture.format = THREE.RGBAFormat;
+        // this.scene.background = texture;
+        this.scene.environment = texture;
+        resolve(texture);
+      });
     });
   }
 
@@ -190,13 +194,45 @@ export default class ThreePlus {
   }
 
   addAxis() {
-    let axis = new THREE.AxesHelper(5);
+    let axis = new THREE.AxesHelper(50);
     this.scene.add(axis);
   }
 
   addOcean() {
     const ocean = new Ocean();
     this.scene.add(ocean.mesh);
+  }
+
+  addSphereSky(dayCallback, nickCallback) {
+    const uTime = { value: 0 };
+    const envMap = this.scene.environment;
+    const sphereSky = new SphereSky(10000, uTime, envMap);
+    this.scene.add(sphereSky.mesh);
+
+    gsap.to(uTime, {
+      value: 24,
+      duration: 24,
+      repeat: -1,
+      ease: 'linear',
+      onUpdate: () => {
+        console.log(uTime.value);
+        const time = Math.abs(uTime.value - 12);
+        if (time < 4) { // 8~16点
+          this.renderer.toneMappingExposure = 1;
+        }
+        if (time > 6) {  // 0~6点 || 18~24点
+          this.renderer.toneMappingExposure = 0.2;
+        }
+        if (time >= 4 && time <= 6) {  // 6~8点 || 16~18点
+          // time：[4, 6] => 减4除2 => [0, 1] => [1, 0]
+          let strength = 1 - (time - 4) / 2;
+          strength < 0.2 && (strength = 0.2);
+          this.renderer.toneMappingExposure = strength;
+        }
+      }
+    });
+
+    return sphereSky;
   }
 
 }

@@ -25,9 +25,10 @@ onMounted(() => {
 onMounted(async () => {
   let threePlus = new ThreePlus(".canvas-container");
   window.threePlus = threePlus;
-  threePlus.camera.position.set(-117, 17, -140);
 
-  threePlus.setBg('./hdr/023.hdr');
+  threePlus.setBg('./hdr/023.hdr').then(() => {
+    threePlus.addSphereSky();
+  });
   threePlus.addOcean();
 
   const gltf = await threePlus.gltfLoader('./public/model/hotel/building.glb');

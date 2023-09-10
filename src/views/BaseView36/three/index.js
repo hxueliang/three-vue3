@@ -19,6 +19,8 @@ import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
 // 导入gsap
 import gsap from 'gsap';
 
+import Axis3d from './charts3d/Axis3d';
+
 export default class ThreePlus {
   constructor(selector) {
     this.mixers = [];
@@ -206,6 +208,12 @@ export default class ThreePlus {
   addAxis() {
     let axis = new THREE.AxesHelper(5);
     this.scene.add(axis);
+  }
+
+  addAxis3d() {
+    const axis3d = new Axis3d();
+    this.scene.add(axis3d.mesh);
+    return axis3d;
   }
 
 }

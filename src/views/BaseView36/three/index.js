@@ -21,6 +21,7 @@ import gsap from 'gsap';
 
 import Axis3d from './charts3d/Axis3d';
 import Bar3d from './charts3d/Bar3d';
+import Pie3d from './charts3d/Pie3d';
 
 export default class ThreePlus {
   constructor(selector) {
@@ -221,6 +222,13 @@ export default class ThreePlus {
     let bar3d = new Bar3d();
     this.scene.add(bar3d.mesh);
     return bar3d;
+  }
+
+  addPie3d() {
+    const pie3d = new Pie3d(this.camera);
+    this.scene.add(pie3d.mesh);
+    this.updateMeshArr.push(pie3d);
+    return pie3d;
   }
 
 }

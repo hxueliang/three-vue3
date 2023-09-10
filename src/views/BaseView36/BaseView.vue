@@ -31,7 +31,8 @@ onMounted(() => {
   threePlus.setLight(10);
 
   threePlus.addAxis3d();
-  threePlus.addBar3d();
+  // threePlus.addBar3d();
+  threePlus.addPie3d();
 })
 
 </script>

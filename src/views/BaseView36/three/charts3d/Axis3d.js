@@ -34,8 +34,7 @@ export default class Axis3d {
     this.addAxisLabel();
   }
 
-  addAxisLabel(data) {
-    data = data || dataExamples;
+  addAxisLabel(data = dataExamples) {
     data.forEach((item, i) => {
       let textPosition = new THREE.Vector3(i - data.length / 2 + 0.5, -0.5, 0);
       let spriteText = new SpriteText(item, textPosition, 0);

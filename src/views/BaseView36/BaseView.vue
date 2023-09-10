@@ -28,7 +28,10 @@ onMounted(() => {
   threePlus.camera.lookAt(0, 2, 0);
   threePlus.control.target.set(0, 2, 0);
 
+  threePlus.setLight(10);
+
   threePlus.addAxis3d();
+  threePlus.addBar3d();
 })
 
 </script>

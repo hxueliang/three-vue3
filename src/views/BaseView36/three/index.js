@@ -20,6 +20,7 @@ import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
 import gsap from 'gsap';
 
 import Axis3d from './charts3d/Axis3d';
+import Bar3d from './charts3d/Bar3d';
 
 export default class ThreePlus {
   constructor(selector) {
@@ -150,9 +151,9 @@ export default class ThreePlus {
     this.scene.environment = new THREE.Color(color);
   }
 
-  setLight() {
+  setLight(strength = 0.2) {
     // 添加环境光
-    this.ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+    this.ambientLight = new THREE.AmbientLight(0xffffff, strength);
     this.scene.add(this.ambientLight);
 
     const light1 = new THREE.DirectionalLight(0xffffff, 0.1);
@@ -214,6 +215,12 @@ export default class ThreePlus {
     const axis3d = new Axis3d();
     this.scene.add(axis3d.mesh);
     return axis3d;
+  }
+
+  addBar3d() {
+    let bar3d = new Bar3d();
+    this.scene.add(bar3d.mesh);
+    return bar3d;
   }
 
 }

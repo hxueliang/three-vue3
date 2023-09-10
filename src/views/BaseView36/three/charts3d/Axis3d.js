@@ -1,4 +1,15 @@
 import * as THREE from 'three';
+import SpriteText from '../SpriteText';
+
+let dataExamples = [
+  "星期一",
+  "星期二",
+  "星期三",
+  "星期四",
+  "星期五",
+  "星期六",
+  "星期日",
+];
 
 export default class Axis3d {
   // size为坐标轴的长高宽
@@ -19,6 +30,17 @@ export default class Axis3d {
     gridZHelper.rotation.x = Math.PI / 2;
     gridZHelper.position.set(0, size.z / 2, -size.y / 2);
     this.mesh.add(gridZHelper);
+
+    this.addAxisLabel();
+  }
+
+  addAxisLabel(data) {
+    data = data || dataExamples;
+    data.forEach((item, i) => {
+      let textPosition = new THREE.Vector3(i - data.length / 2 + 0.5, -0.5, 0);
+      let spriteText = new SpriteText(item, textPosition, 0);
+      this.mesh.add(spriteText.mesh);
+    });
   }
 }
 

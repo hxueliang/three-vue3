@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { Lensflare, LensflareElement } from 'three/examples/jsm/objects/Lensflare';
 
 export default class SphereSky {
   constructor(radius, uTime, envMap) {
@@ -58,6 +59,13 @@ export default class SphereSky {
     sunLight.shadow.mapSize.height = 20480;
     sunLight.shadow.radius = 5;
     this.sun.add(sunLight);
+
+    // 光晕效果
+    const textureLoader = new THREE.TextureLoader();
+    const textureFlare0 = textureLoader.load('./textures/lensflare/lensflare0.png');
+    const lensflare = new Lensflare(); // 创建一个模拟追踪着灯光的镜头光晕
+    lensflare.addElement(new LensflareElement(textureFlare0, 700, 0));
+    sunLight.add(lensflare);
   }
 
   updateSunPosition(time) {

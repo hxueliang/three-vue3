@@ -207,7 +207,7 @@ export default class ThreePlus {
     const uTime = { value: 0 };
     const envMap = this.scene.environment;
     const sphereSky = new SphereSky(10000, uTime, envMap);
-    this.scene.add(sphereSky.mesh);
+    this.scene.add(sphereSky.mesh, sphereSky.sun);
 
     gsap.to(uTime, {
       value: 24,
@@ -215,7 +215,17 @@ export default class ThreePlus {
       repeat: -1,
       ease: 'linear',
       onUpdate: () => {
-        console.log(uTime.value);
+        // console.log(uTime.value);
+        // 更新太阳位置
+        sphereSky.updateSunPosition(uTime.value);
+        // 6点后显示太阳
+        if (uTime.value > 6) {
+          sphereSky.sun.visible = true;
+        }
+        // 18点后隐藏太阳
+        if (uTime.value > 18) {
+          sphereSky.sun.visible = false;
+        }
         const time = Math.abs(uTime.value - 12);
         if (time < 4) { // 8~16点
           this.renderer.toneMappingExposure = 1;

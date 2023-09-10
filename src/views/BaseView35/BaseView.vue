@@ -35,7 +35,13 @@ onMounted(async () => {
   const metaScene = gltf.scene;
   threePlus.scene.add(metaScene);
   metaScene.traverse(child => {
-    if (child.isMesh && child.name === 'Plane') {
+    if (!child.isMesh) { return; }
+    child.castShadow = true;
+    child.receiveShadow = true;
+    // shadowSide定义投影的面
+    // BackSide为前面，能消除阴影纹路
+    child.material.shadowSide = THREE.BackSide;
+    if (child.name === 'Plane') {
       child.visible = false;
     }
   });

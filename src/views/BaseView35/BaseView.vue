@@ -27,7 +27,16 @@ onMounted(async () => {
   window.threePlus = threePlus;
 
   const bgPromise = threePlus.setBg('./hdr/023.hdr');
+
   threePlus.addOcean();
+
+  // 加载视频
+  const video = document.createElement('video');
+  video.src = './video/sucai01.mp4';
+  video.muted = true;
+  video.loop = true;
+  video.play();
+  const videoTexture = new THREE.VideoTexture(video);
 
   const gltf = await threePlus.gltfLoader('./public/model/hotel/building.glb');
   const metaScene = gltf.scene;
@@ -47,6 +56,8 @@ onMounted(async () => {
     if (child.material.name === 'Vetro' && !vetroMaterial) {
       vetroMaterial = child.material;
       vetroMaterial.emissive = new THREE.Color(0x99ff99);
+      vetroMaterial.emissiveMap = videoTexture;
+      vetroMaterial.emissiveIntensity = 1;
     }
   });
   bgPromise.then(() => {

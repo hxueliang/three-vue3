@@ -26,14 +26,13 @@ onMounted(async () => {
   let threePlus = new ThreePlus(".canvas-container");
   window.threePlus = threePlus;
 
-  threePlus.setBg('./hdr/023.hdr').then(() => {
-    threePlus.addSphereSky();
-  });
+  const bgPromise = threePlus.setBg('./hdr/023.hdr');
   threePlus.addOcean();
 
   const gltf = await threePlus.gltfLoader('./public/model/hotel/building.glb');
   const metaScene = gltf.scene;
   threePlus.scene.add(metaScene);
+  let vetroMaterial = null;
   metaScene.traverse(child => {
     if (!child.isMesh) { return; }
     child.castShadow = true;
@@ -44,6 +43,18 @@ onMounted(async () => {
     if (child.name === 'Plane') {
       child.visible = false;
     }
+    console.log(child.material.name);
+    if (child.material.name === 'Vetro' && !vetroMaterial) {
+      vetroMaterial = child.material;
+      vetroMaterial.emissive = new THREE.Color(0x99ff99);
+    }
+  });
+  bgPromise.then(() => {
+    threePlus.addSphereSky(() => {
+      vetroMaterial && (vetroMaterial.emissive = new THREE.Color(0x000000));
+    }, () => {
+      vetroMaterial && (vetroMaterial.emissive = new THREE.Color(0x99ff99));
+    });
   });
 });
 

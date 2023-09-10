@@ -219,12 +219,16 @@ export default class ThreePlus {
         // 更新太阳位置
         sphereSky.updateSunPosition(uTime.value);
         // 6点后显示太阳
-        if (uTime.value > 6) {
+        if (uTime.value > 6 && !this.isDay) {
           sphereSky.sun.visible = true;
+          this.isDay = true;
+          dayCallback();
         }
         // 18点后隐藏太阳
-        if (uTime.value > 18) {
+        if (uTime.value > 18 && this.isDay) {
           sphereSky.sun.visible = false;
+          this.isDay = false;
+          nickCallback();
         }
         const time = Math.abs(uTime.value - 12);
         if (time < 4) { // 8~16点

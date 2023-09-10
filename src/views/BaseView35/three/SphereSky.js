@@ -63,8 +63,14 @@ export default class SphereSky {
     // 光晕效果
     const textureLoader = new THREE.TextureLoader();
     const textureFlare0 = textureLoader.load('./textures/lensflare/lensflare0.png');
+    const textureFlare3 = textureLoader.load('./textures/lensflare/lensflare3.png');
     const lensflare = new Lensflare(); // 创建一个模拟追踪着灯光的镜头光晕
     lensflare.addElement(new LensflareElement(textureFlare0, 700, 0));
+    // 添加随距离变远，光晕变小的效果（用textureFlare3效果不明显，改用textureFlare0）
+    lensflare.addElement(new LensflareElement(textureFlare0, 300, 0.6));
+    lensflare.addElement(new LensflareElement(textureFlare0, 200, 0.75));
+    lensflare.addElement(new LensflareElement(textureFlare0, 150, 0.9));
+    lensflare.addElement(new LensflareElement(textureFlare0, 100, 1));
     sunLight.add(lensflare);
   }
 

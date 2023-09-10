@@ -32,7 +32,30 @@ onMounted(() => {
 
   threePlus.addAxis3d();
   // threePlus.addBar3d();
-  threePlus.addPie3d();
+  // threePlus.addPie3d();
+
+  const dataExamples1 = [
+    { value: 2.5, name: "星期一", type: "亿台" },
+    { value: 1.7, name: "星期二", type: "万台" },
+    { value: 2.0, name: "星期三", type: "万台" },
+    { value: 1.5, name: "星期四", type: "万台" },
+    { value: 2.2, name: "星期五", type: "万台" },
+    { value: 2.6, name: "星期六", type: "万台" },
+    { value: 1.0, name: "星期日", type: "万台" },
+  ];
+  let dataExamples2 = [
+    { value: 3.5, name: "星期一", type: "万台" },
+    { value: 2.7, name: "星期二", type: "万台" },
+    { value: 3.0, name: "星期三", type: "万台" },
+    { value: 2.5, name: "星期四", type: "万台" },
+    { value: 3.2, name: "星期五", type: "万台" },
+    { value: 3.6, name: "星期六", type: "万台" },
+    { value: 2.0, name: "星期日", type: "万台" },
+  ];
+  const plane1 = threePlus.addPolyline3d(dataExamples1);
+  const plane2 = threePlus.addPolyline3d(dataExamples2);
+  // plane1.mesh.position.z = 1;
+  plane2.mesh.position.z = -1;
 })
 
 </script>

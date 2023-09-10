@@ -22,6 +22,7 @@ import gsap from 'gsap';
 import Axis3d from './charts3d/Axis3d';
 import Bar3d from './charts3d/Bar3d';
 import Pie3d from './charts3d/Pie3d';
+import Polyline3d from './charts3d/Polyline3d';
 
 export default class ThreePlus {
   constructor(selector) {
@@ -229,6 +230,12 @@ export default class ThreePlus {
     this.scene.add(pie3d.mesh);
     this.updateMeshArr.push(pie3d);
     return pie3d;
+  }
+
+  addPolyline3d(data) {
+    const polyline3d = new Polyline3d(data);
+    this.scene.add(polyline3d.mesh);
+    return polyline3d;
   }
 
 }

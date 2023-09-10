@@ -66,11 +66,11 @@ window.addEventListener('click', event => {
   // 68.5.0 使用一个新的原点和方向来更新射线
   raycaster.setFromCamera(mouse, camera);
   // 68.5.0 返回射线与这些物体相交的结果集
-  let result = raycaster.intersectObjects(cubeArr);
+  let intersects = raycaster.intersectObjects(cubeArr);
   // 68.5.1 把最前面的设置为red
-  // result[0].object.material = redMaterial;
+  // intersects[0].object.material = redMaterial;
   // 68.5.2 把射线穿过的设置为red
-  result.forEach(res => res.object.material = redMaterial);
+  intersects.forEach(res => res.object.material = redMaterial);
 });
 
 

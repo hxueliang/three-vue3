@@ -173,7 +173,7 @@ export default class ThreePlus {
   initEffect() {
     // 合成效果
     this.effectComposer = new EffectComposer(this.renderer);
-    this.effectComposer.setSize(this.width, this.eight);
+    this.effectComposer.setSize(this.width, this.height);
 
     // 添加渲染通道
     const renderPass = new RenderPass(this.scene, this.camera);
@@ -188,9 +188,13 @@ export default class ThreePlus {
     // const smaaPass = new SMAAPass();
     // this.effectComposer.addPass(smaaPass);
 
-    // // 发光效果
-    // this.unrealBloomPass = new UnrealBloomPass();
-    // this.effectComposer.addPass(this.unrealBloomPass);
+    // // 辉光效果
+    this.unrealBloomPass = new UnrealBloomPass();
+    this.unrealBloomPass.enabled = false;
+    this.unrealBloomPass.threshold = 0.1;
+    this.unrealBloomPass.strength = 0.5;
+    this.unrealBloomPass.radius = 2;
+    this.effectComposer.addPass(this.unrealBloomPass);
   }
 
   addAxis() {
@@ -211,7 +215,7 @@ export default class ThreePlus {
 
     gsap.to(uTime, {
       value: 24,
-      duration: 24,
+      duration: 12,
       repeat: -1,
       ease: 'linear',
       onUpdate: () => {
@@ -219,13 +223,13 @@ export default class ThreePlus {
         // 更新太阳位置
         sphereSky.updateSunPosition(uTime.value);
         // 6点后显示太阳
-        if (uTime.value > 6 && !this.isDay) {
+        if (uTime.value > 6 && uTime.value <= 18 && !this.isDay) {
           sphereSky.sun.visible = true;
           this.isDay = true;
           dayCallback();
         }
         // 18点后隐藏太阳
-        if (uTime.value > 18 && this.isDay) {
+        if ((uTime.value > 18 || uTime.value <= 6) && this.isDay) {
           sphereSky.sun.visible = false;
           this.isDay = false;
           nickCallback();

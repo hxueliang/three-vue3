@@ -26,6 +26,7 @@ onMounted(async () => {
   let threePlus = new ThreePlus(".canvas-container");
   window.threePlus = threePlus;
 
+  // #region
   const bgPromise = threePlus.setBg('./hdr/023.hdr');
 
   threePlus.addOcean();
@@ -52,19 +53,27 @@ onMounted(async () => {
     if (child.name === 'Plane') {
       child.visible = false;
     }
-    console.log(child.material.name);
     if (child.material.name === 'Vetro' && !vetroMaterial) {
       vetroMaterial = child.material;
       vetroMaterial.emissive = new THREE.Color(0x99ff99);
       vetroMaterial.emissiveMap = videoTexture;
       vetroMaterial.emissiveIntensity = 1;
+      // 设置辉光效果
+      threePlus.unrealBloomPass.enabled = true;
     }
   });
+  // #endregion
   bgPromise.then(() => {
     threePlus.addSphereSky(() => {
       vetroMaterial && (vetroMaterial.emissive = new THREE.Color(0x000000));
+      console.log(threePlus.unrealBloomPass.enabled);
+      threePlus.unrealBloomPass.enabled = false;
+      console.log('白天');
     }, () => {
       vetroMaterial && (vetroMaterial.emissive = new THREE.Color(0x99ff99));
+      console.log(threePlus.unrealBloomPass.enabled);
+      threePlus.unrealBloomPass.enabled = true;
+      console.log('夜晚');
     });
   });
 });

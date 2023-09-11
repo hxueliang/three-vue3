@@ -1,4 +1,4 @@
-<!-- 114.使用css2d渲染器 -->
+<!-- 132.分层设置物体发光 -->
 <template>
   <div class="container" ref="container"></div>
 </template>

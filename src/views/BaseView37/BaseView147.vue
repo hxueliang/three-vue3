@@ -34,6 +34,8 @@ let scene, camera, renderer, controls;
 
 let world, planeBody, plane;
 
+const phyMeshes = [], meshes = [];
+
 init();
 
 // 初始化
@@ -51,14 +53,39 @@ function createCode() {
   // 初始化物理世界
   world = new CANNON.World({ gravity: new CANNON.Vec3(0, -9.82, 0) });
 
+  // 创建材质
+  const comonMaterial = new CANNON.Material('comonMaterial');
+  comonMaterial.friction = 0.7;
+
   // 创建刚体(平面)
   planeBody = new CANNON.Body({
     mass: 0,
     shape: new CANNON.Box(new CANNON.Vec3(5, 0.1, 5)),
     position: new CANNON.Vec3(0, 0, 0),
+    material: comonMaterial,
   });
   planeBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), 0.1);
   world.addBody(planeBody);
+
+  // 创建刚体(立方体1)
+  const boxBody1 = new CANNON.Body({
+    mass: 1,
+    shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
+    material: comonMaterial,
+    position: new CANNON.Vec3(0, 5, 0),
+  });
+  world.addBody(boxBody1);
+  phyMeshes.push(boxBody1);
+
+  // 创建刚体(立方体2)
+  const boxBody2 = new CANNON.Body({
+    mass: 1,
+    shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
+    material: new CANNON.Material({ friction: 0 }),
+    position: new CANNON.Vec3(1, 5, 0),
+  });
+  world.addBody(boxBody2);
+  phyMeshes.push(boxBody2);
 
   // threejs渲染
   // 创建平面
@@ -67,6 +94,26 @@ function createCode() {
   plane = new THREE.Mesh(planeGeometry, mplaneMterial);
   plane.quaternion.copy(planeBody.quaternion);
   scene.add(plane);
+
+  // 创建立方体1
+  const box1 = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1, 1),
+    new THREE.MeshBasicMaterial({
+      color: 0x00ff00,
+    })
+  );
+  scene.add(box1);
+  meshes.push(box1);
+
+  // 创建立方体2
+  const box2 = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1, 1),
+    new THREE.MeshBasicMaterial({
+      color: 0x00ff00,
+    })
+  );
+  scene.add(box2);
+  meshes.push(box2);
 }
 
 // 创建场景
@@ -92,6 +139,10 @@ function render() {
   const delta = clock.getDelta();
 
   world.step(1 / 60, delta);
+  for (let i = 0; i < phyMeshes.length; i++) {
+    meshes[i].position.copy(phyMeshes[i].position);
+    meshes[i].quaternion.copy(phyMeshes[i].quaternion);
+  }
 
   controls && controls.update();
   renderer.render(scene, camera);

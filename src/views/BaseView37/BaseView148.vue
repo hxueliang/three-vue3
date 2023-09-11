@@ -58,6 +58,7 @@ function createCode() {
   // 创建材质
   const comonMaterial = new CANNON.Material('comonMaterial');
   comonMaterial.friction = 0.7;
+  comonMaterial.restitution = 0.5;
 
   // 创建刚体(平面)
   planeBody = new CANNON.Body({
@@ -89,6 +90,16 @@ function createCode() {
   world.addBody(boxBody2);
   phyMeshes.push(boxBody2);
 
+  // 创建刚体(立方体3)
+  const boxBody3 = new CANNON.Body({
+    mass: 1,
+    shape: boxShape,
+    material: new CANNON.Material({ friction: 0.1, restitution: 1 }),
+    position: new CANNON.Vec3(2, 5, 0),
+  });
+  world.addBody(boxBody3);
+  phyMeshes.push(boxBody3);
+
   // threejs渲染
   // 创建几可体
   const geometry = new THREE.BoxGeometry(1, 1, 1);
@@ -111,6 +122,11 @@ function createCode() {
   const box2 = new THREE.Mesh(geometry, material);
   scene.add(box2);
   meshes.push(box2);
+
+  // 创建立方体3
+  const box3 = new THREE.Mesh(geometry, material);
+  scene.add(box3);
+  meshes.push(box3);
 }
 
 // 创建场景

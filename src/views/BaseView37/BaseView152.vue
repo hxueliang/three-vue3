@@ -63,6 +63,7 @@ function createCode() {
   // 创建材质
   const comonMaterial = new CANNON.Material('comonMaterial');
   comonMaterial.friction = 0;
+  comonMaterial.restitution = 0.8;
 
   // 创建刚体(平面)
   const planeBody = new CANNON.Body({
@@ -81,12 +82,17 @@ function createCode() {
     mass: 1,
     shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
     material: comonMaterial,
-    position: new CANNON.Vec3(-2, 0.5, 0),
+    position: new CANNON.Vec3(-2, 5, 0),
     collisionFilterGroup: GROUP1,
     collisionFilterMask: GROUP0 | GROUP2 | GROUP3,
   });
   world.addBody(boxBody);
   phyMeshes.push(boxBody);
+
+  boxBody.addEventListener('collide', e => {
+    const impactVelocity = e.contact.getImpactVelocityAlongNormal();
+    console.log('撞击速度是', impactVelocity);
+  });
 
   // 创建刚体(球体)
   const sphereBody = new CANNON.Body({

@@ -59,11 +59,13 @@ function createCode() {
   // 物理世界
   // 初始化物理世界
   world = new CANNON.World({ gravity: new CANNON.Vec3(0, -9.82, 0) });
+  // 物理世界允许休眠
+  world.allowSleep = true;
 
   // 创建材质
   const comonMaterial = new CANNON.Material('comonMaterial');
   comonMaterial.friction = 0;
-  comonMaterial.restitution = 0.8;
+  comonMaterial.restitution = 1;
 
   // 创建刚体(平面)
   const planeBody = new CANNON.Body({
@@ -85,9 +87,23 @@ function createCode() {
     position: new CANNON.Vec3(-2, 5, 0),
     collisionFilterGroup: GROUP1,
     collisionFilterMask: GROUP0 | GROUP2 | GROUP3,
+    allowSleep: true, // 允许休眠
+    sleepSpeedLimit: 0.5, // 速度小于0.5则准备进入休眠
+    sleepTimeLimit: 1, // 速度小于0.5，1秒后进入休眠
   });
   world.addBody(boxBody);
   phyMeshes.push(boxBody);
+
+  // 休眠事件
+  let time = 0;
+  boxBody.addEventListener('sleepy', e => {
+    console.log('即将进入休眠', e);
+    console.log(time = +new Date());
+  });
+  boxBody.addEventListener('sleep', e => {
+    console.log('进入休眠', e);
+    console.log(new Date() - time);
+  });
 
   // boxBody.addEventListener('collide', e => {
   //   const impactVelocity = e.contact.getImpactVelocityAlongNormal();

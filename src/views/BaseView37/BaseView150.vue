@@ -1,4 +1,4 @@
-<!-- 150.碰撞与碰撞组 -->
+<!-- 150.碰撞 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -55,7 +55,7 @@ function createCode() {
 
   // 创建材质
   const comonMaterial = new CANNON.Material('comonMaterial');
-  comonMaterial.friction = 0.1;
+  comonMaterial.friction = 0;
 
   // 创建刚体(平面)
   const planeBody = new CANNON.Body({
@@ -64,7 +64,7 @@ function createCode() {
     position: new CANNON.Vec3(0, 0, 0),
     material: comonMaterial,
   });
-  planeBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), 0.1);
+  // planeBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), 0.1);
   world.addBody(planeBody);
 
   // 创建刚体(立方体)
@@ -72,10 +72,30 @@ function createCode() {
     mass: 1,
     shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
     material: comonMaterial,
-    position: new CANNON.Vec3(0, 5, 0),
+    position: new CANNON.Vec3(-2, 0.5, 0),
   });
   world.addBody(boxBody1);
   phyMeshes.push(boxBody1);
+
+  // 创建刚体(球体)
+  const sphereBody = new CANNON.Body({
+    mass: 1,
+    shape: new CANNON.Sphere(0.5),
+    material: comonMaterial,
+    position: new CANNON.Vec3(0, 0.5, 0),
+  });
+  world.addBody(sphereBody);
+  phyMeshes.push(sphereBody);
+
+  // 创建刚体(圆柱体)
+  const cylinderBody = new CANNON.Body({
+    mass: 1,
+    shape: new CANNON.Cylinder(0.5, 0.5, 1, 32),
+    material: comonMaterial,
+    position: new CANNON.Vec3(2, 0.5, 0),
+  });
+  world.addBody(cylinderBody);
+  phyMeshes.push(cylinderBody);
 
   // threejs渲染
   // 创建材质
@@ -92,6 +112,16 @@ function createCode() {
   const box1 = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material);
   scene.add(box1);
   meshes.push(box1);
+
+  // 创建球体
+  const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), material);
+  scene.add(sphere);
+  meshes.push(sphere);
+
+  // 创建圆柱体
+  const cylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 1, 32), material);
+  scene.add(cylinder);
+  meshes.push(cylinder);
 
 }
 
@@ -182,6 +212,9 @@ onMounted(() => {
   appendCanvas();
   createControls();
   render();
+
+  const [boxBody, sphereBody, cylinderBody] = phyMeshes;
+  boxBody.velocity.set(2, 0, 0);
 });
 </script>
 

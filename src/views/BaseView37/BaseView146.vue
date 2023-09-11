@@ -41,7 +41,7 @@ init();
 // 初始化
 function init() {
   createScene();
-  createCamera(5, 15, 20);
+  createCamera(5, 15, 30);
   createRenderer();
   createAxes();
   // createAmbientLight();
@@ -71,11 +71,14 @@ function createCode() {
   planeBody = new CANNON.Body({
     mass: 0, // 怎么碰撞都不会动
     // type: CANNON.Body.STATIC, // 设置物体为静态的
-    shape: new CANNON.Plane(),
+    // shape: new CANNON.Plane(),
+    // 用薄立方体作为平面，实现平面非无限大
+    shape: new CANNON.Box(new CANNON.Vec3(5, 0.1, 5)),
     position: new CANNON.Vec3(0, 0, 0),
   });
-  // 旋转平面，延x轴旋转，-90度
-  planeBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
+  // 旋转平面，延x轴旋转，-90+0.1度
+  // planeBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2 + 0.1);
+  planeBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), 0.1);
   world.addBody(planeBody);
 
 
@@ -87,7 +90,9 @@ function createCode() {
   scene.add(sphere);
 
   // 创建平面
-  const planeGeometry = new THREE.PlaneGeometry(10, 10);
+  // const planeGeometry = new THREE.PlaneGeometry(10, 10);
+  // 改为立方体，cannon的立方体的数值*2与threejs的立体相同大小
+  const planeGeometry = new THREE.BoxGeometry(10, 0.2, 10);
   const mplaneMterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
   plane = new THREE.Mesh(planeGeometry, mplaneMterial);
   plane.quaternion.copy(planeBody.quaternion);

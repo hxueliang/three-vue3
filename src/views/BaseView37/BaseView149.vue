@@ -1,4 +1,4 @@
-<!-- 148.接触材质 -->
+<!-- 149.接触材质 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -91,14 +91,29 @@ function createCode() {
   phyMeshes.push(boxBody2);
 
   // 创建刚体(立方体3)
+  const boxBody3Material = new CANNON.Material('boxBody3Material');
+  // boxBody3Material.friction = 0.1; // 优先级>接触材质
+  // boxBody3Material.restitution = 1; // 优先级>接触材质
   const boxBody3 = new CANNON.Body({
     mass: 1,
     shape: boxShape,
-    material: new CANNON.Material({ friction: 0.1, restitution: 1 }),
+    material: boxBody3Material,
     position: new CANNON.Vec3(2, 5, 0),
   });
   world.addBody(boxBody3);
   phyMeshes.push(boxBody3);
+
+  // 定义接触材质
+  const boxBody3ToComonMaterial = new CANNON.ContactMaterial(
+    boxBody3Material,
+    comonMaterial,
+    {
+      friction: 0.1,
+      restitution: 1
+    }
+  );
+  // 将接触材质添加到物理世界
+  world.addContactMaterial(boxBody3ToComonMaterial);
 
   // threejs渲染
   // 创建几可体

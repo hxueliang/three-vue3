@@ -32,12 +32,14 @@ const textureLoader = new THREE.TextureLoader();
 
 let scene, camera, renderer, controls;
 
+let world, sphereBody, sphere;
+
 init();
 
 // 初始化
 function init() {
   createScene();
-  createCamera();
+  createCamera(5, 15, 20);
   createRenderer();
   createAxes();
   // createAmbientLight();
@@ -48,6 +50,28 @@ function init() {
 
 // 业务代码
 function createCode() {
+  // 物理世界
+  // 初始化物理世界
+  world = new CANNON.World({
+    gravity: new CANNON.Vec3(0, -9.82, 0), // m/s²
+  });
+
+  // 创建刚体(此处为球体)
+  const radius = 1; // m
+  sphereBody = new CANNON.Body({
+    mass: 5, // kg
+    shape: new CANNON.Sphere(radius),
+  });
+  sphereBody.position.set(0, 5, 0); // m
+  world.addBody(sphereBody);
+
+
+  // threejs渲染
+  // 创建球体
+  const geometry = new THREE.SphereGeometry(radius, 32, 32);
+  const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+  sphere = new THREE.Mesh(geometry, material);
+  scene.add(sphere);
 }
 
 // 创建场景
@@ -72,6 +96,12 @@ function createRenderer() {
 // 创建渲染函数
 function render() {
   const elapsed = clock.getElapsedTime();
+
+  // 两帧之间的时间差：1/60
+  world.step(1 / 60);
+  // 将物理世界刚体的位置和旋转，给到threejs物体
+  sphere.position.copy(sphereBody.position);
+  sphere.quaternion.copy(sphereBody.quaternion);
 
   controls && controls.update();
   renderer.render(scene, camera);

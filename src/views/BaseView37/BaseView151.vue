@@ -1,4 +1,4 @@
-<!-- 150.碰撞组 -->
+<!-- 151.碰撞组 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -21,6 +21,7 @@ import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
+import { GLSL1 } from 'three';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -35,6 +36,12 @@ let scene, camera, renderer, controls;
 let world;
 
 const phyMeshes = [], meshes = [];
+
+// 碰撞组，要用2的幂次方
+const GROUP0 = 1;
+const GROUP1 = 2;
+const GROUP2 = 4;
+const GROUP3 = 8;
 
 init();
 
@@ -61,8 +68,10 @@ function createCode() {
   const planeBody = new CANNON.Body({
     mass: 0,
     shape: new CANNON.Box(new CANNON.Vec3(5, 0.1, 5)),
-    position: new CANNON.Vec3(0, 0, 0),
+    position: new CANNON.Vec3(0, -0.1, 0),
     material: comonMaterial,
+    collisionFilterGroup: GROUP0,
+    collisionFilterMask: GROUP1 | GROUP2 | GROUP3,
   });
   // planeBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), 0.1);
   world.addBody(planeBody);
@@ -73,6 +82,8 @@ function createCode() {
     shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
     material: comonMaterial,
     position: new CANNON.Vec3(-2, 0.5, 0),
+    collisionFilterGroup: GROUP1,
+    collisionFilterMask: GROUP0 | GROUP2 | GROUP3,
   });
   world.addBody(boxBody1);
   phyMeshes.push(boxBody1);
@@ -83,6 +94,8 @@ function createCode() {
     shape: new CANNON.Sphere(0.5),
     material: comonMaterial,
     position: new CANNON.Vec3(0, 0.5, 0),
+    collisionFilterGroup: GROUP2,
+    collisionFilterMask: GROUP0 | GROUP1,
   });
   world.addBody(sphereBody);
   phyMeshes.push(sphereBody);
@@ -93,6 +106,8 @@ function createCode() {
     shape: new CANNON.Cylinder(0.5, 0.5, 1, 32),
     material: comonMaterial,
     position: new CANNON.Vec3(2, 0.5, 0),
+    collisionFilterGroup: GROUP3,
+    collisionFilterMask: GROUP0 | GROUP1,
   });
   world.addBody(cylinderBody);
   phyMeshes.push(cylinderBody);
@@ -105,6 +120,7 @@ function createCode() {
   const planeGeometry = new THREE.BoxGeometry(10, 0.2, 10);
   const mplaneMterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
   const plane = new THREE.Mesh(planeGeometry, mplaneMterial);
+  plane.position.copy(planeBody.position);
   plane.quaternion.copy(planeBody.quaternion);
   scene.add(plane);
 

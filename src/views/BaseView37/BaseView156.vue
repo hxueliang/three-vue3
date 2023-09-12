@@ -1,4 +1,4 @@
-<!-- 154.施加力的方式 -->
+<!-- 156.施加力的方式 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -58,8 +58,8 @@ function createCode() {
 
   // 创建材质
   const comonMaterial = new CANNON.Material('comonMaterial');
-  comonMaterial.friction = 0.2;
-  comonMaterial.restitution = 0.7;
+  comonMaterial.friction = 0;
+  comonMaterial.restitution = 0.3;
 
   // 创建刚体(平面)
   const planeBody = new CANNON.Body({
@@ -77,6 +77,8 @@ function createCode() {
     material: comonMaterial,
     position: new CANNON.Vec3(0, 5, 0),
   });
+  // 2.1，4.1 让球旋转180度
+  // sphereBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), Math.PI);
   world.addBody(sphereBody);
   phyMeshes.push(sphereBody);
 
@@ -97,6 +99,36 @@ function createCode() {
   );
   scene.add(sphere);
   meshes.push(sphere);
+
+  window.addEventListener('click', () => {
+    /**
+     * 给刚体施加力
+     * @param {Vec3} force - 力
+     * @param {Vec3} position - 作用位置
+     */
+    console.log(sphereBody.position);
+    // 1.1 世界坐标
+    // sphereBody.applyForce(new CANNON.Vec3(10, 0, 0), new CANNON.Vec3(0, 0, 0)); // 平滑
+    // sphereBody.applyForce(new CANNON.Vec3(10, 0, 0), new CANNON.Vec3(0, 0.5, 0)); // a效果：向右顺时针翻滚
+    // sphereBody.applyForce(new CANNON.Vec3(10, 0, 0), new CANNON.Vec3(0, -0.5, 0)); // b效果：向右逆时针翻滚
+
+    // 2.2 球自身物理变换后的坐标
+    // sphereBody.applyLocalForce(new CANNON.Vec3(10, 0, 0), new CANNON.Vec3(0, 0.5, 0)); // c效果：向左顺时针翻滚
+    // sphereBody.applyLocalForce(new CANNON.Vec3(10, 0, 0), new CANNON.Vec3(0, -0.5, 0)); // d效果：向左逆时针翻滚
+
+    // 3.1 脉冲的方式，力乘上1/60秒
+    // sphereBody.applyImpulse(new CANNON.Vec3(10 * (1 / 60), 0, 0), new CANNON.Vec3(0, 0.5, 0));// a效果：向右顺时针翻滚
+    // sphereBody.applyImpulse(new CANNON.Vec3(10 * (1 / 60), 0, 0), new CANNON.Vec3(0, -0.5, 0));// b效果：向右逆时针翻滚
+
+    // 4.2 脉冲的方式，力乘上1/60秒
+    // sphereBody.applyLocalImpulse(new CANNON.Vec3(10 * (1 / 60), 0, 0), new CANNON.Vec3(0, 0.5, 0));// c效果：向左顺时针翻滚
+    // sphereBody.applyLocalImpulse(new CANNON.Vec3(10 * (1 / 60), 0, 0), new CANNON.Vec3(0, -0.5, 0));// d效果：向左逆时针翻滚
+
+
+    // 5.1 扭距方式
+    // sphereBody.applyTorque(new CANNON.Vec3(0, 0, 10)); // e效果：z轴逆时针旋转
+    sphereBody.applyTorque(new CANNON.Vec3(0, 0, -10)); // f效果：z轴顺时针旋转
+  });
 }
 
 // 创建场景

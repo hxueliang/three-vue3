@@ -37,6 +37,8 @@ let world;
 
 const phyMeshes = [], meshes = [];
 
+const lockConstraints = [];
+
 init();
 
 // 初始化
@@ -80,6 +82,41 @@ function createCode() {
   plane.quaternion.copy(planeBody.quaternion);
   scene.add(plane);
 
+
+  const boxShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
+  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+  // 上一个刚体
+  let preBoxBody = null;
+  // 循环创建10个物体
+  for (let i = 0; i < 8; i++) {
+    // 创建刚体
+    const boxBody = new CANNON.Body({
+      mass: 1,
+      shape: boxShape,
+      material: comonMaterial,
+      position: new CANNON.Vec3(i + 0.2 * i - 2, 4, 0),
+    });
+    world.addBody(boxBody);
+    phyMeshes.push(boxBody);
+
+    // 创建物体
+    const box = new THREE.Mesh(geometry, material);
+    scene.add(box);
+    meshes.push(box);
+
+    if (preBoxBody) {
+      const lockConstraint = new CANNON.LockConstraint(boxBody, preBoxBody);
+      lockConstraints.push(lockConstraint); // 保存约束，方便后继移除
+      world.addConstraint(lockConstraint);
+    }
+    preBoxBody = boxBody;
+  }
+
+  // 移除第5个约束
+  window.addEventListener('click', () => {
+    world.removeConstraint(lockConstraints[4]);
+  });
 }
 
 // 创建场景

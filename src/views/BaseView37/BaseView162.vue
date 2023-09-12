@@ -107,6 +107,17 @@ function createCode() {
     scene.add(shpere);
     meshes.push(shpere);
   });
+
+  // 在每次世界模拟完一个时间步之后，判断约束力度的绝对值大小，如果大于1000，就删除约束
+  world.addEventListener('postStep', () => {
+    for (let i = 0; i < world.constraints.length; i++) {
+      const constraint = world.constraints[i];
+      // 约束力度绝对大小
+      const multiplier = Math.abs(constraint.equations[0].multiplier);
+      // 删除约束
+      multiplier > 1000 && world.removeConstraint(constraint);
+    }
+  });
 }
 
 // 创建场景

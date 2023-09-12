@@ -97,7 +97,38 @@ function createCode() {
     const sphere = new THREE.Mesh(geometry, material);
     scene.add(sphere);
     meshes.push(sphere);
+
+    if (preBody) {
+      const constraint = new CANNON.DistanceConstraint(
+        preBody,
+        sphereBody,
+        1.2
+      );
+      world.addConstraint(constraint);
+    }
+    preBody = sphereBody;
   }
+
+  // 创建子弹射击
+  const shpereShape = new CANNON.Sphere(0.5);
+  const position = new CANNON.Vec3(0, 5, 3);
+  const shpereGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+  const shpereMaterial = new THREE.MeshBasicMaterial({ color: 0x666666 });
+  window.addEventListener('click', () => {
+    const shpereBody = new CANNON.Body({
+      mass: 10,
+      shape: shpereShape,
+      position,
+      material: comonMaterial,
+    });
+    shpereBody.velocity.set(0, 0, -10);
+    world.addBody(shpereBody);
+    phyMeshes.push(shpereBody);
+
+    const shpere = new THREE.Mesh(shpereGeometry, shpereMaterial);
+    scene.add(shpere);
+    meshes.push(shpere);
+  });
 }
 
 // 创建场景

@@ -111,6 +111,44 @@ function createCode() {
   );
   scene.add(box);
   meshes.push(box);
+
+  // 连接两个物体的弹簧
+  const spring = new CANNON.Spring(sphereBody, boxBody, {
+    // 弹簧没受力时的长度
+    restLength: 3,
+    // 弹簧的刚度
+    stiffness: 50,
+    // 阻尼
+    damping: 1,
+    // 作用锚点
+    localAnchorA: new CANNON.Vec3(0, 0, 0),
+    localAnchorB: new CANNON.Vec3(-0.5, 0.5, 0.5)
+  });
+  // 计算每一步后的力
+  world.addEventListener('postStep', (event) => { // preStep
+    spring.applyForce();
+  });
+
+  // 创建子弹射击
+  const bulletShape = new CANNON.Sphere(0.5);
+  const position = new CANNON.Vec3(0, 5, 3);
+  const shpereGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+  const shpereMaterial = new THREE.MeshBasicMaterial({ color: 0x666666 });
+  window.addEventListener('click', () => {
+    const shpereBody = new CANNON.Body({
+      mass: 1,
+      shape: bulletShape,
+      position,
+      material: comonMaterial,
+    });
+    shpereBody.velocity.set(0, 0, -10);
+    world.addBody(shpereBody);
+    phyMeshes.push(shpereBody);
+
+    const shpere = new THREE.Mesh(shpereGeometry, shpereMaterial);
+    scene.add(shpere);
+    meshes.push(shpere);
+  });
 }
 
 // 创建场景

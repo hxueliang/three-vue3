@@ -59,7 +59,7 @@ function createCode() {
   // 创建材质
   const comonMaterial = new CANNON.Material('comonMaterial');
   comonMaterial.friction = 0.2;
-  comonMaterial.restitution = 0.1;
+  comonMaterial.restitution = 0.7;
 
   // 创建刚体(平面)
   const planeBody = new CANNON.Body({
@@ -69,6 +69,28 @@ function createCode() {
     material: comonMaterial,
   });
   world.addBody(planeBody);
+
+  // 创建球形状
+  const sphereShape1 = new CANNON.Sphere(0.5);
+  const sphereShape2 = new CANNON.Sphere(0.5);
+  // 创建圆柱休形状
+  const cylinderShape = new CANNON.Cylinder(0.5, 0.5, 1, 32);
+
+  // 创建刚体(形状后期添加)
+  const capsuleBody = new CANNON.Body({
+    mass: 1,
+    material: comonMaterial,
+    position: new CANNON.Vec3(0, 1, 0),
+  });
+  // 给刚体添加形状
+  capsuleBody.addShape(sphereShape1, new CANNON.Vec3(0, 0.5, 0));
+  capsuleBody.addShape(cylinderShape, new CANNON.Vec3(0, 0, 0));
+  capsuleBody.addShape(sphereShape2, new CANNON.Vec3(0, -0.5, 0));
+  // 添速度，测试效果
+  capsuleBody.velocity.set(5, 0, 0);
+  // 添加到物理世界
+  world.addBody(capsuleBody);
+  phyMeshes.push(capsuleBody);
 
   // threejs渲染
   // 创建材质
@@ -81,6 +103,24 @@ function createCode() {
   plane.position.copy(planeBody.position);
   plane.quaternion.copy(planeBody.quaternion);
   scene.add(plane);
+
+  // 创建圆柱体
+  const cylinder = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.5, 0.5, 1, 32),
+    new THREE.MeshBasicMaterial({ color: 0x0000ff })
+  );
+  cylinder.position.copy(capsuleBody.position);
+  cylinder.quaternion.copy(capsuleBody.quaternion);
+  scene.add(cylinder);
+  meshes.push(cylinder);
+
+  // 创建球体
+  const sphere1 = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), material);
+  sphere1.position.set(0, 0.5, 0);
+  cylinder.add(sphere1);
+  const sphere2 = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), material);
+  sphere2.position.set(0, -0.5, 0);
+  cylinder.add(sphere2);
 }
 
 // 创建场景

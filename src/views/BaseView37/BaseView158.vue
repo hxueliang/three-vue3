@@ -83,6 +83,7 @@ function createCode() {
   const boxShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.05));
   const geometry = new THREE.BoxGeometry(1, 1, 0.1);
   const material = new THREE.MeshBasicMaterial({ color: 0xff00ff });
+  let preBoxBody = null;
   for (let i = 0; i < 10; i++) {
     const boxBody = new CANNON.Body({
       mass: i === 0 ? 0 : 1,
@@ -97,7 +98,46 @@ function createCode() {
     scene.add(box);
     meshes.push(box);
 
+    if (preBoxBody) {
+      const constraint1 = new CANNON.PointToPointConstraint(
+        preBoxBody,
+        new CANNON.Vec3(-0.5, -0.55, 0),
+        boxBody,
+        new CANNON.Vec3(-0.5, 0.55, 0),
+      );
+      world.addConstraint(constraint1);
+
+      const constraint2 = new CANNON.PointToPointConstraint(
+        preBoxBody,
+        new CANNON.Vec3(0.5, -0.55, 0),
+        boxBody,
+        new CANNON.Vec3(0.5, 0.55, 0),
+      );
+      world.addConstraint(constraint2);
+    }
+    preBoxBody = boxBody;
   }
+
+  // 创建子弹射击
+  const shpereShape = new CANNON.Sphere(0.5);
+  const position = new CANNON.Vec3(0, 5, 3);
+  const shpereGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+  const shpereMaterial = new THREE.MeshBasicMaterial({ color: 0x666666 });
+  window.addEventListener('click', () => {
+    const shpereBody = new CANNON.Body({
+      mass: 10,
+      shape: shpereShape,
+      position,
+      material: comonMaterial,
+    });
+    shpereBody.velocity.set(0, 0, -10);
+    world.addBody(shpereBody);
+    phyMeshes.push(shpereBody);
+
+    const shpere = new THREE.Mesh(shpereGeometry, shpereMaterial);
+    scene.add(shpere);
+    meshes.push(shpere);
+  });
 }
 
 // 创建场景

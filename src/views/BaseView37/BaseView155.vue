@@ -62,22 +62,49 @@ function createCode() {
   comonMaterial.restitution = 0.7;
 
   // 创建刚体(平面)
+  // 因为cannon的bug，使用Trimesh创建的形状，不会与立方体碰撞
+  // 所以这此处不能用立方体制作地面，改为用平面作地面
   const planeBody = new CANNON.Body({
     mass: 0,
-    shape: new CANNON.Box(new CANNON.Vec3(5, 0.1, 5)),
+    shape: new CANNON.Plane(),
     position: new CANNON.Vec3(0, -0.1, 0),
     material: comonMaterial,
   });
+  planeBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
   world.addBody(planeBody);
 
   // threejs渲染
   // 创建平面
-  const planeGeometry = new THREE.BoxGeometry(10, 0.2, 10);
+  const planeGeometry = new THREE.PlaneGeometry(10, 10);
   const mplaneMterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
   const plane = new THREE.Mesh(planeGeometry, mplaneMterial);
   plane.position.copy(planeBody.position);
   plane.quaternion.copy(planeBody.quaternion);
   scene.add(plane);
+
+  const gltfLoader = new GLTFLoader();
+  gltfLoader.load('./model/other/lion.gltf', gltf => {
+    const lion = gltf.scene.getObjectByName('雕塑_狮子');
+    lion.material = new THREE.MeshBasicMaterial({ color: 0xee7447 });
+    scene.add(lion);
+    meshes.push(lion);
+
+    // 创建形状
+    const lionShape = new CANNON.Trimesh(
+      lion.geometry.attributes.position.array,
+      lion.geometry.index.array,
+    );
+
+    // 创建刚体
+    const lionBody = new CANNON.Body({
+      mass: 1,
+      shape: lionShape,
+      position: new CANNON.Vec3(0, 1, 0),
+      material: comonMaterial,
+    });
+    world.addBody(lionBody);
+    phyMeshes.push(lionBody);
+  });
 }
 
 // 创建场景

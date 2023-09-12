@@ -95,6 +95,58 @@ function createCode() {
   );
   scene.add(shpere);
   meshes.push(shpere);
+
+  const col = 15;
+  const row = 15;
+  const map = {
+    // 'col-row': body
+  };
+
+  const particleShape = new CANNON.Particle();
+  const geometry = new THREE.SphereGeometry(0.1, 8, 8);
+  const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+  for (let i = 0; i < col; i++) {
+    for (let j = 0; j < row; j++) {
+      const particleBody = new CANNON.Body({
+        mass: 0.1,
+        shape: particleShape,
+        position: new CANNON.Vec3((i - col / 2) / 4, 5, (j - row / 2) / 4),
+        material: comonMaterial,
+      });
+      world.addBody(particleBody);
+      phyMeshes.push(particleBody);
+      map[`${i}-${j}`] = particleBody;
+
+      const sphere = new THREE.Mesh(geometry, material);
+      scene.add(sphere);
+      meshes.push(sphere);
+    }
+  }
+  for (let i = 0; i < col; i++) {
+    for (let j = 0; j < row; j++) {
+      if (i > 0) {
+        let preBody = map[`${i - 1}-${j}`];
+        let nowBody = map[`${i}-${j}`];
+        const constraint = new CANNON.DistanceConstraint(
+          preBody,
+          nowBody,
+          1 / 4
+        );
+        world.addConstraint(constraint);
+      }
+      if (j > 0) {
+        let preBody = map[`${i}-${j - 1}`];
+        let nowBody = map[`${i}-${j}`];
+        const constraint = new CANNON.DistanceConstraint(
+          preBody,
+          nowBody,
+          1 / 3
+        );
+        world.addConstraint(constraint);
+      }
+    }
+  }
+
 }
 
 // 创建场景

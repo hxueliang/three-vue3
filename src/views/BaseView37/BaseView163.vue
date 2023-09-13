@@ -88,6 +88,31 @@ function createCode() {
   const box2 = new THREE.Mesh(boxGeometry, boxMaterial);
   scene.add(box2);
   meshes.push(box2);
+
+  const constraint = new CANNON.HingeConstraint(fixedBody, moveBody, {
+    // bodyA可以旋转的轴，定义在bodyA的局部。
+    axisA: new CANNON.Vec3(1, 0, 0),
+    // bodyB可以旋转的轴，在bodyB中局部定义。
+    axisB: new CANNON.Vec3(1, 0, 0),
+    // bodyA力的作用点
+    pivotA: new CANNON.Vec3(0, -3, 0),
+    // bodyB力的作用点
+    pivotB: new CANNON.Vec3(0, 3, 0),
+    // 是否碰撞连接的物体
+    // collideConnected: true,
+    // 约束物体所应施加的最大力
+    // maxForce: 10,
+  });
+  world.addConstraint(constraint);
+
+  window.addEventListener('click', () => {
+    // 添加力
+    // moveBody.applyForce(new CANNON.Vec3(0, 0, -1000), box2.position);
+
+    // 启用马达
+    constraint.enableMotor();
+    constraint.setMotorSpeed(10);
+  });
 }
 
 // 创建场景

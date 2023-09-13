@@ -83,6 +83,7 @@ function createCode() {
     material: comonMaterial,
     position: new CANNON.Vec3(0, 2.5, 2.5)
   });
+  fBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), Math.PI);
   world.addBody(fBody);
   phyMeshes.push(fBody);
   // 前面
@@ -134,6 +135,18 @@ function createCode() {
   scene.add(r);
   meshes.push(r);
 
+  // 创建SPH流体系统
+  const sphSystem = new CANNON.SPHSystem({
+    // 流体密度
+    density: 1,
+    // 流体粘度
+    viscosity: 0.01,
+    // 流体交互距离
+    smoothingRadius: 1,
+  });
+  // 将流体系统添加到世界中
+  world.subsystems.push(sphSystem);
+
   // 创建流体粒子
   const particleShape = new CANNON.Particle();
   const sphereGeometry = new THREE.SphereGeometry(0.1, 8, 8);
@@ -146,12 +159,14 @@ function createCode() {
       material: comonMaterial,
       position: new CANNON.Vec3(
         Math.random() - 0.5,
-        10,
+        15 + i,
         Math.random() - 0.5
       )
     });
     world.addBody(particleBody);
     phyMeshes.push(particleBody);
+    // 将粒子添加到流体系统中
+    sphSystem.add(particleBody);
     // 粒子
     const particle = new THREE.Mesh(sphereGeometry, sphereMaterial);
     scene.add(particle);

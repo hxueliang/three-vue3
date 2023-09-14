@@ -20,7 +20,8 @@
     "three": "^0.155.0",
     "vite-plugin-require-transform": "^1.0.21",
     "vue": "^3.3.4",
-    "vue-router": "^4.2.4"
+    "vue-router": "^4.2.4",
+    "yuka": "^0.7.8"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",

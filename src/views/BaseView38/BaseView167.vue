@@ -8,6 +8,7 @@ import { ref, onMounted } from 'vue';
 import gsap from 'gsap';
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
+import * as YUKA from 'yuka';
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -31,6 +32,8 @@ const clock = new THREE.Clock();
 const textureLoader = new THREE.TextureLoader();
 
 let scene, camera, renderer, controls;
+
+let entityManager;
 
 init();
 
@@ -59,9 +62,63 @@ function createCode() {
   coneGeometry.rotateX(Math.PI / 2);
   const coneMaterial = new THREE.MeshStandardMaterial({ color: 0xffff00 });
   const cone = new THREE.Mesh(coneGeometry, coneMaterial);
+  cone.matrixAutoUpdate = false;
   cone.castShadow = true;
   cone.receiveShadow = true;
   scene.add(cone);
+
+  // 创建yuka的车辆
+  const vehicle = new YUKA.Vehicle();
+  vehicle.maxSpeed = 6;
+  // 设置车辆的渲染对象
+  vehicle.setRenderComponent(cone, callback);
+  function callback(entity, renderComponent) {
+    // renderComponent.position.copy(entity.position);
+    // renderComponent.quaternion.copy(entity.quaternion);
+    renderComponent.matrix.copy(entity.worldMatrix);
+  }
+
+  // 创建yuka的路径
+  const path = new YUKA.Path();
+  path.add(new YUKA.Vector3(0, 0, 0));
+  path.add(new YUKA.Vector3(0, 0, 10));
+  path.add(new YUKA.Vector3(10, 0, 10));
+  path.add(new YUKA.Vector3(10, 0, 0));
+  path.add(new YUKA.Vector3(0, 0, 0));
+
+  // 设置路径的循环模式
+  path.loop = true;
+
+  // 将路径当前位置设置为车辆的位置
+  vehicle.position.copy(path.current());
+
+  // 跟随路径的行为
+  const followPathBehavior = new YUKA.FollowPathBehavior(path);
+  vehicle.steering.add(followPathBehavior);
+
+  // 创建实体管理对象
+  entityManager = new YUKA.EntityManager();
+  entityManager.add(vehicle);
+
+  drawPathLine(path);
+}
+
+// 绘制路径
+function drawPathLine(path) {
+  const positions = [];
+  const { _waypoints } = path;
+  for (let i = 0; i < _waypoints.length; i++) {
+    const { x, y, z } = _waypoints[i];
+    positions.push(x, y, z);
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    'position',
+    new THREE.Float32BufferAttribute(positions, 3)
+  );
+  const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+  const line = new THREE.Line(geometry, material);
+  scene.add(line);
 }
 
 // 创建场景
@@ -82,10 +139,11 @@ function createRenderer() {
   renderer.shadowMap.enabled = true;
   renderer.setSize(innerWidth, innerHeight);
 }
-
+const time = new YUKA.Time();
 // 创建渲染函数
 function render() {
-  const elapsed = clock.getElapsedTime();
+  const delta = time.update().getDelta();
+  entityManager && entityManager.update(delta);
 
   controls && controls.update();
   renderer.render(scene, camera);

@@ -57,21 +57,24 @@ function createCode() {
   plane.position.y = -1;
   scene.add(plane);
 
-  // 创建椎体
-  const coneGeometry = new THREE.ConeGeometry(0.2, 1, 32);
-  coneGeometry.rotateX(Math.PI / 2);
-  const coneMaterial = new THREE.MeshStandardMaterial({ color: 0xffff00 });
-  const cone = new THREE.Mesh(coneGeometry, coneMaterial);
-  // cone.matrixAutoUpdate = false;
-  cone.castShadow = true;
-  cone.receiveShadow = true;
-  scene.add(cone);
+  // 加载汽车模型
+  const gltfLoader = new GLTFLoader();
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderPath('./draco/');
+  gltfLoader.setDRACOLoader(dracoLoader);
+  gltfLoader.load('./model/yuka/car.gltf', gltf => {
+    gltf.scene.children[0].rotation.y = Math.PI / 2;
+    gltf.scene.children[0].scale.set(0.5, 0.5, 0.5);
+    scene.add(gltf.scene);
+    // 设置车辆的渲染对象
+    vehicle.setRenderComponent(gltf.scene, callback);
+  });
 
   // 创建yuka的车辆
   const vehicle = new YUKA.Vehicle();
   vehicle.maxSpeed = 5;
   // 设置车辆的渲染对象
-  vehicle.setRenderComponent(cone, callback);
+  // vehicle.setRenderComponent(cone, callback);
   function callback(entity, renderComponent) {
     renderComponent.position.copy(entity.position);
     renderComponent.quaternion.copy(entity.rotation);

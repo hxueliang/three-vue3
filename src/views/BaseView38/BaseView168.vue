@@ -1,4 +1,4 @@
-<!-- 167.限制路径与权重 -->
+<!-- 168.限制路径与权重 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -62,20 +62,20 @@ function createCode() {
   coneGeometry.rotateX(Math.PI / 2);
   const coneMaterial = new THREE.MeshStandardMaterial({ color: 0xffff00 });
   const cone = new THREE.Mesh(coneGeometry, coneMaterial);
-  cone.matrixAutoUpdate = false;
+  // cone.matrixAutoUpdate = false;
   cone.castShadow = true;
   cone.receiveShadow = true;
   scene.add(cone);
 
   // 创建yuka的车辆
   const vehicle = new YUKA.Vehicle();
-  vehicle.maxSpeed = 6;
+  vehicle.maxSpeed = 5;
   // 设置车辆的渲染对象
   vehicle.setRenderComponent(cone, callback);
   function callback(entity, renderComponent) {
-    // renderComponent.position.copy(entity.position);
-    // renderComponent.quaternion.copy(entity.quaternion);
-    renderComponent.matrix.copy(entity.worldMatrix);
+    renderComponent.position.copy(entity.position);
+    renderComponent.quaternion.copy(entity.rotation);
+    // renderComponent.matrix.copy(entity.worldMatrix);
   }
 
   // 创建yuka的路径
@@ -95,6 +95,12 @@ function createCode() {
   // 跟随路径的行为
   const followPathBehavior = new YUKA.FollowPathBehavior(path);
   vehicle.steering.add(followPathBehavior);
+
+  // 保持在路径中行为
+  const onPathBehavior = new YUKA.OnPathBehavior(path, 0.1);
+  // 行为的权重
+  onPathBehavior.weight = 10;
+  vehicle.steering.add(onPathBehavior);
 
   // 创建实体管理对象
   entityManager = new YUKA.EntityManager();

@@ -85,7 +85,7 @@ function createCode() {
     shape: new CANNON.Box(new CANNON.Vec3(4, 0.5, 2)),
     position: new CANNON.Vec3(0, 5, 0)
   });
-  world.addBody(chassisBody);
+  // world.addBody(chassisBody);
   phyMeshes.push(chassisBody);
   // 创建车身
   const chassisMesh = new THREE.Mesh(
@@ -94,6 +94,94 @@ function createCode() {
   );
   scene.add(chassisMesh);
   meshes.push(chassisMesh);
+
+  // 创建刚性车身
+  const vehicle = new CANNON.RigidVehicle({
+    chassisBody
+  });
+
+  // 轮子共同属性
+  const wheelShape = new CANNON.Sphere(1.5);
+  const wheelGeometry = new THREE.SphereGeometry(1.5, 8, 8);
+  const wheelMaterial = new THREE.MeshBasicMaterial({
+    color: 0x999999,
+    wireframe: true,
+  });
+  // 轮子位置
+  const wheelArray = [
+    { position: new CANNON.Vec3(-3, -0.2, 3.5) },
+    { position: new CANNON.Vec3(3, -0.2, 3.5) },
+    { position: new CANNON.Vec3(-3, -0.2, -3.5) },
+    { position: new CANNON.Vec3(3, -0.2, -3.5) },
+  ];
+  // 创建4个轮子
+  wheelArray.forEach(wheel => {
+    // 创建刚体(轮子1)
+    const wheelBody1 = new CANNON.Body({ mass: 1, shape: wheelShape });
+    // world.addBody(wheelBody1);
+    phyMeshes.push(wheelBody1);
+    // 创建轮子1
+    const wheelMesh1 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+    scene.add(wheelMesh1);
+    meshes.push(wheelMesh1);
+    // 添加轮子1
+    vehicle.addWheel({
+      body: wheelBody1,
+      // 轮子位置
+      position: wheel.position,
+      // 旋转轴
+      axis: new CANNON.Vec3(0, 0, -1),
+      // 转弯轴
+      direction: new CANNON.Vec3(0, -1, 0),
+    });
+  });
+
+  // 将车身添加到世界
+  // 这句代码必须写在最后
+  // 前面的1+4个body添加到世界的操作可以去掉了
+  vehicle.addToWorld(world);
+
+  // 控制车子
+  controlVehicle(vehicle);
+}
+
+function controlVehicle(vehicle) {
+  window.addEventListener('keydown', ({ key }) => {
+    if (key === 'w') {
+      vehicle.setWheelForce(-100, 0); // 第一个轮子
+      vehicle.setWheelForce(-100, 2); // 第三个轮子
+    }
+    if (key === 's') {
+      vehicle.setWheelForce(100, 0); // 第一个轮子
+      vehicle.setWheelForce(100, 2); // 第三个轮子
+    }
+    if (key === 'a') {
+      vehicle.setSteeringValue(Math.PI / 4, 0); // 第一个轮子
+      vehicle.setSteeringValue(Math.PI / 4, 2); // 第三个轮子
+    }
+    if (key === 'd') {
+      vehicle.setSteeringValue(-Math.PI / 4, 0); // 第一个轮子
+      vehicle.setSteeringValue(-Math.PI / 4, 2); // 第三个轮子
+    }
+  });
+  window.addEventListener('keyup', ({ key }) => {
+    if (key === 'w') {
+      vehicle.setWheelForce(0, 0);
+      vehicle.setWheelForce(0, 2);
+    }
+    if (key === 's') {
+      vehicle.setWheelForce(0, 0);
+      vehicle.setWheelForce(0, 2);
+    }
+    if (key === 'a') {
+      vehicle.setSteeringValue(0, 0); // 第一个轮子
+      vehicle.setSteeringValue(0, 2); // 第三个轮子
+    }
+    if (key === 'd') {
+      vehicle.setSteeringValue(0, 0); // 第一个轮子
+      vehicle.setSteeringValue(0, 2); // 第三个轮子
+    }
+  });
 }
 
 // 创建场景

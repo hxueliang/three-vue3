@@ -92,6 +92,132 @@ function createCode() {
   );
   scene.add(chassisMesh);
   meshes.push(chassisMesh);
+
+  // 创建拥有悬架的车辆
+  const vehicle = new CANNON.RaycastVehicle({
+    chassisBody: chassisBody,
+  });
+
+  const wheelOptions = {
+    // 车轮半径
+    radius: 0.5,
+    directionLocal: new CANNON.Vec3(0, -1, 0),
+    // 设置悬架的刚度
+    suspensionStiffness: 30,
+    // 设置悬架的休息长度
+    suspensionRestLength: 0.3,
+    // 设置车轮的滑动摩擦力
+    frictionSlip: 1.4,
+    // 设置拉伸的阻尼
+    dampingRelaxation: 2.3,
+    // 设置压缩的阻尼
+    dampingCompression: 4.4,
+    // 最大的悬架力
+    maxSuspensionForce: 100000,
+    // 设置最大的悬架行程
+    maxSuspensionTravel: 0.2,
+    // 车轮的转向轴
+    axleLocal: new CANNON.Vec3(0, 0, 1),
+  };
+
+  // 轮子位置
+  const wheelArray = [
+    { position: new CANNON.Vec3(-1, 0, 1) },
+    { position: new CANNON.Vec3(-1, 0, -1) },
+    { position: new CANNON.Vec3(1, 0, 1) },
+    { position: new CANNON.Vec3(1, 0, -1) },
+  ];
+  // 创建4个轮子
+  wheelArray.forEach(wheel => {
+    vehicle.addWheel({
+      ...wheelOptions,
+      chassisConnectionPointLocal: wheel.position,
+    });
+  });
+
+  vehicle.addToWorld(world);
+
+  const wheelBodies = [];
+
+  // 车轮形状
+  const wheelShape = new CANNON.Cylinder(0.5, 0.5, 0.2, 20);
+  const wheelGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.2, 20);
+  const wheelMaterial = new THREE.MeshBasicMaterial({
+    color: 0xff0000,
+    wireframe: true,
+  });
+
+  for (let i = 0; i < vehicle.wheelInfos.length; i++) {
+    const wheel = vehicle.wheelInfos[i];
+    const cylinderBody = new CANNON.Body({
+      mass: 0,
+      shape: wheelShape,
+    });
+    cylinderBody.addShape(wheelShape);
+    // world.addBody(cylinderBody);
+    phyMeshes.push(cylinderBody);
+    wheelBodies.push(cylinderBody);
+
+    const cylinderMesh = new THREE.Mesh(wheelGeometry, wheelMaterial);
+    cylinderMesh.rotation.x = -Math.PI / 2;
+    const wheelObj = new THREE.Object3D();
+    wheelObj.add(cylinderMesh);
+    scene.add(wheelObj);
+    meshes.push(wheelObj);
+  }
+
+  world.addEventListener("postStep", () => {
+    for (let i = 0; i < vehicle.wheelInfos.length; i++) {
+      vehicle.updateWheelTransform(i);
+      const t = vehicle.wheelInfos[i].worldTransform;
+      const wheelBody = wheelBodies[i];
+      wheelBody.position.copy(t.position);
+      wheelBody.quaternion.copy(t.quaternion);
+    }
+  });
+
+
+  // 控制车子
+  window.addEventListener("keydown", (event) => {
+    console.log(event.key);
+    if (event.key === "w") {
+      // setWheelForce(力，轮子编号)
+      vehicle.applyEngineForce(1000, 0);
+      vehicle.applyEngineForce(1000, 1);
+      // vehicle.applyEngineForce(10000, 2);
+      // vehicle.applyEngineForce(10000, 3);
+    }
+    if (event.key === "s") {
+      vehicle.applyEngineForce(-1000, 0);
+      vehicle.applyEngineForce(-1000, 1);
+    }
+    if (event.key == "a") {
+      vehicle.setSteeringValue(Math.PI / 4, 2);
+      vehicle.setSteeringValue(Math.PI / 4, 3);
+    }
+    if (event.key == "d") {
+      vehicle.setSteeringValue(-Math.PI / 4, 2);
+      vehicle.setSteeringValue(-Math.PI / 4, 3);
+    }
+  });
+  window.addEventListener("keyup", (event) => {
+    if (event.key === "w") {
+      vehicle.applyEngineForce(0, 0);
+      vehicle.applyEngineForce(0, 1);
+    }
+    if (event.key === "s") {
+      vehicle.applyEngineForce(0, 0);
+      vehicle.applyEngineForce(0, 1);
+    }
+    if (event.key == "a") {
+      vehicle.setSteeringValue(0, 2);
+      vehicle.setSteeringValue(0, 3);
+    }
+    if (event.key == "d") {
+      vehicle.setSteeringValue(0, 2);
+      vehicle.setSteeringValue(0, 3);
+    }
+  });
 }
 
 // 创建场景

@@ -112,10 +112,6 @@ function createCode() {
     target.position.set(point.x, 0, point.z);
   });
 
-  // 到达目标行为
-  const arriveBehavior = new YUKA.ArriveBehavior(target.position);
-  vehicle.steering.add(arriveBehavior);
-
   // 创建实体管理对象
   entityManager = new YUKA.EntityManager();
   entityManager.add(vehicle);
@@ -148,6 +144,10 @@ function createCode() {
   vehicle.steering.add(obstacleAvoidanceBehavior);
   // 设置平滑度，减少小车抖动
   vehicle.smoother = new YUKA.Smoother(5);
+
+  // 逃离行为
+  const fleeBehavior = new YUKA.FleeBehavior(target.position);
+  vehicle.steering.add(fleeBehavior);
 }
 
 // 创建场景

@@ -97,11 +97,16 @@ function createCode() {
   // 设置随机位置
   function setPosition() {
     target.position.set(Math.random() * 20 - 10, 0, Math.random() * 20 - 10);
+    setTimeout(setPosition, 2000);
   }
 
   // 搜索目标的行为
-  const seekBehavior = new YUKA.SeekBehavior(target.position);
-  vehicle.steering.add(seekBehavior);
+  // const seekBehavior = new YUKA.SeekBehavior(target.position);
+  // vehicle.steering.add(seekBehavior);
+
+  // 到达目标行为
+  const arriveBehavior = new YUKA.ArriveBehavior(target.position);
+  vehicle.steering.add(arriveBehavior);
 
   // 创建实体管理对象
   entityManager = new YUKA.EntityManager();

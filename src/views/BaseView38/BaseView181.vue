@@ -48,6 +48,24 @@ function init() {
   window.addEventListener('resize', onWindowResize);
 }
 
+
+class CustomVechicle extends YUKA.Vehicle {
+  constructor(navMesh) {
+    super();
+    this.navMesh = navMesh;
+  }
+
+  update(delta) {
+    super.update(delta);
+    // 处理小车行径时，窜入地面
+    const currentRegion = navMesh.getRegionForPoint(vehicle.position);
+    if (currentRegion) {
+      const distance = currentRegion.distanceToPoint(vehicle.position);
+      vehicle.position.y -= distance * 0.2;
+    }
+  }
+}
+
 // 业务代码
 function createCode() {
   const gltfLoader = new GLTFLoader();
@@ -66,18 +84,7 @@ function createCode() {
     });
     scene.add(plane);
   });
-  // 加载汽车模型
-  gltfLoader.load('./model/yuka/car.gltf', gltf => {
-    gltf.scene.children[0].rotation.y = Math.PI / 2;
-    gltf.scene.children[0].scale.set(0.5, 0.5, 0.5);
-    scene.add(gltf.scene);
-    // 设置车辆的渲染对象
-    vehicle.setRenderComponent(gltf.scene, callback);
-  });
 
-  // 创建yuka的车辆
-  vehicle = new YUKA.Vehicle();
-  vehicle.maxSpeed = 5;
   // 设置车辆的渲染对象
   // vehicle.setRenderComponent(cone, callback);
   function callback(entity, renderComponent) {
@@ -173,7 +180,6 @@ function createCode() {
 
   // 创建实体管理对象
   entityManager = new YUKA.EntityManager();
-  entityManager.add(vehicle);
   entityManager.add(target);
 
   // 创建网格加载器
@@ -182,6 +188,21 @@ function createCode() {
   navMeshLoader.load('./model/yuka/modelMap.gltf').then(navigationMesh => {
     console.log(navigationMesh);
     navMesh = navigationMesh;
+
+    // 创建yuka的车辆
+    // vehicle = new YUKA.Vehicle();
+    vehicle = new CustomVechicle(navMesh);
+    vehicle.maxSpeed = 5;
+    entityManager.add(vehicle);
+
+    // 加载汽车模型
+    gltfLoader.load('./model/yuka/car.gltf', gltf => {
+      gltf.scene.children[0].rotation.y = Math.PI / 2;
+      gltf.scene.children[0].scale.set(0.5, 0.5, 0.5);
+      scene.add(gltf.scene);
+      // 设置车辆的渲染对象
+      vehicle.setRenderComponent(gltf.scene, callback);
+    });
   });
 }
 
@@ -208,15 +229,6 @@ const time = new YUKA.Time();
 function render() {
   const delta = time.update().getDelta();
   entityManager && entityManager.update(delta);
-
-  // 处理小车行径时，窜入地面
-  if (navMesh) {
-    const currentRegion = navMesh.getRegionForPoint(vehicle.position);
-    if (currentRegion) {
-      const distance = currentRegion.distanceToPoint(vehicle.position);
-      vehicle.position.y -= distance * 0.2;
-    }
-  }
 
   controls && controls.update();
   renderer.render(scene, camera);

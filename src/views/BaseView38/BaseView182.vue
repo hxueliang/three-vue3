@@ -74,14 +74,8 @@ function createCode() {
   gltfLoader.setDRACOLoader(dracoLoader);
   // 加载地面模型
   let plane;
-  gltfLoader.load('./model/yuka/modelMap.gltf', gltf => {
+  gltfLoader.load('./model/yuka/city.glb', gltf => {
     plane = gltf.scene;
-    plane.traverse(child => {
-      if (child.isMesh) {
-        child.receiveShadow = true;
-        child.castShadow = true;
-      }
-    });
     scene.add(plane);
   });
 
@@ -135,7 +129,7 @@ function createCode() {
     vehicle.steering.clear();
 
     // 到终点行为
-    const arriveBehavior = new YUKA.ArriveBehavior(to, 3, 0.1);
+    const arriveBehavior = new YUKA.ArriveBehavior(to, 3, 1);
     vehicle.steering.add(arriveBehavior);
 
     // 在路径上行为
@@ -174,7 +168,7 @@ function createCode() {
   // 创建网格加载器
   const navMeshLoader = new YUKA.NavMeshLoader();
   // 加载网格
-  navMeshLoader.load('./model/yuka/modelMap.gltf').then(navigationMesh => {
+  navMeshLoader.load('./model/yuka/citymap.gltf').then(navigationMesh => {
     console.log(navigationMesh);
     navMesh = navigationMesh;
 
@@ -184,9 +178,7 @@ function createCode() {
     entityManager.add(vehicle);
 
     // 加载汽车模型
-    gltfLoader.load('./model/yuka/car.gltf', gltf => {
-      gltf.scene.children[0].rotation.y = Math.PI / 2;
-      gltf.scene.children[0].scale.set(0.5, 0.5, 0.5);
+    gltfLoader.load('./model/yuka/robot.glb', gltf => {
       scene.add(gltf.scene);
       vehicle.setRenderComponent(gltf.scene, callback);
     });

@@ -55,6 +55,7 @@ class Reflector extends Mesh {
 		const material = new ShaderMaterial({
 			name: (shader.name !== undefined) ? shader.name : 'unspecified',
 			uniforms: UniformsUtils.clone(shader.uniforms),
+			transparent: true,
 			fragmentShader: shader.fragmentShader,
 			vertexShader: shader.vertexShader
 		});
@@ -254,7 +255,7 @@ Reflector.ReflectorShader = {
 			#include <logdepthbuf_fragment>
 
 			vec4 base = texture2DProj( tDiffuse, vUv );
-			gl_FragColor = vec4( blendOverlay( base.rgb, color ), 1.0 );
+			gl_FragColor = vec4( blendOverlay( base.rgb, color ), 0.1 );
 
 			#include <tonemapping_fragment>
 			#include <colorspace_fragment>

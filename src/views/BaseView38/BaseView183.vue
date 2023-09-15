@@ -24,6 +24,8 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
+import { Reflector } from './mesh/Reflector';
+
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
 const container = ref(null);
@@ -79,6 +81,18 @@ function createCode() {
     plane = gltf.scene;
     scene.add(plane);
   });
+
+  // 创建镜面
+  const mirrorGeometry = new THREE.PlaneGeometry(200, 100);
+  const groundMirror = new Reflector(mirrorGeometry, {
+    clipBias: 0.003,
+    textureWidth: window.innerWidth * window.devicePixelRatio,
+    textureHeight: window.innerHeight * window.devicePixelRatio,
+    color: 0x777777,
+  });
+  groundMirror.position.y = 0.1;
+  groundMirror.rotateX(-Math.PI / 2);
+  scene.add(groundMirror);
 
   // 设置车辆的渲染对象
   function callback(entity, renderComponent) {

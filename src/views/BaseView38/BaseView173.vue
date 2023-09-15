@@ -120,6 +120,34 @@ function createCode() {
   entityManager = new YUKA.EntityManager();
   entityManager.add(vehicle);
   entityManager.add(target);
+
+  // 创建障碍物
+  const obstacles = [];
+  for (let i = 0; i < 10; i++) {
+    // 创建box
+    const geometry = new THREE.BoxGeometry(2, 2, 2);
+    const materail = new THREE.MeshStandardMaterial({ color: 0x333333 });
+    const box = new THREE.Mesh(geometry, materail);
+    setPosition(box);
+    box.castShadow = true;
+    box.receiveShadow = true;
+    scene.add(box);
+    // 创建障碍物
+    const obstacle = new YUKA.GameEntity();
+    obstacle.position.copy(box.position);
+    // 设置障碍物半径
+    geometry.computeBoundingSphere(); // 计算包围盒
+    obstacle.boundingRadius = geometry.boundingSphere.radius;
+    obstacles.push(obstacle);
+
+    entityManager.add(obstacle);
+  }
+
+  // 避障行为
+  const obstacleAvoidanceBehavior = new YUKA.ObstacleAvoidanceBehavior(obstacles);
+  vehicle.steering.add(obstacleAvoidanceBehavior);
+  // 设置平滑度，减少小车抖动
+  vehicle.smoother = new YUKA.Smoother(5);
 }
 
 // 创建场景

@@ -99,6 +99,19 @@ function createCode() {
     target.position.set(Math.random() * 20 - 10, 0, Math.random() * 20 - 10);
   }
 
+  // 点击修改目标位置
+  const raycaster = new THREE.Raycaster();
+  const ndc = new THREE.Vector2();
+  window.addEventListener('pointerdown', event => {
+    ndc.x = event.clientX / window.innerWidth * 2 - 1;
+    ndc.y = -(event.clientY / window.innerHeight * 2 - 1);
+    raycaster.setFromCamera(ndc, camera);
+    let intersects = raycaster.intersectObject(plane);
+    if (intersects.length === 0) { return; }
+    const { point } = intersects[0];
+    target.position.set(point.x, 0, point.z);
+  });
+
   // 到达目标行为
   const arriveBehavior = new YUKA.ArriveBehavior(target.position);
   vehicle.steering.add(arriveBehavior);

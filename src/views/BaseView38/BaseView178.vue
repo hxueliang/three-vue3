@@ -66,6 +66,9 @@ function createCode() {
   dracoLoader.setDecoderPath('./draco/');
   gltfLoader.setDRACOLoader(dracoLoader);
   gltfLoader.load('./model/yuka/car.gltf', gltf => {
+    // 创建随机行走行为
+    const wanderBehavior = new YUKA.WanderBehavior(3);
+
     for (let i = 0; i < 40; i++) {
       const car = gltf.scene.clone();
       car.children[0].rotation.y = Math.PI / 2;
@@ -78,6 +81,8 @@ function createCode() {
       vehicle.rotation.fromEuler(0, Math.random() * Math.PI / 6, 0);
       vehicle.setRenderComponent(car, callback);
       entityManager.add(vehicle);
+
+      vehicle.steering.add(wanderBehavior);
     }
   });
 

@@ -93,7 +93,7 @@ function createCode() {
   const c1 = gltfLoader.loadAsync('./model/yuka/car.gltf');
   const c2 = gltfLoader.loadAsync('./model/yuka/truck.gltf');
   Promise.all([c1, c2]).then(res => {
-    const [car, truck] = res.map(item => item.scene);
+    const [carSrc, truck] = res.map(item => item.scene);
 
     // 货车
     truck.children[0].rotation.y = Math.PI / 2;
@@ -106,21 +106,37 @@ function createCode() {
     scene.add(truck);
 
     // 小车
-    car.children[0].rotation.y = Math.PI / 2;
-    car.children[0].scale.set(0.5, 0.5, 0.5);
-    const vehicle1 = new YUKA.Vehicle();
-    vehicle1.maxSpeed = 6;
-    setPosition(vehicle1);
-    vehicle1.setRenderComponent(car, callback);
-    entityManager.add(vehicle1);
-    scene.add(car);
+    const offset = [
+      new YUKA.Vector3(0, 0, 0),
+      new YUKA.Vector3(2, 0, 1),
+      new YUKA.Vector3(-2, 0, 1),
+      new YUKA.Vector3(3, 0, 3),
+      new YUKA.Vector3(-3, 0, 3),
+      new YUKA.Vector3(1.5, 0, 6),
+      new YUKA.Vector3(-1.5, 0, 6),
+    ];
 
-    // 设置小车偏移追击货车行为
-    const offsetPursuitBehavior = new YUKA.OffsetPursuitBehavior(
-      vehicle2,
-      new YUKA.Vector3(0, 0, 1)
-    );
-    vehicle1.steering.add(offsetPursuitBehavior);
+    for (let i = 0; i < offset.length; i++) {
+      const car = carSrc.clone();
+      car.children[0].rotation.y = Math.PI / 2;
+      car.children[0].scale.set(0.5, 0.5, 0.5);
+      const vehicle1 = new YUKA.Vehicle();
+      vehicle1.maxSpeed = 6;
+      setPosition(vehicle1);
+      vehicle1.setRenderComponent(car, callback);
+      entityManager.add(vehicle1);
+      scene.add(car);
+
+      // 设置小车偏移追击货车行为
+      const offsetPursuitBehavior = new YUKA.OffsetPursuitBehavior(
+        vehicle2,
+        offset[i]
+      );
+      vehicle1.steering.add(offsetPursuitBehavior);
+    }
+
+
+
 
     // 设置货车到达目标行为
     const arriveBehavior = new YUKA.ArriveBehavior(target.position);
@@ -129,7 +145,7 @@ function createCode() {
     // 5秒切换目标位置
     setInterval(() => {
       setPosition(target);
-    }, 5000);
+    }, 10000);
   });
 }
 

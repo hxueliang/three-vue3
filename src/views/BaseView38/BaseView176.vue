@@ -98,7 +98,7 @@ function createCode() {
     car.children[0].scale.set(0.5, 0.5, 0.5);
     // 创建yuka的车辆
     const vehicle1 = new YUKA.Vehicle();
-    vehicle1.maxSpeed = 3;
+    vehicle1.maxSpeed = 6;
     setPosition(vehicle1);
     vehicle1.setRenderComponent(car, callback);
     // 添加实体
@@ -108,7 +108,7 @@ function createCode() {
     truck.children[0].scale.set(0.5, 0.5, 0.5);
     // 创建yuka的车辆
     const vehicle2 = new YUKA.Vehicle();
-    vehicle2.maxSpeed = 6;
+    vehicle2.maxSpeed = 5;
     setPosition(vehicle2);
     vehicle2.setRenderComponent(truck, callback);
     // 添加实体
@@ -117,6 +117,12 @@ function createCode() {
     scene.add(car);
     scene.add(truck);
 
+    // 设置小车偏移追击货车行为
+    const offsetPursuitBehavior = new YUKA.OffsetPursuitBehavior(
+      vehicle2,
+      new YUKA.Vector3(0, 0, 1)
+    );
+    vehicle1.steering.add(offsetPursuitBehavior);
 
     // 设置货车到达目标行为
     const arriveBehavior = new YUKA.ArriveBehavior(target.position);

@@ -84,6 +84,52 @@ function createCode() {
     obj.position.set(Math.random() * 50 - 20, 0, Math.random() * 50 - 25);
   }
   entityManager.add(target);
+
+  // 加载汽车模型
+  const gltfLoader = new GLTFLoader();
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderPath('./draco/');
+  gltfLoader.setDRACOLoader(dracoLoader);
+  const c1 = gltfLoader.loadAsync('./model/yuka/car.gltf');
+  const c2 = gltfLoader.loadAsync('./model/yuka/truck.gltf');
+  Promise.all([c1, c2]).then(res => {
+    const [car, truck] = res.map(item => item.scene);
+    car.children[0].rotation.y = Math.PI / 2;
+    car.children[0].scale.set(0.5, 0.5, 0.5);
+    // 创建yuka的车辆
+    const vehicle1 = new YUKA.Vehicle();
+    vehicle1.maxSpeed = 3;
+    setPosition(vehicle1);
+    vehicle1.setRenderComponent(car, callback);
+    // 添加实体
+    entityManager.add(vehicle1);
+
+    truck.children[0].rotation.y = Math.PI / 2;
+    truck.children[0].scale.set(0.5, 0.5, 0.5);
+    // 创建yuka的车辆
+    const vehicle2 = new YUKA.Vehicle();
+    vehicle2.maxSpeed = 6;
+    setPosition(vehicle2);
+    vehicle2.setRenderComponent(truck, callback);
+    // 添加实体
+    entityManager.add(vehicle2);
+
+    scene.add(car);
+    scene.add(truck);
+
+    // 设置小车追击货车行为
+    const pursuitBehavior = new YUKA.PursuitBehavior(vehicle2);
+    vehicle1.steering.add(pursuitBehavior);
+
+    // 设置货车到达目标行为
+    const arriveBehavior = new YUKA.ArriveBehavior(target.position);
+    vehicle2.steering.add(arriveBehavior);
+
+    // 5秒切换目标位置
+    setInterval(() => {
+      setPosition(target);
+    }, 5000);
+  });
 }
 
 // 创建场景

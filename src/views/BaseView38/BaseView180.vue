@@ -35,6 +35,8 @@ let scene, camera, renderer, controls;
 
 let entityManager;
 
+let vehicle, navMesh;
+
 init();
 
 // 初始化
@@ -48,6 +50,10 @@ function init() {
 
 // 业务代码
 function createCode() {
+  const gltfLoader = new GLTFLoader();
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderPath('./draco/');
+  gltfLoader.setDRACOLoader(dracoLoader);
   // 加载地面模型
   let plane;
   gltfLoader.load('./model/yuka/modelMap.gltf', gltf => {
@@ -60,12 +66,7 @@ function createCode() {
     });
     scene.add(plane);
   });
-
   // 加载汽车模型
-  const gltfLoader = new GLTFLoader();
-  const dracoLoader = new DRACOLoader();
-  dracoLoader.setDecoderPath('./draco/');
-  gltfLoader.setDRACOLoader(dracoLoader);
   gltfLoader.load('./model/yuka/car.gltf', gltf => {
     gltf.scene.children[0].rotation.y = Math.PI / 2;
     gltf.scene.children[0].scale.set(0.5, 0.5, 0.5);
@@ -75,7 +76,7 @@ function createCode() {
   });
 
   // 创建yuka的车辆
-  const vehicle = new YUKA.Vehicle();
+  vehicle = new YUKA.Vehicle();
   vehicle.maxSpeed = 5;
   // 设置车辆的渲染对象
   // vehicle.setRenderComponent(cone, callback);
@@ -114,16 +115,74 @@ function createCode() {
     if (intersects.length === 0) { return; }
     const { point } = intersects[0];
     target.position.set(point.x, 0, point.z);
+
+    const from = vehicle.position;
+    const to = point;
+
+    // 根据导航网格获取路径
+    const path = navMesh.findPath(from, to);
+    // 生成YUKA路径
+    const path1 = new YUKA.Path();
+    path.forEach(({ x, y, z }) => path1.add(new YUKA.Vector3(x, y, z)));
+    drawPathLine(path1);
+
+    // 清除以有行为
+    vehicle.steering.clear();
+
+    // 跟随路径的行为
+    // const followPathBehavior = new YUKA.FollowPathBehavior(path1);
+    // followPathBehavior.weight = 10;
+    // vehicle.steering.add(followPathBehavior);
+
+    // 到终点行为
+    const arriveBehavior = new YUKA.ArriveBehavior(to, 3, 0.1);
+    vehicle.steering.add(arriveBehavior);
+
+    // 在路径上行为
+    const onPathBehavior = new YUKA.OnPathBehavior(path1, 0.1, 0.1);
+    vehicle.steering.add(onPathBehavior);
   });
 
+  // 绘制路径
+  let line;
+  function drawPathLine(path) {
+    if (line) {
+      scene.remove(line);
+      line.geometry.dispose();
+      line.material.dispose();
+    }
+    const positions = [];
+    const { _waypoints } = path;
+    for (let i = 0; i < _waypoints.length; i++) {
+      const { x, y, z } = _waypoints[i];
+      positions.push(x, y, z);
+    }
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute(
+      'position',
+      new THREE.Float32BufferAttribute(positions, 3)
+    );
+    const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+    line = new THREE.Line(geometry, material);
+    scene.add(line);
+  }
+
   // 到达目标行为
-  const arriveBehavior = new YUKA.ArriveBehavior(target.position);
-  vehicle.steering.add(arriveBehavior);
+  // const arriveBehavior = new YUKA.ArriveBehavior(target.position);
+  // vehicle.steering.add(arriveBehavior);
 
   // 创建实体管理对象
   entityManager = new YUKA.EntityManager();
   entityManager.add(vehicle);
   entityManager.add(target);
+
+  // 创建网格加载器
+  const navMeshLoader = new YUKA.NavMeshLoader();
+  // 加载网格
+  navMeshLoader.load('./model/yuka/modelMap.gltf').then(navigationMesh => {
+    console.log(navigationMesh);
+    navMesh = navigationMesh;
+  });
 }
 
 // 创建场景
@@ -149,6 +208,15 @@ const time = new YUKA.Time();
 function render() {
   const delta = time.update().getDelta();
   entityManager && entityManager.update(delta);
+
+  // 处理小车行径时，窜入地面
+  if (navMesh) {
+    const currentRegion = navMesh.getRegionForPoint(vehicle.position);
+    if (currentRegion) {
+      const distance = currentRegion.distanceToPoint(vehicle.position);
+      vehicle.position.y -= distance * 0.2;
+    }
+  }
 
   controls && controls.update();
   renderer.render(scene, camera);

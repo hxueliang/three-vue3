@@ -89,9 +89,28 @@ function createCode() {
   sphere.receiveShadow = true;
   scene.add(sphere);
 
+  // 创建目标
+  const target = new YUKA.GameEntity();
+  target.setRenderComponent(sphere, callback);
+  setPosition();
+
+  // 设置随机位置
+  function setPosition() {
+    target.position.set(Math.random() * 20 - 10, 0, Math.random() * 20 - 10);
+    // 两秒切换位置
+    setTimeout(() => {
+      setPosition();
+    }, 2000);
+  }
+
+  // 搜索目标的行为
+  const seekBehavior = new YUKA.SeekBehavior(target.position);
+  vehicle.steering.add(seekBehavior);
+
   // 创建实体管理对象
   entityManager = new YUKA.EntityManager();
   entityManager.add(vehicle);
+  entityManager.add(target);
 }
 
 // 创建场景

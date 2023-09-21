@@ -1,4 +1,10 @@
 <!-- 188.后期边缘处理 -->
+
+<!-- 
+  https://localhost:8080/examples/webgl_postprocessing_sobel
+  https://localhost:8080/examples/webgl_postprocessing_outline
+-->
+
 <template>
   <div class="container" ref="container"></div>
 </template>

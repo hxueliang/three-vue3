@@ -1,4 +1,10 @@
 <!-- 189.后期发光处理 -->
+
+<!-- 
+  https://localhost:8080/examples/webgl_postprocessing_unreal_bloom
+  https://localhost:8080/examples/webgl_postprocessing_unreal_bloom_selective
+-->
+
 <template>
   <div class="container" ref="container"></div>
 </template>

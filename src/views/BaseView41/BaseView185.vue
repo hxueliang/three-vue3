@@ -1,5 +1,10 @@
 <!-- 185.屏幕空间反射 -->
 
+<!-- 
+https://localhost:8080/examples/webgl_postprocessing_ssr
+https://github.com/0beqz/screen-space-reflections
+-->
+
 <template>
   <div class="container" ref="container"></div>
 </template>

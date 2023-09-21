@@ -1,4 +1,10 @@
 <!-- 187.后期环境光遮蔽处理 -->
+
+<!--  
+https://localhost:8080/examples/webgl_postprocessing_sao
+https://localhost:8080/examples/webgl_postprocessing_ssao
+-->
+
 <template>
   <div class="container" ref="container"></div>
 </template>

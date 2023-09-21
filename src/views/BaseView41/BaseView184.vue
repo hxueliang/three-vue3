@@ -1,4 +1,35 @@
 <!-- 184.普通/接触/级联/烘焙/pcss阴影优缺点 -->
+
+<!-- 烘焙阴影
+缺点：物体移动，阴影还还在原处，只适用于静态的物体。因为贴图是固定的，不会变
+优点：性能是最佳的。因为不需要再计算
+https://localhost:8080/examples/webgl_materials_lightmap
+-->
+
+<!-- 接触阴影
+缺点：使用场景有限，通常用在纯色背景中使用
+优点：性能是最较佳的
+https://localhost:8080/examples/webgl_shadow_contact
+-->
+
+<!-- 普通阴影
+缺点：
+  1、场景分辨率不大，相机分辨率设置的分辨率较大时，会出现一个个像素格子或条纹。
+  2、场景分辨率不大，相机分辨率设置的分辨率也不大时，虽然不会出现一个个像素格子或条纹，但是阴影没有从实到虚的效果，感觉很硬实
+https://localhost:8080/examples/webgl_shadowmap 
+-->
+
+<!-- 软阴影（如：pcss）
+缺点：需要更多的计算消耗
+优点：效果最好
+https://localhost:8080/examples/webgl_shadowmap_pcss
+-->
+
+<!-- 级联阴影
+优点：可实现远近阴影不用的分辨率
+https://localhost:8080/examples/webgl_shadowmap_csm
+-->
+
 <template>
   <div class="container" ref="container"></div>
 </template>

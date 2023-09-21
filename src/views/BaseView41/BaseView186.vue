@@ -1,4 +1,11 @@
 <!-- 186.后期抗锯齿处理 -->
+
+<!-- 
+https://localhost:8080/examples/webgl_postprocessing_fxaa
+https://localhost:8080/examples/webgl_postprocessing_ssaa
+https://localhost:8080/examples/webgl_postprocessing_smaa
+-->
+
 <template>
   <div class="container" ref="container"></div>
 </template>

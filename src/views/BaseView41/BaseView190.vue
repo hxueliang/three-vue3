@@ -28,6 +28,13 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 import { SSREffect } from 'screen-space-reflections';
+import {
+  EffectComposer,
+  RenderPass,
+  SelectiveBloomEffect,
+  BlendFunction,
+  EffectPass,
+} from 'postprocessing';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -38,6 +45,8 @@ const clock = new THREE.Clock();
 const textureLoader = new THREE.TextureLoader();
 
 let scene, camera, renderer, controls;
+
+let composer;
 
 init();
 
@@ -75,6 +84,21 @@ function createCode() {
   sum.shadow.mapSize.height = 2048;
   sum.shadow.bias = -0.00001;
   sum.angle = 0.1;
+
+  // 后期处理
+  composer = new EffectComposer(renderer); // 实例化后期处理
+  composer.addPass(new RenderPass(scene, camera)); // 添加renderPass
+  const bloomEffect = new SelectiveBloomEffect(scene, camera, { // 实例化辉光效果
+    blendFunction: BlendFunction.ADD, // 混合模式
+    mipmapBlur: true, // 模糊
+    luminanceThreshold: 0.7, // 亮度阈值
+    luminanceSmoothing: 0.3, // 亮度平滑
+    intensity: 30, // 强度
+  });
+
+  // 创建效果通道
+  const effectPass = new EffectPass(camera, bloomEffect);
+  composer.addPass(effectPass);
 }
 
 // 创建场景
@@ -112,7 +136,7 @@ function render() {
   const elapsed = clock.getElapsedTime();
 
   controls && controls.update();
-  renderer.render(scene, camera);
+  composer.render();
   requestAnimationFrame(render);
 };
 

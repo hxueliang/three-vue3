@@ -1,4 +1,10 @@
 <!-- 190.提升渲染效果具体细节实现流程 -->
+<!-- 
+  后期处理
+  https://github.com/pmndrs/postprocessing
+  屏幕空间反射
+  https://github.com/0beqz/screen-space-reflections
+-->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -21,6 +27,7 @@ import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
+import { SSREffect } from 'screen-space-reflections';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -46,6 +53,28 @@ function init() {
 
 // 业务代码
 function createCode() {
+  const gltfLoader = new GLTFLoader();
+  const dracoLoader = new DRACOLoader();
+  gltfLoader.setDRACOLoader(dracoLoader);
+  gltfLoader.load('./model/effect/court-transformed.glb', gltf => {
+    gltf.scene.traverse(child => {
+      if (!child.isMesh) { return; }
+      // 开启投射和接收阴影
+      child.castShadow = true;
+      child.receiveShadow = true;
+      // 降低周围物体的亮度
+      child.material.envMapIntensity = 0.2;
+    });
+    gltf.scene.position.set(0, -0.5, 0);
+    scene.add(gltf.scene);
+  });
+
+  // 添加聚光灯充当太阳
+  const sum = createSpotLight(-200, 200, -100, 300000, 0xffffff, true);
+  sum.shadow.mapSize.width = 2048;
+  sum.shadow.mapSize.height = 2048;
+  sum.shadow.bias = -0.00001;
+  sum.angle = 0.1;
 }
 
 // 创建场景
@@ -64,8 +93,18 @@ function createCamera(x = 0, y = 0, z = 10) {
 function createRenderer() {
   renderer = new THREE.WebGLRenderer({
     antialias: true,
+    // 希望有更高的效果，设置对数深度缓冲区
+    logarithmicDepthBuffer: true,
+    // 需要高精度
+    powerPreference: 'high-performance',
   });
   renderer.setSize(innerWidth, innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap; // 使用软阴影
 }
 
 // 创建渲染函数
@@ -120,6 +159,15 @@ function createDirLight(x = 0, y = 0, z = 10, strength = 1, color = '#ffffff', c
   dirLight.castShadow = castShadow;
   dirLight.position.set(x, y, z);
   scene.add(dirLight);
+}
+
+// 添加聚光灯
+function createSpotLight(x = 0, y = 0, z = 10, strength = 1000, color = '#ffffff', castShadow = false) {
+  const light = new THREE.SpotLight(color, strength);
+  light.position.set(x, y, z);
+  light.castShadow = castShadow;
+  scene.add(light);
+  return light;
 }
 
 // 监听视口变化

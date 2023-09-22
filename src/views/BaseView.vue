@@ -44,6 +44,7 @@ function init() {
   // createAmbientLight();
   // createDirLight();
   // createPointLight();
+  // createSpotLight();
   window.addEventListener('resize', onWindowResize);
 }
 
@@ -126,6 +127,15 @@ function createDirLight(x = 0, y = 0, z = 10, strength = 1, color = '#ffffff', c
   dirLight.castShadow = castShadow;
   dirLight.position.set(x, y, z);
   scene.add(dirLight);
+}
+
+// 添加聚光灯
+function createSpotLight(x = 0, y = 0, z = 10, strength = 1000, color = '#ffffff', castShadow = false) {
+  const light = new THREE.SpotLight(color, strength);
+  light.position.set(x, y, z);
+  light.castShadow = castShadow;
+  scene.add(light);
+  return light;
 }
 
 // 监听视口变化

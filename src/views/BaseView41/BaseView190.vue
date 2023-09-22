@@ -27,7 +27,6 @@ import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
-import { SSREffect } from 'screen-space-reflections';
 import {
   EffectComposer,
   RenderPass,
@@ -37,6 +36,7 @@ import {
   SMAAEffect,
   SSAOEffect,
   NormalPass,
+  GodRaysEffect,
 } from 'postprocessing';
 
 let innerWidth = window.innerWidth;
@@ -116,12 +116,22 @@ function createCode() {
     intensity: 1.33,
   });
 
+  // 体积光效果
+  const roomLight = new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 32, 32),
+    new THREE.MeshBasicMaterial({ color: 0xffffff })
+  );
+  roomLight.position.set(0, 5, 0);
+  scene.add(roomLight);
+  const godRaysEffect = new GodRaysEffect(camera, roomLight);
+
   // 创建效果通道
   const effectPass = new EffectPass(
     camera,
     bloomEffect,
     smaaEffect,
     ssaoEffect,
+    godRaysEffect,
   );
   composer.addPass(effectPass);
 }

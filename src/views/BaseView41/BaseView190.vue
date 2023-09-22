@@ -1,4 +1,4 @@
-<!-- 114.使用css2d渲染器 -->
+<!-- 190.提升渲染效果具体细节实现流程 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -37,22 +37,15 @@ init();
 // 初始化
 function init() {
   createScene();
-  createCamera();
+  createCamera(0, 1, 10);
   createRenderer();
   createAxes();
-  // createAmbientTexture();
-  // createAmbientLight();
-  // createDirLight();
-  // createPointLight();
+  createAmbientTexture();
   window.addEventListener('resize', onWindowResize);
 }
 
 // 业务代码
 function createCode() {
-  const geometry = new THREE.PlaneGeometry(1, 1);
-  const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-  const plane = new THREE.Mesh(geometry, material);
-  scene.add(plane);
 }
 
 // 创建场景
@@ -67,10 +60,11 @@ function createCamera(x = 0, y = 0, z = 10) {
   scene.add(camera);
 }
 
-
 // 创建渲染器
 function createRenderer() {
-  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer = new THREE.WebGLRenderer({
+    antialias: true,
+  });
   renderer.setSize(innerWidth, innerHeight);
 }
 

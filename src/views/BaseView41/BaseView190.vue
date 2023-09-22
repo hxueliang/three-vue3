@@ -39,6 +39,8 @@ import {
   GodRaysEffect,
 } from 'postprocessing';
 
+import { SSRDebugGUI } from './SSRDebugGUI';
+
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
 const container = ref(null);
@@ -136,8 +138,36 @@ function createCode() {
   const godRaysEffect = new GodRaysEffect(camera, roomLight);
   */
 
+  const options = {
+    intensity: 1,
+    exponent: 1,
+    distance: 10,
+    fade: 0,
+    roughnessFade: 1,
+    thickness: 10,
+    ior: 1.45,
+    maxRoughness: 1,
+    maxDepthDifference: 10,
+    blend: 0.9,
+    correction: 1,
+    correctionRadius: 1,
+    blur: 0.5,
+    blurKernel: 1,
+    blurSharpness: 10,
+    jitter: 0,
+    jitterRoughness: 0,
+    steps: 20,
+    refineSteps: 5,
+    missedRays: true,
+    useNormalMap: true,
+    useRoughnessMap: true,
+    resolutionScale: 1,
+    velocityResolutionScale: 1
+  };
+
   // 添加屏幕空间反射
-  const ssrEffect = new SSREffect(scene, camera);
+  const ssrEffect = new SSREffect(scene, camera, options);
+  new SSRDebugGUI(ssrEffect, options);
 
   // 创建效果通道
   const effectPass = new EffectPass(

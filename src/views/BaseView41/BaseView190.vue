@@ -34,6 +34,7 @@ import {
   SelectiveBloomEffect,
   BlendFunction,
   EffectPass,
+  SMAAEffect,
 } from 'postprocessing';
 
 let innerWidth = window.innerWidth;
@@ -53,7 +54,7 @@ init();
 // 初始化
 function init() {
   createScene();
-  createCamera(0, 1, 10);
+  createCamera(0, 1.5, 8);
   createRenderer();
   createAxes();
   createAmbientTexture();
@@ -96,8 +97,15 @@ function createCode() {
     intensity: 30, // 强度
   });
 
+  // 提升抗锯齿效果
+  const smaaEffect = new SMAAEffect();
+
   // 创建效果通道
-  const effectPass = new EffectPass(camera, bloomEffect);
+  const effectPass = new EffectPass(
+    camera,
+    bloomEffect,
+    smaaEffect,
+  );
   composer.addPass(effectPass);
 }
 
@@ -108,7 +116,7 @@ function createScene() {
 
 // 创建相机
 function createCamera(x = 0, y = 0, z = 10) {
-  camera = new THREE.PerspectiveCamera(25, innerWidth / innerHeight, 0.1, 3000);
+  camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
   camera.position.set(x, y, z);
   scene.add(camera);
 }

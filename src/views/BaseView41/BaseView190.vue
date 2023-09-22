@@ -35,6 +35,8 @@ import {
   BlendFunction,
   EffectPass,
   SMAAEffect,
+  SSAOEffect,
+  NormalPass,
 } from 'postprocessing';
 
 let innerWidth = window.innerWidth;
@@ -100,11 +102,26 @@ function createCode() {
   // 提升抗锯齿效果
   const smaaEffect = new SMAAEffect();
 
+  // 环境光遮蔽效果
+  const normalPass = new NormalPass(scene, camera);
+  const ssaoEffect = new SSAOEffect(camera, normalPass.texture, {
+    // https://github.com/pmndrs/postprocessing/blob/main/demo/src/demos/SSAODemo.js
+    // https://pmndrs.github.io/postprocessing/public/docs/class/src/effects/SSAOEffect.js~SSAOEffect.html
+    blendFunction: BlendFunction.MULTIPLY,
+    samples: 32,
+    rings: 3,
+    luminanceInfluence: 0.1,
+    radius: 0.005,
+    bias: 0,
+    intensity: 1.33,
+  });
+
   // 创建效果通道
   const effectPass = new EffectPass(
     camera,
     bloomEffect,
     smaaEffect,
+    ssaoEffect,
   );
   composer.addPass(effectPass);
 }

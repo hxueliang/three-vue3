@@ -14,7 +14,6 @@ import { ref, onMounted } from 'vue';
 import gsap from 'gsap';
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-import * as TWEEN from 'three/examples/jsm/libs/tween.module.js';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
@@ -27,6 +26,7 @@ import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
+import { SSREffect } from 'screen-space-reflections';
 import {
   EffectComposer,
   RenderPass,
@@ -75,14 +75,15 @@ function createCode() {
       child.castShadow = true;
       child.receiveShadow = true;
       // 降低周围物体的亮度
-      child.material.envMapIntensity = 0.2;
+      child.material.envMapIntensity = 0.3;
     });
     gltf.scene.position.set(0, -0.5, 0);
     scene.add(gltf.scene);
   });
 
   // 添加聚光灯充当太阳
-  const sum = createSpotLight(-200, 200, -100, 300000, 0xffffff, true);
+  // 155强度用300000，146强度用3
+  const sum = createSpotLight(-200, 200, -100, 3, 0xffffff, true);
   sum.shadow.mapSize.width = 2048;
   sum.shadow.mapSize.height = 2048;
   sum.shadow.bias = -0.00001;
@@ -116,6 +117,7 @@ function createCode() {
     intensity: 1.33,
   });
 
+  /*
   // 体积光效果
   const roomLight = new THREE.Mesh(
     new THREE.SphereGeometry(0.5, 32, 32),
@@ -124,14 +126,19 @@ function createCode() {
   roomLight.position.set(0, 5, 0);
   scene.add(roomLight);
   const godRaysEffect = new GodRaysEffect(camera, roomLight);
+  */
+
+  // 添加屏幕空间反射
+  const ssrEffect = new SSREffect(scene, camera);
 
   // 创建效果通道
   const effectPass = new EffectPass(
     camera,
     bloomEffect,
-    smaaEffect,
     ssaoEffect,
-    godRaysEffect,
+    // godRaysEffect,
+    ssrEffect, // 需要更换three@0.146.0才不报错
+    smaaEffect,
   );
   composer.addPass(effectPass);
 }

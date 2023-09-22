@@ -43,9 +43,9 @@ let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
 const container = ref(null);
 
-const gui = new GUI();
 const clock = new THREE.Clock();
 const textureLoader = new THREE.TextureLoader();
+const rgbeLoader = new RGBELoader();
 
 let scene, camera, renderer, controls;
 
@@ -69,16 +69,24 @@ function createCode() {
   const dracoLoader = new DRACOLoader();
   gltfLoader.setDRACOLoader(dracoLoader);
   gltfLoader.load('./model/effect/court-transformed.glb', gltf => {
-    gltf.scene.traverse(child => {
-      if (!child.isMesh) { return; }
-      // 开启投射和接收阴影
-      child.castShadow = true;
-      child.receiveShadow = true;
-      // 降低周围物体的亮度
-      child.material.envMapIntensity = 0.3;
+    rgbeLoader.load('./hdr/living.hdr', texture => {
+      texture.mapping = THREE.EquirectangularReflectionMapping;
+      gltf.scene.traverse(child => {
+        if (!child.isMesh) { return; }
+        // 开启投射和接收阴影
+        child.castShadow = true;
+        child.receiveShadow = true;
+        // 降低周围物体的亮度
+        child.material.envMapIntensity = 0.3;
+        child.material.envMap = texture;
+
+        if (child.name === "GymFloor_ParquetShader_0") {
+          child.material.envMap = scene.environment;
+        }
+      });
+      gltf.scene.position.set(0, -0.5, 0);
+      scene.add(gltf.scene);
     });
-    gltf.scene.position.set(0, -0.5, 0);
-    scene.add(gltf.scene);
   });
 
   // 添加聚光灯充当太阳
@@ -198,7 +206,6 @@ function createAxes(show = true) {
 
 // 添加环境纹理
 function createAmbientTexture() {
-  const rgbeLoader = new RGBELoader();
   rgbeLoader.load('./hdr/noon_grass_1k.hdr', texture => {
     texture.mapping = THREE.EquirectangularReflectionMapping;
     scene.background = texture;

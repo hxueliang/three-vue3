@@ -23,6 +23,7 @@ import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
 import { IFCLoader } from 'web-ifc-three/IFCLoader';
+import { GLTFExporter } from 'three/addons/exporters/GLTFExporter';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -60,7 +61,38 @@ function createCode() {
   ifcLoader.load('./model/light/kg.ifc', ifcModel => {
     console.log(ifcModel);
     scene.add(ifcModel);
+
+    // 导出模型
+    const gltfExporter = new GLTFExporter();
+    gltfExporter.parse(ifcModel, gltf => {
+      // 是二进制
+      if (gltf instanceof ArrayBuffer) {
+        // 保存二进制数据
+        saveArrayBuffer(gltf, 'model.glb');
+      } else {
+        saveArrayBuffer(gltf, 'model.gltf');
+      }
+    }, error => {
+      console.log(error);
+    }, {
+      binary: true // true:glb，false:gltf
+    });
   });
+}
+
+function saveArrayBuffer(buffer, filename) {
+  save(
+    new Blob([buffer], { type: 'application/octet-stream' }),
+    filename
+  );
+}
+
+function save(blob, filename) {
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+  link.remove();
 }
 
 // 创建场景

@@ -55,6 +55,7 @@ function init() {
 
 // 业务代码
 function createCode() {
+  /*
   // 加载ifc模型
   const ifcLoader = new IFCLoader();
   ifcLoader.ifcManager.setWasmPath("./web-ifc/");
@@ -78,8 +79,13 @@ function createCode() {
       binary: true // true:glb，false:gltf
     });
   });
+  */
+  gltfLoader.load('./model/light/modelkg-min.glb', gltf => {
+    scene.add(gltf.scene);
+  });
 }
 
+/*
 function saveArrayBuffer(buffer, filename) {
   save(
     new Blob([buffer], { type: 'application/octet-stream' }),
@@ -94,6 +100,7 @@ function save(blob, filename) {
   link.click();
   link.remove();
 }
+*/
 
 // 创建场景
 function createScene() {

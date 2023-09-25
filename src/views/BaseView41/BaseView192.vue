@@ -21,6 +21,8 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
+import { enhanceShaderLighting } from "enhance-shader-lighting";
+
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
 const container = ref(null);
@@ -50,7 +52,38 @@ function init() {
 
 // 业务代码
 function createCode() {
+
+  const options = {
+    aoColor: new THREE.Color(0x000000),
+    hemisphereColor: new THREE.Color(0xffffff),
+    irradianceColor: new THREE.Color(0xffffff),
+    radianceColor: new THREE.Color(0xffffff),
+
+    aoPower: 1,
+    aoSmoothing: 0,
+    aoMapGamma: 1,
+    lightMapGamma: 1,
+    lightMapSaturation: 1,
+    envPower: 1,
+    roughnessPower: 1,
+    sunIntensity: 0,
+    mapContrast: 1,
+    lightMapContrast: 1,
+    smoothingPower: 0.25,
+    irradianceIntensity: Math.PI,
+    radianceIntensity: 1,
+
+    hardcodeValues: false,
+  };
   gltfLoader.load('./model/light/gym.optimized.glb', gltf => {
+    gltf.scene.traverse(child => {
+      if (!child.isMesh) {
+        return;
+      }
+      child.material.onBeforeCompile = shader => {
+        enhanceShaderLighting(shader, options);
+      };
+    });
     scene.add(gltf.scene);
   });
 }

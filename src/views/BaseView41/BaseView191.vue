@@ -84,6 +84,46 @@ function createCode() {
   composer = new EffectComposer(renderer); // 实例化后期处理
   composer.addPass(new RenderPass(scene, camera)); // 添加renderPass
 
+  // 添加发光效果
+  const bloomEffect = new SelectiveBloomEffect(scene, camera, {
+    // mipmapBlur: true,
+    bloomEffect: BlendFunction.ADD,
+    luminanceThreshold: 0.7,
+    luminanceSmoothing: 0.3,
+    intensity: 10,
+  });
+  // bloomEffect.luminancePass.enabled = false; // 不控制四散光芒
+  // bloomEffect.ignoreBackground = true; // 背影不发光
+  // bloomEffect.inverted = true; // 反选发光与不发光
+
+  // 添加轮廓效果
+  const outlineEffect = new OutlineEffect(scene, camera, {
+    blendFunction: BlendFunction.ADD,
+    edgeStrength: 3, // 边缘强度
+    pulseSpeed: 0, // 脉冲速度
+    visibleEdgeColor: 0xffffff, // 可见边缘色
+    hiddenEdgeColor: 0x22090a, // 隐藏边缘色
+    blur: false,
+    xRay: true,
+    usePatternItextrue: false,
+  });
+
+  // 添加抗锯齿效果
+  const smaaEffect = new SMAAEffect();
+
+  // 创建outline通道，已经提升outline抗锯齿效果，担性能有所下降
+  const outlinePass = new EffectPass(camera, outlineEffect);
+  // composer.addPass(outlinePass);
+
+  // 创建总和效果通道
+  const effectPass = new EffectPass(
+    camera,
+    bloomEffect,
+    // outlineEffect, // 已经创建独立的通道
+    smaaEffect,
+  );
+  composer.addPass(effectPass);
+
   // 添加鼠标点击事件
   const raycaster = new THREE.Raycaster();
   const mouse = new THREE.Vector2();
@@ -93,9 +133,15 @@ function createCode() {
     raycaster.setFromCamera(mouse, camera);
     let intersects = raycaster.intersectObjects(scene.children);
     if (intersects.length > 0) {
-      console.log(1);
+      const object = intersects[0].object;
+      bloomEffect.selection.toggle(object);
+      outlineEffect.selection.toggle(object);
     }
   });
+
+  // 发光效果没达到阈值，添加灯光
+  const spotLight = createSpotLight(-200, 200, -200, 30);
+  spotLight.angle = 0.1;
 }
 
 // 创建场景

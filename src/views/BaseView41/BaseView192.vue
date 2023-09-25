@@ -23,6 +23,14 @@ import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
 import { enhanceShaderLighting } from "enhance-shader-lighting";
 
+import {
+  EffectComposer,
+  RenderPass,
+  BlendFunction,
+  BloomEffect,
+  EffectPass,
+} from 'postprocessing';
+
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
 const container = ref(null);
@@ -37,6 +45,8 @@ dracoLoader.setDecoderPath("./draco/");
 gltfLoader.setDRACOLoader(dracoLoader);
 
 let scene, camera, renderer, controls;
+
+let composer;
 
 init();
 
@@ -101,6 +111,17 @@ function createCode() {
       });
     }
   }
+
+  composer = new EffectComposer(renderer, {
+    // 设置抗锯齿多采样
+    multisampling: Math.max(4, renderer.capabilities.maxSamples)
+  });
+  composer.addPass(new RenderPass(scene, camera));
+  composer.addPass(new EffectPass(camera, new BloomEffect({
+    intensity: 5,
+    luminanceThreshold: 0.5,
+    luminanceSmoothing: 1.0
+  })));
 }
 
 // 更新着色器
@@ -134,7 +155,8 @@ function render() {
   const elapsed = clock.getElapsedTime();
 
   controls && controls.update();
-  renderer.render(scene, camera);
+  // renderer.render(scene, camera);
+  composer.render();
   requestAnimationFrame(render);
 };
 

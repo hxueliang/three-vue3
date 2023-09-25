@@ -20,7 +20,7 @@
     "mitt": "^3.0.1",
     "postprocessing": "^6.33.1",
     "screen-space-reflections": "^2.5.0",
-    "three": "^0.149.0",
+    "three": "^0.155.0",
     "tweakpane": "^3.1.0",
     "vite-plugin-require-transform": "^1.0.21",
     "vue": "^3.3.4",

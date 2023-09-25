@@ -1,4 +1,4 @@
-<!-- 114.使用css2d渲染器 -->
+<!-- 193.加载IFC模型 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -42,23 +42,16 @@ init();
 // 初始化
 function init() {
   createScene();
-  createCamera();
+  createCamera(0, 25, 80);
   createRenderer();
   createAxes();
-  // createAmbientTexture();
-  // createAmbientLight();
-  // createDirLight();
-  // createPointLight();
-  // createSpotLight();
+  createAmbientTexture();
+  createAmbientLight(3);
   window.addEventListener('resize', onWindowResize);
 }
 
 // 业务代码
 function createCode() {
-  const geometry = new THREE.PlaneGeometry(1, 1);
-  const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-  const plane = new THREE.Mesh(geometry, material);
-  scene.add(plane);
 }
 
 // 创建场景
@@ -106,9 +99,9 @@ function createAxes(show = true) {
 // 添加环境纹理
 function createAmbientTexture() {
   const rgbeLoader = new RGBELoader();
-  rgbeLoader.load('./hdr/noon_grass_1k.hdr', texture => {
+  rgbeLoader.load('./hdr/HDRI_Hen-Hilltop_Construction_4k.hdr', texture => {
     texture.mapping = THREE.EquirectangularReflectionMapping;
-    scene.background = texture;
+    scene.background = new THREE.Color(0x666699);
     scene.environment = texture;
   });
 }

@@ -62,8 +62,8 @@ function createCode() {
     aoPower: 1,
     aoSmoothing: 0,
     aoMapGamma: 1,
-    lightMapGamma: 1,
-    lightMapSaturation: 1,
+    // lightMapGamma: 1,
+    // lightMapSaturation: 1,
     envPower: 1,
     roughnessPower: 1,
     sunIntensity: 0,
@@ -75,16 +75,38 @@ function createCode() {
 
     hardcodeValues: false,
   };
+  const shaderArr = [];
   gltfLoader.load('./model/light/gym.optimized.glb', gltf => {
     gltf.scene.traverse(child => {
       if (!child.isMesh) {
         return;
       }
       child.material.onBeforeCompile = shader => {
+        shaderArr.push(shader);
         enhanceShaderLighting(shader, options);
       };
     });
     scene.add(gltf.scene);
+  });
+
+  // 添加gui
+  for (let option in options) {
+    if (option.indexOf('Color') !== -1) {
+      gui.addColor(options, option).onChange(value => {
+        updateShaderLighting(shaderArr, option, value);
+      });
+    } else if (option !== 'hardcodeValues') {
+      gui.add(options, option).min(0).max(10).step(0.1).onChange(value => {
+        updateShaderLighting(shaderArr, option, value);
+      });
+    }
+  }
+}
+
+// 更新着色器
+function updateShaderLighting(shaderArr, option, value) {
+  shaderArr.forEach(shader => {
+    shader.uniforms[option] && (shader.uniforms[option].value = value);
   });
 }
 

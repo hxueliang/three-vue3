@@ -1,4 +1,5 @@
 <!-- 193.加载IFC模型 -->
+<!-- 把 node_modules/web-ifc 复制到 public -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -21,6 +22,8 @@ import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
+
+import { IFCLoader } from 'web-ifc-three/IFCLoader';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -52,6 +55,13 @@ function init() {
 
 // 业务代码
 function createCode() {
+  // 加载ifc模型
+  const ifcLoader = new IFCLoader();
+  ifcLoader.ifcManager.setWasmPath("./web-ifc/");
+  ifcLoader.load('./model/light/kg.ifc', ifcModel => {
+    console.log(ifcModel);
+    scene.add(ifcModel);
+  });
 }
 
 // 创建场景

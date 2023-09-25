@@ -69,13 +69,23 @@ function createCode() {
       if (gltf instanceof ArrayBuffer) {
         // 保存二进制数据
         saveArrayBuffer(gltf, 'model.glb');
+      } else {
+        const output = JSON.stringify(gltf);
+        saveString(output, 'model.gltf');
       }
     }, error => {
       console.log(error);
     }, {
-      binary: true // true:glb，false:gltf
+      binary: false // true:glb，false:gltf
     });
   });
+}
+
+function saveString(text, filename) {
+  save(
+    new Blob([text], { type: 'text/plain' }),
+    filename
+  );
 }
 
 function saveArrayBuffer(buffer, filename) {

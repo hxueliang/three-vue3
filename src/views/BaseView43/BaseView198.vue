@@ -29,10 +29,17 @@ import {
   uv,
   timerLocal,
   vec2,
+  texture,
+  color,
+  normalMap,
+  float,
 } from 'three/nodes';
 
 // 虽然暂没使用，也需要导入才有棋盘效果
 import { nodeFrame } from "three/addons/renderers/webgl/nodes/WebGLNodes.js";
+
+// 珠光漆的法向贴图
+import { FlakesTexture } from "three/addons/textures/FlakesTexture.js";
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -58,6 +65,10 @@ function init() {
   createRenderer();
   createAxes();
   createAmbientTexture();
+  createAmbientLight();
+  createDirLight(3, 3, 10);
+  createPointLight(3, 10, 3);
+  createSpotLight(10, 3, 10);
   window.addEventListener('resize', onWindowResize);
 }
 
@@ -67,6 +78,24 @@ function createCode() {
 
   // 在原有的材质上，创建节点材质
   const nodeMaterial = NodeMaterial.fromMaterial(material);
+
+  // 汽车珠光漆材质
+  const flakesTexture = new FlakesTexture();
+  const canvasTexture = new THREE.CanvasTexture(flakesTexture);
+  canvasTexture.anisotropy = 16;
+  canvasTexture.wrapS = THREE.RepeatWrapping;
+  canvasTexture.wrapT = THREE.RepeatWrapping;
+
+  // nodeMaterial.colorNode = texture(canvasTexture);
+  nodeMaterial.colorNode = color(0x0000ff);
+  nodeMaterial.normalNode = normalMap(
+    texture(canvasTexture, uv().mul(2.5, 1.5)),
+    0.15
+  );
+  nodeMaterial.metalnessNode = float(0.9);
+  nodeMaterial.roughnessNode = float(0.5);
+  nodeMaterial.clearcoatNode = float(1);
+  nodeMaterial.clearcoatRoughnessNode = float(0.01);
 
   const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
   const sphere = new THREE.Mesh(sphereGeometry, nodeMaterial);

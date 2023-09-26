@@ -22,6 +22,16 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
+import {
+  MeshPhysicalNodeMaterial,
+  NodeMaterial,
+  checker,
+  uv,
+} from 'three/nodes';
+
+// 虽然暂没使用，也需要导入才有棋盘效果
+import { nodeFrame } from "three/addons/renderers/webgl/nodes/WebGLNodes.js";
+
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
 const container = ref(null);
@@ -57,18 +67,27 @@ function init() {
 function createCode() {
   const material = new THREE.MeshPhysicalMaterial();
 
+  // 方法一：创建节点材质
+  // const nodeMaterial = new MeshPhysicalNodeMaterial();
+  // 方法二：在原有的材质上，创建节点材质
+  const nodeMaterial = NodeMaterial.fromMaterial(material);
+  // 设置棋盘纹理
+  const node = checker(uv());
+  // 设置节点颜色
+  nodeMaterial.colorNode = node;
+
   const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-  const sphere = new THREE.Mesh(sphereGeometry, material);
+  const sphere = new THREE.Mesh(sphereGeometry, nodeMaterial);
   sphere.position.set(2, 0, 0);
   scene.add(sphere);
 
   const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
-  const cube = new THREE.Mesh(boxGeometry, material);
+  const cube = new THREE.Mesh(boxGeometry, nodeMaterial);
   cube.position.set(-2, 0, 0);
   scene.add(cube);
 
   const planeGeometry = new THREE.PlaneGeometry(1, 1);
-  const plane = new THREE.Mesh(planeGeometry, material);
+  const plane = new THREE.Mesh(planeGeometry, nodeMaterial);
   scene.add(plane);
 }
 

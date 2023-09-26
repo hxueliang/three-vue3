@@ -27,6 +27,8 @@ import {
   NodeMaterial,
   checker,
   uv,
+  timerLocal,
+  vec2,
 } from 'three/nodes';
 
 // 虽然暂没使用，也需要导入才有棋盘效果
@@ -71,8 +73,10 @@ function createCode() {
   // const nodeMaterial = new MeshPhysicalNodeMaterial();
   // 方法二：在原有的材质上，创建节点材质
   const nodeMaterial = NodeMaterial.fromMaterial(material);
+  // 拿到uv
+  const uvNode = uv().mul(5).add(vec2(timerLocal(-2), 0.25));
   // 设置棋盘纹理
-  const node = checker(uv());
+  const node = checker(uvNode);
   // 设置节点颜色
   nodeMaterial.colorNode = node;
 
@@ -115,6 +119,7 @@ function render() {
   const elapsed = clock.getElapsedTime();
 
   controls && controls.update();
+  nodeFrame.update();
   renderer.render(scene, camera);
   requestAnimationFrame(render);
 };

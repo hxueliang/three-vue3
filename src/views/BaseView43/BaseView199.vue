@@ -76,6 +76,24 @@ function createCode() {
   // 在原有的材质上，创建节点材质
   const nodeMaterial = NodeMaterial.fromMaterial(material);
 
+  // 设置碳纤维材质
+  const carbonTexture = textureLoader.load('./texture/carbon/Carbon.png');
+  carbonTexture.colorSpace = THREE.SRGBColorSpace;
+  carbonTexture.wrapS = THREE.RepeatWrapping;
+  carbonTexture.wrapT = THREE.RepeatWrapping;
+  const carbonNormalTexture = textureLoader.load('./texture/carbon/Carbon_Normal.png');
+  carbonNormalTexture.colorSpace = THREE.SRGBColorSpace;
+  carbonNormalTexture.wrapS = THREE.RepeatWrapping;
+  carbonNormalTexture.wrapT = THREE.RepeatWrapping;
+  const carbonUv = uv().mul(5);
+  nodeMaterial.colorNode = texture(carbonTexture, carbonUv);
+  nodeMaterial.normalNode = normalMap(texture(carbonNormalTexture, carbonUv));
+
+  nodeMaterial.metalnessNode = float(0.9);
+  nodeMaterial.roughnessNode = float(0.5);
+  nodeMaterial.clearcoatNode = float(1);
+  nodeMaterial.clearcoatRoughnessNode = float(0.01);
+
   const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
   const sphere = new THREE.Mesh(sphereGeometry, nodeMaterial);
   sphere.position.set(2, 0, 0);

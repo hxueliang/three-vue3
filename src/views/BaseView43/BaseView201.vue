@@ -37,6 +37,8 @@ gltfLoader.setDRACOLoader(dracoLoader);
 
 let scene, camera, renderer, controls;
 
+let world, sphereMesh, sphereBody;
+
 init();
 
 // 初始化
@@ -55,6 +57,66 @@ function init() {
 
 // 业务代码
 function createCode() {
+  // 初始化cannon
+  world = new CANNON.World();
+  world.gravity.set(0, -9.82, 0);
+
+  // 初始化物理材质
+  world.defaultContactMaterial.contactEquationStiffness = 1e9;
+  world.defaultContactMaterial.contactEquationRelaxation = 4;
+
+  // // 设置物理引擎的求解器
+  const solver = new CANNON.GSSolver();
+  solver.iterations = 7; // 一帧内最大的迭代7次
+  solver.tolerance = 0.1; // 容差值，两次迭代0.1，就可以不计算了
+
+  world.solver = new CANNON.SplitSolver(solver);
+
+  // 创建材质
+  const physicsMaterial = new CANNON.Material('physics');
+  const physics_physics = new CANNON.ContactMaterial(
+    physicsMaterial,
+    physicsMaterial,
+    {
+      friction: 0, // 当摩擦力为0时，物体不会滑动
+      restitution: 0.7, // 弹性系数
+    }
+  );
+  world.addContactMaterial(physics_physics);
+
+  // 创建球刚体
+  const radius = 1.3;
+  sphereBody = new CANNON.Body({
+    mass: 5,
+    shape: new CANNON.Sphere(radius),
+    material: physicsMaterial,
+  });
+  sphereBody.position.set(0, 5, 0);
+  sphereBody.linearDamping = 0.9; // 添加线性阻力
+  world.addBody(sphereBody);
+
+  // 创建球体
+  const sphereGeometry = new THREE.SphereGeometry(radius, 8, 8);
+  const sphereMaterial = new THREE.MeshPhysicalMaterial({
+    color: 0xff0000,
+    wireframe: true,
+  });
+  sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  scene.add(sphereMesh);
+
+  // 创建平面刚体
+  const planeBody = new CANNON.Body({
+    mass: 0,
+    shape: new CANNON.Plane(),
+    material: physicsMaterial,
+  });
+  planeBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
+  world.addBody(planeBody);
+
+  // 加载平面
+  gltfLoader.load('./model/roomModel/ground03.glb', gltf => {
+    scene.add(gltf.scene);
+  });
 }
 
 // 创建场景
@@ -78,7 +140,12 @@ function createRenderer() {
 
 // 创建渲染函数
 function render() {
-  const elapsed = clock.getElapsedTime();
+  const delta = clock.getDelta();
+
+  world.step(1 / 60, delta, 3);
+
+  sphereMesh.position.copy(sphereBody.position);
+  // sphereMesh.quaternion.copy(sphereBody.quaternion);
 
   controls && controls.update();
   renderer.render(scene, camera);

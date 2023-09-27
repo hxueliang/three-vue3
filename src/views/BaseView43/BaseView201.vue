@@ -21,6 +21,7 @@ import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
+import { PointerLockControlsCannon } from './threeMesh/PointerLockControlsCannon';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -117,6 +118,23 @@ function createCode() {
   gltfLoader.load('./model/roomModel/ground03.glb', gltf => {
     scene.add(gltf.scene);
   });
+
+  initPointerLockControls();
+}
+
+function initPointerLockControls() {
+  controls = new PointerLockControlsCannon(camera, sphereBody);
+  scene.add(controls.getObject());
+
+  renderer.domElement.addEventListener('click', () => controls.lock());
+  controls.addEventListener('lock', () => {
+    console.log('lock');
+    controls.enabled = true;
+  });
+  controls.addEventListener('unlock', () => {
+    console.log('unlock');
+    controls.enabled = false;
+  });
 }
 
 // 创建场景
@@ -147,7 +165,7 @@ function render() {
   sphereMesh.position.copy(sphereBody.position);
   // sphereMesh.quaternion.copy(sphereBody.quaternion);
 
-  controls && controls.update();
+  controls && controls.update(delta);
   renderer.render(scene, camera);
   requestAnimationFrame(render);
 };
@@ -223,7 +241,7 @@ function appendCanvas() {
 onMounted(() => {
   createCode();
   appendCanvas();
-  createControls();
+  // createControls();
   render();
 });
 </script>

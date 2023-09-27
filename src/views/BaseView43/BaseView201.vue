@@ -40,12 +40,14 @@ let scene, camera, renderer, controls;
 
 let world, sphereMesh, sphereBody;
 
+let robot;
+
 init();
 
 // 初始化
 function init() {
   createScene();
-  createCamera(1, 3, 30);
+  createCamera(0, 0, 15);
   createRenderer();
   createAxes();
   createAmbientTexture();
@@ -86,7 +88,7 @@ function createCode() {
   world.addContactMaterial(physics_physics);
 
   // 创建球刚体
-  const radius = 1.3;
+  const radius = 0.82;
   sphereBody = new CANNON.Body({
     mass: 5,
     shape: new CANNON.Sphere(radius),
@@ -120,6 +122,13 @@ function createCode() {
   });
 
   initPointerLockControls();
+
+  gltfLoader.load('./model/roomModel/robot.glb', gltf => {
+    robot = gltf.scene;
+    robot.children[0].position.set(0, -radius, 0);
+    robot.children[0].rotation.set(0, Math.PI, 0);
+    sphereMesh.add(robot);
+  });
 }
 
 function initPointerLockControls() {
@@ -164,6 +173,8 @@ function render() {
 
   sphereMesh.position.copy(sphereBody.position);
   // sphereMesh.quaternion.copy(sphereBody.quaternion);
+
+  robot && robot.quaternion.copy(controls.getObject().quaternion);
 
   controls && controls.update(delta);
   renderer.render(scene, camera);

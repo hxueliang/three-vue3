@@ -33,6 +33,10 @@ import {
   color,
   normalMap,
   float,
+  mx_noise_vec3,// 普通噪声
+  mx_worley_noise_vec3,// 像细包的噪声
+  mx_cell_noise_float,// 像格子的噪声
+  mx_fractal_noise_vec3,// 像云雾的噪声
 } from 'three/nodes';
 
 // 虽然暂没使用，也需要导入才有棋盘效果
@@ -93,6 +97,28 @@ function createCode() {
   nodeMaterial.roughnessNode = float(0.5);
   nodeMaterial.clearcoatNode = float(1);
   nodeMaterial.clearcoatRoughnessNode = float(0.01);
+
+  const uvNoise = uv().mul(1);
+  // const uvNoise = uv().mul(10).add(timerLocal());
+
+  // 普通噪声
+  nodeMaterial.colorNode = mx_noise_vec3(uvNoise);
+  // 像细包的噪声
+  // nodeMaterial.colorNode = mx_worley_noise_vec3(uvNoise);
+  // 像格子的噪声
+  // nodeMaterial.colorNode = mx_cell_noise_float(uvNoise);
+  // 像云雾的噪声
+  // nodeMaterial.colorNode = mx_fractal_noise_vec3(uvNoise);
+
+  // 不同厚度，导致折射效果不一样的玻璃材质
+  // nodeMaterial.transmissionNode = float(1); // 通透性 error未解决
+  // nodeMaterial.transmissionMap = null; // 通透性贴图
+  // nodeMaterial.iorNode = float(2.0); // 折射率
+  // nodeMaterial.thicknessNode = mx_cell_noise_float(uvNoise).g; // 厚度
+  // nodeMaterial.thicknessMap = null; // 厚度
+
+  console.log(nodeMaterial);
+
   const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
   const sphere = new THREE.Mesh(sphereGeometry, nodeMaterial);
   sphere.position.set(2, 0, 0);

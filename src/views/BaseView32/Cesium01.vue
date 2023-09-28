@@ -8,10 +8,17 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import * as Cesium from 'cesium';
+
+import 'cesium/Build/Cesium/Widgets/widgets.css';
+
+// 设置cesium静态资源路径
+window.CESIUM_BASE_URL = '/';
 
 const container = ref(null);
 
 onMounted(() => {
+  const viwer = new Cesium.Viewer('container');
 })
 
 </script>

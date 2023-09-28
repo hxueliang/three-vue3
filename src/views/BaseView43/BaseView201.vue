@@ -24,6 +24,21 @@ import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 import { PointerLockControlsCannon } from './threeMesh/PointerLockControlsCannon';
 import nipplejs from 'nipplejs';
 
+
+import {
+  color,
+  float,
+  vec2,
+  texture,
+  normalMap,
+  uv,
+  MeshPhysicalNodeMaterial,
+  mx_noise_vec3,
+  EnvironmentNode,
+} from "three/nodes";
+import { nodeFrame } from "three/addons/renderers/webgl/nodes/WebGLNodes.js";
+import { FlakesTexture } from "three/addons/textures/FlakesTexture.js";
+
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
 const container = ref(null);
@@ -158,7 +173,30 @@ function createCode() {
 
   // 柱子
   gltfLoader.load('./model/roomModel/ground.glb', gltf => {
+    // 珠光漆材质
+    const flakesTexture = new FlakesTexture();
+    const canvasTexture = new THREE.CanvasTexture(flakesTexture);
+    canvasTexture.anisotropy = 16;
+    canvasTexture.wrapS = THREE.RepeatWrapping;
+    canvasTexture.wrapT = THREE.RepeatWrapping;
+
+    const nodeMaterial = new MeshPhysicalNodeMaterial();
+
+    nodeMaterial.colorNode = color(0xeeeeff);
+    nodeMaterial.normalNode = normalMap(
+      texture(canvasTexture, uv().mul(2.5, 1.5)),
+      0.15
+    );
+    nodeMaterial.metalnessNode = float(0.9);
+    nodeMaterial.roughnessNode = float(0.5);
+    nodeMaterial.clearcoatNode = float(1);
+    nodeMaterial.clearcoatRoughnessNode = float(0.01);
     const model = gltf.scene;
+    model.traverse(child => {
+      if (!child.isMesh) { return; }
+      child.material = nodeMaterial;
+      console.log(child);
+    });
     scene.add(model);
   });
 

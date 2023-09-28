@@ -67,7 +67,7 @@ init();
 // 初始化
 function init() {
   createScene();
-  createCamera(0, 0.5, 10);
+  createCamera(0, 1, 10);
   createRenderer();
   createAxes();
   createAmbientTexture();
@@ -157,7 +157,7 @@ function createCode() {
     robot.children[0].position.set(0, -radius, 0);
     robot.children[0].rotation.set(0, Math.PI, 0);
     // robot.add(camera);
-    sphereMesh.add(camera);
+    // sphereMesh.add(camera);
     sphereMesh.add(robot);
   });
 
@@ -208,7 +208,6 @@ function createCode() {
     model.traverse(child => {
       if (!child.isMesh) { return; }
       child.material = nodeMaterial;
-      console.log(child);
     });
     scene.add(model);
   });
@@ -216,6 +215,30 @@ function createCode() {
   // 主舞台
   gltfLoader.load('./model/roomModel/stage.glb', gltf => {
     const model = gltf.scene;
+    // 添加碳纤维材质
+    const nodeMaterial = new MeshPhysicalNodeMaterial();
+    const carbonTexture = textureLoader.load('./texture/carbon/Carbon.png');
+    carbonTexture.colorSpace = THREE.SRGBColorSpace;
+    carbonTexture.wrapS = THREE.RepeatWrapping;
+    carbonTexture.wrapT = THREE.RepeatWrapping;
+    const carbonNormalTexture = textureLoader.load('./texture/carbon/Carbon_Normal.png');
+    carbonNormalTexture.colorSpace = THREE.SRGBColorSpace;
+    carbonNormalTexture.wrapS = THREE.RepeatWrapping;
+    carbonNormalTexture.wrapT = THREE.RepeatWrapping;
+    const carbonUv = uv().mul(5);
+    nodeMaterial.colorNode = texture(carbonTexture, carbonUv);
+    nodeMaterial.normalNode = normalMap(texture(carbonNormalTexture, carbonUv));
+
+    nodeMaterial.metalnessNode = float(0.9);
+    nodeMaterial.roughnessNode = float(0.5);
+    nodeMaterial.clearcoatNode = float(1);
+    nodeMaterial.clearcoatRoughnessNode = float(0.01);
+
+    model.traverse(child => {
+      if (child.isMesh && child.material.name === 'Material_579') {
+        child.material = nodeMaterial;
+      }
+    });
     scene.add(model);
   });
 
@@ -267,6 +290,7 @@ function createScene() {
 function createCamera(x = 0, y = 0, z = 10) {
   camera = new THREE.PerspectiveCamera(25, innerWidth / innerHeight, 0.1, 3000);
   camera.position.set(x, y, z);
+  camera.lookAt(0, 0, -2);
   scene.add(camera);
 }
 
@@ -284,6 +308,8 @@ function render() {
   world.step(1 / 60, delta, 3);
 
   sphereMesh.position.copy(sphereBody.position);
+
+  robot && robot.quaternion.copy(controls.getObject().quaternion);
 
   controls && controls.update(delta);
   renderer.render(scene, camera);

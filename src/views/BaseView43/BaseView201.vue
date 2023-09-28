@@ -50,7 +50,7 @@ init();
 // 初始化
 function init() {
   createScene();
-  createCamera(0, 1, 15);
+  createCamera(0, 1, 50);
   createRenderer();
   createAxes();
   createAmbientTexture();
@@ -131,6 +131,29 @@ function createCode() {
     // robot.add(camera);
     sphereMesh.add(camera);
     sphereMesh.add(robot);
+  });
+
+  // 加载碰撞模型
+  gltfLoader.load('./model/roomModel/collisions.glb', gltf => {
+    const model = gltf.scene;
+    model.traverse(child => {
+      if (!child.isMesh) { return; }
+      const { geometry, materail, position, rotation, scale, quaternion } = child;
+      const { x, y, z } = scale;
+
+      // const mesh = new THREE.Mesh(geometry, materail);
+      // mesh.position.copy(position);
+      // mesh.rotation.copy(rotation);
+      // mesh.scale.copy(scale);
+      // scene.add(mesh);
+
+      const shape = new CANNON.Box(new CANNON.Vec3(x, y, z));
+      const body = new CANNON.Body({ mass: 0, material: physicsMaterial });
+      body.addShape(shape);
+      body.position.copy(position);
+      body.quaternion.copy(quaternion);
+      world.addBody(body);
+    });
   });
 
   // 创建地虚拟按键管理器

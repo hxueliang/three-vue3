@@ -50,7 +50,7 @@ init();
 // 初始化
 function init() {
   createScene();
-  createCamera(0, 1, 50);
+  createCamera(0, 0.5, 10);
   createRenderer();
   createAxes();
   createAmbientTexture();
@@ -97,7 +97,7 @@ function createCode() {
     shape: new CANNON.Sphere(radius),
     material: physicsMaterial,
   });
-  sphereBody.position.set(0, 5, 0);
+  sphereBody.position.set(0, 5, 10);
   sphereBody.linearDamping = 0.9; // 添加线性阻力
   world.addBody(sphereBody);
 
@@ -156,6 +156,39 @@ function createCode() {
     });
   });
 
+  // 柱子
+  gltfLoader.load('./model/roomModel/ground.glb', gltf => {
+    const model = gltf.scene;
+    scene.add(model);
+  });
+
+  // 主舞台
+  gltfLoader.load('./model/roomModel/stage.glb', gltf => {
+    const model = gltf.scene;
+    scene.add(model);
+  });
+
+  // 副舞台
+  gltfLoader.load('./model/roomModel/stage02.glb', gltf => {
+    const model = gltf.scene;
+    scene.add(model);
+  });
+
+  // 展板
+  gltfLoader.load('./model/roomModel/board.glb', gltf => {
+    const model = gltf.scene;
+    scene.add(model);
+  });
+
+  // 灯光
+  gltfLoader.load('./model/roomModel/light.glb', gltf => {
+    const model = gltf.scene;
+    model.traverse(child => {
+      child.intensity = 0.1;
+    });
+    scene.add(model);
+  });
+
   // 创建地虚拟按键管理器
   manager = nipplejs.create({});
   let isMove = false;
@@ -172,8 +205,6 @@ function createCode() {
       angle: { radian: angle },
       force,
     } = data;
-    console.log(data);
-    // console.log(data.angle.degree + '度');
     sphereBody.velocity.set(
       x * 3 * force,
       sphereBody.velocity.y,

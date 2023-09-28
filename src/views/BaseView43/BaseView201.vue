@@ -189,41 +189,7 @@ function createCode() {
     scene.add(model);
   });
 
-  // 创建地虚拟按键管理器
-  manager = nipplejs.create({});
-  let isMove = false;
-  manager.on('start', function (evt, data) {
-    isMove = true;
-  });
-  manager.on('end', function (evt, data) {
-    isMove = false;
-  });
-  manager.on('move', function (evt, data) {
-    if (!isMove) { return; }
-    const {
-      vector: { x, y: z },
-      angle: { radian: angle },
-      force,
-    } = data;
-    sphereBody.velocity.set(
-      x * 3 * force,
-      sphereBody.velocity.y,
-      -z * 3 * force
-    );
-    /*
-    // angle的0度是在二维坐标系x轴的正方向
-    // 面而robot的朝向二维坐标系y轴的正放向，此时angle为90度
-    // 减去90度，矫正robot.rotation.y
-    robot && (robot.rotation.y = angle - Math.PI / 2);
-    */
-    // 目标角度
-    const target = angle - Math.PI / 2;
-    // 让旋转角度不断逼迫目标角度
-    robot &&
-      (robot.rotation.y =
-        robot.rotation.y + (target - robot.rotation.y) * 0.1 * force);
-
-  });
+  initPointerLockControls();
 }
 
 function initPointerLockControls() {

@@ -22,6 +22,7 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 import { PointerLockControlsCannon } from './threeMesh/PointerLockControlsCannon';
+import nipplejs from 'nipplejs';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -42,12 +43,14 @@ let world, sphereMesh, sphereBody;
 
 let robot;
 
+let manager;
+
 init();
 
 // 初始化
 function init() {
   createScene();
-  createCamera(0, 0, 15);
+  createCamera(0, 1, 15);
   createRenderer();
   createAxes();
   createAmbientTexture();
@@ -121,13 +124,51 @@ function createCode() {
     scene.add(gltf.scene);
   });
 
-  initPointerLockControls();
-
   gltfLoader.load('./model/roomModel/robot.glb', gltf => {
     robot = gltf.scene;
     robot.children[0].position.set(0, -radius, 0);
     robot.children[0].rotation.set(0, Math.PI, 0);
+    // robot.add(camera);
+    sphereMesh.add(camera);
     sphereMesh.add(robot);
+  });
+
+  // 创建地虚拟按键管理器
+  manager = nipplejs.create({});
+  let isMove = false;
+  manager.on('start', function (evt, data) {
+    isMove = true;
+  });
+  manager.on('end', function (evt, data) {
+    isMove = false;
+  });
+  manager.on('move', function (evt, data) {
+    if (!isMove) { return; }
+    const {
+      vector: { x, y: z },
+      angle: { radian: angle },
+      force,
+    } = data;
+    console.log(data);
+    // console.log(data.angle.degree + '度');
+    sphereBody.velocity.set(
+      x * 3 * force,
+      sphereBody.velocity.y,
+      -z * 3 * force
+    );
+    /*
+    // angle的0度是在二维坐标系x轴的正方向
+    // 面而robot的朝向二维坐标系y轴的正放向，此时angle为90度
+    // 减去90度，矫正robot.rotation.y
+    robot && (robot.rotation.y = angle - Math.PI / 2);
+    */
+    // 目标角度
+    const target = angle - Math.PI / 2;
+    // 让旋转角度不断逼迫目标角度
+    robot &&
+      (robot.rotation.y =
+        robot.rotation.y + (target - robot.rotation.y) * 0.1 * force);
+
   });
 }
 
@@ -172,9 +213,6 @@ function render() {
   world.step(1 / 60, delta, 3);
 
   sphereMesh.position.copy(sphereBody.position);
-  // sphereMesh.quaternion.copy(sphereBody.quaternion);
-
-  robot && robot.quaternion.copy(controls.getObject().quaternion);
 
   controls && controls.update(delta);
   renderer.render(scene, camera);

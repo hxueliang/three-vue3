@@ -729,6 +729,11 @@ delayed-stream@~1.0.0:
   resolved "https://registry.npmmirror.com/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
   integrity sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==
 
+enhance-shader-lighting@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.npmmirror.com/enhance-shader-lighting/-/enhance-shader-lighting-0.0.2.tgz#d1e0f2868ad22ff8397d99bee1cc72ad5eb9b780"
+  integrity sha512-iUyd5fLYkN4D1Dg7OuNivNMT2jo6qhbT5J36LA9m86QACJE76AwRCblqUE68PaJ68HOfGWjLZfd3FGZ4R30QKQ==
+
 errno@^0.1.1:
   version "0.1.8"
   resolved "https://registry.npmmirror.com/errno/-/errno-0.1.8.tgz#8bb3e9c7d463be4976ff888f76b4809ebc2e811f"
@@ -943,6 +948,11 @@ needle@^3.1.0:
     iconv-lite "^0.6.3"
     sax "^1.2.4"
 
+nipplejs@^0.10.1:
+  version "0.10.1"
+  resolved "https://registry.npmmirror.com/nipplejs/-/nipplejs-0.10.1.tgz#64acbb71c5549bcbf96c587f806342e9e7da67f9"
+  integrity sha512-BuKBDfdd7BVK6E7sivHwrRPh9TETsHuHEwuT95nAjRz2uJu5roYngNs+BdRe8nYf8mP6OZ9aRqdgMlqVsDMRcw==
+
 parse-node-version@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npmmirror.com/parse-node-version/-/parse-node-version-1.0.1.tgz#e2b5dbede00e7fa9bc363607f53327e8b073189b"
@@ -1041,6 +1051,11 @@ supports-color@^5.3.0:
   dependencies:
     has-flag "^3.0.0"
 
+three-mesh-bvh@0.5.21:
+  version "0.5.21"
+  resolved "https://registry.npmmirror.com/three-mesh-bvh/-/three-mesh-bvh-0.5.21.tgz#e08f5f3052d624cce36d0975692949c02359832f"
+  integrity sha512-TGXPk7YwtlU5rgQJYA25OT6yAdBMeekfC4BTkGNtTWA5glb2rmEpjxvhZncRQSl73QZir2LFOQT0FjfzgG55xw==
+
 three@^0.155.0:
   version "0.155.0"
   resolved "https://registry.npmmirror.com/three/-/three-0.155.0.tgz#cca9b8ad817830c8b4fdd8f0d9a12a2e413a2672"
@@ -1055,6 +1070,11 @@ tslib@^2.3.0:
   version "2.6.2"
   resolved "https://registry.npmmirror.com/tslib/-/tslib-2.6.2.tgz#703ac29425e7b37cd6fd456e92404d46d1f3e4ae"
   integrity sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==
+
+tweakpane@^3.1.0:
+  version "3.1.10"
+  resolved "https://registry.npmmirror.com/tweakpane/-/tweakpane-3.1.10.tgz#d2e11a3ee668017f7572ce53417f06eed41f5ab8"
+  integrity sha512-rqwnl/pUa7+inhI2E9ayGTqqP0EPOOn/wVvSWjZsRbZUItzNShny7pzwL3hVlaN4m9t/aZhsP0aFQ9U5VVR2VQ==
 
 vite-plugin-glsl@^1.1.2:
   version "1.1.2"
@@ -1101,6 +1121,19 @@ vue@^3.3.4:
     "@vue/runtime-dom" "3.3.4"
     "@vue/server-renderer" "3.3.4"
     "@vue/shared" "3.3.4"
+
+web-ifc-three@^0.0.125:
+  version "0.0.125"
+  resolved "https://registry.npmmirror.com/web-ifc-three/-/web-ifc-three-0.0.125.tgz#e9ec0e10e397b7c2fc5be967b112173cc696e78c"
+  integrity sha512-i9hnYQq5XOEJ/eeYgwe44IAiIgbjn46zOcuEuvkV+8liutrDHitv8Ct126BNOBaoe7B9ZYnQk8CL9/YEtdtGOQ==
+  dependencies:
+    three-mesh-bvh "0.5.21"
+    web-ifc "^0.0.39"
+
+web-ifc@^0.0.39:
+  version "0.0.39"
+  resolved "https://registry.npmmirror.com/web-ifc/-/web-ifc-0.0.39.tgz#c3c7e9b16aad79f8ad78e346671cb5b854480737"
+  integrity sha512-sg+DyxDiyXBqlXXbz+uSqw8IGX+mVvHmn2+hg6UXDvAcrzJJw8EI2H4ZzlxWxCqqdpGVeK0wCpdeQm43UCDbrA==
 
 yuka@^0.7.8:
   version "0.7.8"

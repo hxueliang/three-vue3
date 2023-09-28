@@ -212,6 +212,16 @@ function createCode() {
     scene.add(model);
   });
 
+  // 加载视频
+  const video = document.createElement('video');
+  video.src = './texture/other/DigitalTwin.mp4';
+  // 静音，设置静音才能自动播放
+  video.muted = true;
+  video.loop = true;
+  video.play();
+  // 创建视频纹理
+  const videoTexture = new THREE.VideoTexture(video);
+
   // 主舞台
   gltfLoader.load('./model/roomModel/stage.glb', gltf => {
     const model = gltf.scene;
@@ -237,6 +247,10 @@ function createCode() {
     model.traverse(child => {
       if (child.isMesh && child.material.name === 'Material_579') {
         child.material = nodeMaterial;
+      }
+      if (child.isMesh && child.material.name === 'Material_593') {
+        child.material.map = videoTexture;
+        child.material.emssiveMap = videoTexture;
       }
     });
     scene.add(model);

@@ -38,9 +38,11 @@ import {
 } from "three/nodes";
 import { nodeFrame } from "three/addons/renderers/webgl/nodes/WebGLNodes.js";
 import { FlakesTexture } from "three/addons/textures/FlakesTexture.js";
+import { Reflector } from './mesh/Reflector';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
+let devicePixelRatio = window.devicePixelRatio;
 const container = ref(null);
 
 const gui = new GUI();
@@ -136,6 +138,17 @@ function createCode() {
 
   // 加载平面
   gltfLoader.load('./model/roomModel/ground03.glb', gltf => {
+    // 添加镜面反射
+    const mirrorGeometry = new THREE.PlaneGeometry(100, 100);
+    const groundMirror = new Reflector(mirrorGeometry, {
+      clipBias: 0.003,
+      textrueWidth: innerWidth * devicePixelRatio,
+      textrueHeight: innerHeight * devicePixelRatio,
+      color: 0x777777,
+    });
+    groundMirror.position.y = 0.1;
+    groundMirror.rotateX(-Math.PI / 2);
+    scene.add(groundMirror);
     scene.add(gltf.scene);
   });
 

@@ -12,8 +12,13 @@ import * as Cesium from 'cesium';
 
 import 'cesium/Build/Cesium/Widgets/widgets.css';
 
+import { CESIUM_TOKEN } from '@/constant/cesium.js';
+
 // 设置cesium静态资源路径
 window.CESIUM_BASE_URL = '/';
+
+// 设置token
+Cesium.Ion.defaultAccessToken = CESIUM_TOKEN;
 
 const container = ref(null);
 

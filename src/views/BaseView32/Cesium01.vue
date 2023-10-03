@@ -23,7 +23,9 @@ Cesium.Ion.defaultAccessToken = CESIUM_TOKEN;
 const container = ref(null);
 
 onMounted(() => {
-  const viwer = new Cesium.Viewer('container');
+  const viwer = new Cesium.Viewer('container', {
+    infoBox: false, // 隐藏旧版本控制台报错，新版本可以不设置
+  });
 
   // 隐藏cesium的logo
   viwer.cesiumWidget.creditContainer.style.display = 'none';

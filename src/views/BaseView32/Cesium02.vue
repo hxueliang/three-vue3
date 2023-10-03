@@ -37,6 +37,15 @@ onMounted(() => {
     animation: false, // 不显示动画控制器
     timeline: false, // 不显示时间轴
     fullscreenButton: false, // 不显示全屏按钮
+    // 设置天空盒
+    skyBox: new Cesium.SkyBox({
+      positiveX: './textures/city/night_1.jpg',
+      negativeX: './textures/city/night_2.jpg',
+      positiveY: './textures/city/night_3.jpg',
+      negativeY: './textures/city/night_4.jpg',
+      positiveZ: './textures/city/night_5.jpg',
+      negativeZ: './textures/city/night_6.jpg',
+    })
   });
 
   // 隐藏cesium的logo

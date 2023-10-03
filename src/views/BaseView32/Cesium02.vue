@@ -56,10 +56,20 @@ onMounted(() => {
       tileMatrixSetID: "GoogleMapsCompatible",
     }),
     */
+    /*
     // OSM地图
     imageryProvider: new Cesium.OpenStreetMapImageryProvider({
       url: 'https://a.tile.openstreetmap.org/',
     }),
+    */
+    // 高德矢量地图
+    imageryProvider: new Cesium.UrlTemplateImageryProvider({
+      url: `http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style={x}&y={y}&z{z}`,
+      layer: "tdtBasicLayer",
+      style: "default",
+      format: "image/jpeg",
+      tileMatrixSetID: "GoogleMapsCompatible",
+    })
   });
 
   // 隐藏cesium的logo

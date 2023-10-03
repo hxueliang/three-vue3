@@ -29,6 +29,14 @@ Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
 
 onMounted(() => {
   const viwer = new Cesium.Viewer('container', {
+    geocoder: false, // 不显示搜索按钮
+    homeButton: false, // 不显示home按钮
+    sceneModePicker: false, // 不显示场景模式选择按钮
+    baseLayerPicker: false, // 不显示图层选择按钮
+    navigationHelpButton: false, // 不显示帮助按钮
+    animation: false, // 不显示动画控制器
+    timeline: false, // 不显示时间轴
+    fullscreenButton: false, // 不显示全屏按钮
   });
 
   // 隐藏cesium的logo

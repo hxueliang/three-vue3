@@ -22,6 +22,14 @@ Cesium.Ion.defaultAccessToken = CESIUM_TOKEN;
 
 const container = ref(null);
 
+// 设置cesium默认视角在中国
+Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
+  89.5, // 西边经度
+  20.4, // 南边维度
+  110.4, // 东边经度
+  61.2, // 北边维度
+);
+
 onMounted(() => {
   const viwer = new Cesium.Viewer('container');
 

@@ -46,6 +46,7 @@ onMounted(() => {
       positiveZ: './textures/city/night_5.jpg',
       negativeZ: './textures/city/night_6.jpg',
     }),
+    /*
     // 设置天地图矢量路径图
     imageryProvider: new Cesium.WebMapTileServiceImageryProvider({
       url: `http://t0.tianditu.com/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=${TDT_TOKEN}`,
@@ -53,6 +54,11 @@ onMounted(() => {
       style: "default",
       format: "image/jpeg",
       tileMatrixSetID: "GoogleMapsCompatible",
+    }),
+    */
+    // OSM地图
+    imageryProvider: new Cesium.OpenStreetMapImageryProvider({
+      url: 'https://a.tile.openstreetmap.org/',
     }),
   });
 

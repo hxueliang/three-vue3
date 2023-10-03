@@ -24,6 +24,9 @@ const container = ref(null);
 
 onMounted(() => {
   const viwer = new Cesium.Viewer('container');
+
+  // 隐藏cesium的logo
+  viwer.cesiumWidget.creditContainer.style.display = 'none';
 })
 
 </script>

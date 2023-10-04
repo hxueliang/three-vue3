@@ -57,7 +57,7 @@ onMounted(() => {
     }),
     */
     /*
-    // OSM地图
+    // OSM地图影像地图
     imageryProvider: new Cesium.OpenStreetMapImageryProvider({
       url: 'https://a.tile.openstreetmap.org/',
     }),

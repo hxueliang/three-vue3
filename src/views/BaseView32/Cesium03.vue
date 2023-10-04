@@ -27,8 +27,19 @@ Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
   61.2, // 北边维度
 );
 
-onMounted(() => {
+onMounted(async () => {
   const viwer = new Cesium.Viewer('container', {
+    /*
+    // 设置自定义地形
+    terrainProvider: new Cesium.CesiumTerrainProvider({
+      url: './terrains/gz'
+    })
+    */
+  });
+  // 设置地形
+  viwer.terrainProvider = await Cesium.createWorldTerrainAsync({
+    requestVertexNormals: true, // 顶点法线，添加阴影
+    requestWaterMask: true, // 添加水纹
   });
 })
 

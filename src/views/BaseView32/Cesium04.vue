@@ -33,6 +33,32 @@ Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
 onMounted(() => {
   const viwer = new Cesium.Viewer('container', {
   });
+
+  // 角度转弧度
+  const radians = Cesium.Math.toRadians(90);
+  console.log(radians);
+
+  // 弧度转角度
+  const degrees = Cesium.Math.toDegrees(2 * Math.PI);
+  console.log(degrees);
+
+  /**
+   * 将经纬度转为笛卡尔坐标
+   * longitude: number, 
+   * latitude: number, 
+   * height?: number, 
+   * ellipsoid?: Cesium.Ellipsoid, 
+   * result?: Cesium.Cartesian3
+   */
+  const cartesian3 = Cesium.Cartesian3.fromDegrees(89.5, 20.4, 100);
+  console.log(cartesian3);
+
+  // 将笛卡尔坐标转为经纬度
+  const cartographic = Cesium.Cartographic.fromCartesian(cartesian3);
+  cartographic.longitude = Cesium.Math.toDegrees(cartographic.longitude);
+
+  cartographic.latitude = Cesium.Math.toDegrees(cartographic.latitude);
+  console.log(cartographic);
 })
 
 </script>

@@ -30,6 +30,24 @@ Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
 onMounted(() => {
   const viewer = new Cesium.Viewer('container', {
   });
+
+  // 生成天安门的位置
+  const position = Cesium.Cartesian3.fromDegrees(116.391, 39.901, 1000);
+
+  // setView瞬间到达指定位置、视角
+  viewer.camera.setView({
+    // 指定相机位置
+    destination: position,
+    // 指定相机视角
+    orientation: {
+      // 指定相机的朝向，即领航角，
+      heading: Cesium.Math.toRadians(0),
+      // 指定相机的俯仰角，0竖直向上，-90竖直向下
+      pitch: Cesium.Math.toRadians(-30),
+      // 指定相机的滚转角，即翻滚角，
+      roll: 0,
+    }
+  });
 })
 
 </script>

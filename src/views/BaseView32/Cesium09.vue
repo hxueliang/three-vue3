@@ -61,6 +61,20 @@ onMounted(async () => {
     console.log(`Error creating tileset: ${error}`);
   }
 
+  // 添加3D模型
+  const airplane = viewer.entities.add({
+    name: 'Airplane',
+    position: Cesium.Cartesian3.fromDegrees(113.3191, 23.109, 700),
+    model: {
+      uri: './model/cesium/airplane.gltf',
+      minimumPixelSize: 64, // 飞机的最小像素
+      silhouetteSize: 2, // 设置飞机的轮廓
+      silhouetteColor: Cesium.Color.WHITE, // 轮廓的颜色
+      // 相机离模型多远距离显示
+      distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 200000)
+    }
+  });
+
   // 文字标签与广告牌
   const label = viewer.entities.add({
     position: Cesium.Cartesian3.fromDegrees(113.3191, 23.109, 200),

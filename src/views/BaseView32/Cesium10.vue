@@ -30,6 +30,21 @@ Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
 onMounted(async () => {
   const viewer = new Cesium.Viewer('container', {
   });
+
+  // 使用entities创建矩形
+  const rectangle = viewer.entities.add({
+    rectangle: {
+      coordinates: Cesium.Rectangle.fromDegrees(
+        90, // 西边经度
+        20, // 南边维度
+        110, // 东边经度
+        30 // 北边维度
+      ),
+      material: Cesium.Color.RED.withAlpha(0.5),
+    }
+  });
+
+  viewer.camera.setView(viewer.entities);
 })
 
 </script>

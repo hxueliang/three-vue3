@@ -34,6 +34,56 @@ onMounted(() => {
   // 生成天安门的位置
   const position = Cesium.Cartesian3.fromDegrees(116.391, 39.901, 1000);
 
+  // flyTo让相机飞往某个地方
+  viewer.camera.flyTo({
+    destination: position,
+    // 指定相机视角
+    orientation: {
+      // 指定相机的朝向，即领航角，
+      heading: Cesium.Math.toRadians(0),
+      // 指定相机的俯仰角，0竖直向上，-90竖直向下
+      pitch: Cesium.Math.toRadians(-30),
+      // 指定相机的滚转角，即翻滚角，
+      roll: 0,
+    }
+  });
+
+  // 移动
+  const MOVE_KEY = {
+    w: 'moveForward', // 设置相机向前移动
+    s: 'moveBackward', // 设置相机向后移动
+    a: 'moveLeft', // 设置相机向左移动
+    d: 'moveRight', // 设置相机向右移动
+  };
+
+  // 旋转
+  const LOOK_KEY = {
+    q: 'lookLeft', // 设置相机向左旋转
+    e: 'lookRight', // 设置相机向右旋转
+    r: 'lookUp', // 设置相机向上旋转
+    f: 'lookDown', // 设置相机向下旋转
+  };
+
+  // 翻滚
+  const TWIST_KEY = {
+    g: 'twistLeft', // 相机向左逆时针秋游，视觉效果：画布向右顺时针翻滚
+    h: 'twistRight', // 相机向右顺时针翻滚，视觉效果：画布向左逆时针秋游
+  };
+
+  // 通过按键移动相机
+  document.addEventListener('keydown', e => {
+    const { key } = e;
+    if (key in MOVE_KEY) {
+      // 获取相机离地面的高度
+      const height = viewer.camera.positionCartographic.height;
+      const moveRate = height / 10;
+      viewer.camera[MOVE_KEY[key]](moveRate);
+    } else if (key in LOOK_KEY) {
+      viewer.camera[LOOK_KEY[key]](Cesium.Math.toRadians(0.1));
+    } else if (key in TWIST_KEY) {
+      viewer.camera[TWIST_KEY[key]](Cesium.Math.toRadians(0.1));
+    }
+  });
 })
 
 </script>

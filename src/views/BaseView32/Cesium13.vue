@@ -59,6 +59,7 @@ onMounted(async () => {
 
   // 2 创建几何体实例
   const geoInstance = new Cesium.GeometryInstance({
+    id: 'redRect',
     geometry: rectGeometry,
     attributes: {
       color: Cesium.ColorGeometryInstanceAttribute.fromColor(
@@ -68,6 +69,7 @@ onMounted(async () => {
   });
   // 2.1 创建几何体实例2
   const geoInstance2 = new Cesium.GeometryInstance({
+    id: 'blueRect',
     geometry: rectGeometry2,
     attributes: {
       color: Cesium.ColorGeometryInstanceAttribute.fromColor(
@@ -90,6 +92,17 @@ onMounted(async () => {
   // 5 添加到viewer的场景中
   viewer.scene.primitives.add(primitive);
 
+
+  // 动态修改图元颜色
+  setInterval(() => {
+    const attributes = primitive.getGeometryInstanceAttributes('blueRect');
+    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(
+      // Cesium.Color.YELLOW.withAlpha(0.5) // 改为黄色
+      Cesium.Color.fromRandom({ // 改为随机颜色
+        alpha: 0.5
+      })
+    );
+  }, 1000);
 })
 
 </script>

@@ -44,6 +44,18 @@ onMounted(async () => {
     extrudedHeight: 0, // 挤出高度
     vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT, // 要计算的顶点属性
   });
+  // 1.1 创建几何体2
+  const rectGeometry2 = new Cesium.RectangleGeometry({
+    rectangle: Cesium.Rectangle.fromDegrees(
+      150, // 西边经度
+      20, // 南边维度
+      170, // 东边经度
+      30 // 北边维度
+    ),
+    height: 0, // 距离表面高度
+    extrudedHeight: 0, // 挤出高度
+    vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT, // 要计算的顶点属性
+  });
 
   // 2 创建几何体实例
   const geoInstance = new Cesium.GeometryInstance({
@@ -51,6 +63,15 @@ onMounted(async () => {
     attributes: {
       color: Cesium.ColorGeometryInstanceAttribute.fromColor(
         Cesium.Color.RED.withAlpha(0.5)
+      )
+    }
+  });
+  // 2.1 创建几何体实例2
+  const geoInstance2 = new Cesium.GeometryInstance({
+    geometry: rectGeometry2,
+    attributes: {
+      color: Cesium.ColorGeometryInstanceAttribute.fromColor(
+        Cesium.Color.BLUE.withAlpha(0.5)
       )
     }
   });
@@ -62,7 +83,7 @@ onMounted(async () => {
 
   // 4 创建图元，即物体
   const primitive = new Cesium.Primitive({
-    geometryInstances: geoInstance,
+    geometryInstances: [geoInstance, geoInstance2],
     appearance,
   });
 

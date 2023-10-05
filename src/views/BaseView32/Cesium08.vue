@@ -61,6 +61,29 @@ onMounted(async () => {
     console.log(`Error creating tileset: ${error}`);
   }
 
+  // 文字标签与广告牌
+  const label = viewer.entities.add({
+    position: Cesium.Cartesian3.fromDegrees(113.3191, 23.109, 200),
+    label: {
+      text: '广州塔',
+      font: '24px sans-serif',
+      fillColor: Cesium.Color.WHITE,
+      outlineColor: Cesium.Color.BLACK,
+      outlineWidth: 2,
+      style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+      pixelOffset: new Cesium.Cartesian2(0, -24), // 文字偏移量
+      horizontalOrigin: Cesium.HorizontalOrigin.CENTER, // 文字显示位置
+      verticalOrigin: Cesium.VerticalOrigin.BOTTOM, // 文字的显示位置
+    },
+    billboard: {
+      image: './icon/gzt.png',
+      width: 50,
+      height: 50,
+      horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+      verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+    }
+  });
+
 })
 
 </script>

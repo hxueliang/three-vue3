@@ -27,7 +27,7 @@ Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
   61.2, // 北边维度
 );
 
-onMounted(() => {
+onMounted(async () => {
   const viewer = new Cesium.Viewer('container', {
   });
 
@@ -42,6 +42,37 @@ onMounted(() => {
       roll: 0,
     }
   });
+
+  // 添加一个实体（点）
+  const positionPoint = Cesium.Cartesian3.fromDegrees(113.3191, 23.109, 0);
+  const point = viewer.entities.add({
+    position: positionPoint,
+    point: {
+      pixelSize: 10,
+      color: Cesium.Color.RED,
+      outlineColor: Cesium.Color.WHITE,
+      outlineWidth: 2,
+    }
+  });
+
+  // 添加3D建筑
+  try {
+    const tileset = await Cesium.createOsmBuildingsAsync({
+      style: new Cesium.Cesium3DTileStyle({
+        color: {
+          conditions: [
+            ["${feature['building']} === 'hospital'", "color('#0000FF')"],
+            ["${feature['building']} === 'school'", "color('#00FF00')"],
+            [true, "color('#ffffff')"]
+          ]
+        }
+      })
+    });
+    viewer.scene.primitives.add(tileset);
+  } catch (error) {
+    console.log(`Error creating tileset: ${error}`);
+  }
+
 })
 
 </script>

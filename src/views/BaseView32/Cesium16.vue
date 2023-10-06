@@ -34,7 +34,23 @@ onMounted(async () => {
   });
 
   // 设置红色材质
-  const material = Cesium.Color.RED;
+  // const material = Cesium.Color.RED;
+
+  // 设置虚线材质
+  // const material = new Cesium.PolylineDashMaterialProperty({
+  //   dashLength: 24, // 虚线长度
+  //   color: Cesium.Color.RED,
+  // });
+
+  // 设置箭头材质
+  // const material = new Cesium.PolylineArrowMaterialProperty(Cesium.Color.RED);
+
+  // 设置发光飞线效果
+  const material = new Cesium.PolylineGlowMaterialProperty({
+    glowPower: 0.9, // 发光程度
+    taperPower: 0.1, // 前细后粗
+    color: Cesium.Color.RED,
+  });
 
   // 使用entities创建折线
   const redLine = viewer.entities.add({
@@ -49,7 +65,7 @@ onMounted(async () => {
         110, // 东边经度
         30 // 北边维度
       ]),
-      width: 5,
+      width: 10,
       material,
     },
   });

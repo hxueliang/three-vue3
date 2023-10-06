@@ -55,7 +55,7 @@ onMounted(async () => {
     ),
     height: 0, // 距离表面高度
     extrudedHeight: 0, // 挤出高度
-    vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT, // 要计算的顶点属性
+    vertexFormat: Cesium.EllipsoidSurfaceAppearance.VERTEX_FORMAT,
   });
   // 1.1 创建几何体2
   const rectGeometry2 = new Cesium.RectangleGeometry({
@@ -67,7 +67,7 @@ onMounted(async () => {
     ),
     height: 0, // 距离表面高度
     extrudedHeight: 0, // 挤出高度
-    vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT, // 要计算的顶点属性
+    vertexFormat: Cesium.EllipsoidSurfaceAppearance.VERTEX_FORMAT,
   });
 
   // 2 创建几何体实例
@@ -98,8 +98,34 @@ onMounted(async () => {
   // });
 
   // type为Color
-  const material1 = new Cesium.Material.fromType('Color', {
-    color: Cesium.Color.AQUA.withAlpha(0.5)
+  // const material1 = new Cesium.Material.fromType('Color', {
+  //   color: Cesium.Color.AQUA.withAlpha(0.5)
+  // });
+
+  // type为Image
+  // const material1 = new Cesium.Material.fromType('Image', {
+  //   image: './imgs/cesium/ldq.jpeg',
+  //   repeat: new Cesium.Cartesian2(1.0, 1.0)
+  // });
+
+  // type为DiffuseMap
+  // const material1 = new Cesium.Material.fromType('DiffuseMap', {
+  //   image: './imgs/cesium/ldq.jpeg',
+  //   repeat: new Cesium.Cartesian2(1.0, 1.0)
+  // });
+
+  // type为Grid
+  // const material1 = new Cesium.Material.fromType('Grid', {
+  //   color: Cesium.Color.AQUA.withAlpha(0.5),
+  //   cellAlpha: 0.2,
+  //   lineCount: new Cesium.Cartesian2(4, 4),
+  //   lineThickness: new Cesium.Cartesian2(4.0, 4.0),
+  // });
+
+  // type为Water
+  const material1 = new Cesium.Material.fromType('Water', {
+    baseWaterColor: Cesium.Color.AQUA.withAlpha(0.9),
+    normalMap: './Assets/Textures/waterNormals.jpg',
   });
 
   // 设定几何体都是与地球的椭球体平行

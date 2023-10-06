@@ -92,8 +92,24 @@ onMounted(async () => {
   });
 
   // 3 设置外观，即材质
-  const appearance = new Cesium.PerInstanceColorAppearance({
-    flat: true,
+  // 使用instance的颜色去着色
+  // const appearance = new Cesium.PerInstanceColorAppearance({
+  //   flat: true,
+  // });
+
+  const material1 = new Cesium.Material.fromType('Color', {
+    color: Cesium.Color.AQUA.withAlpha(0.5)
+  });
+
+  // 设定几何体都是与地球的椭球体平行
+  // 做大量几何体与地球椭球体平行时，可以在计算大量顶点属性的时候节省内存
+  // const appearance = new Cesium.EllipsoidSurfaceAppearance({
+  //   material: material1,
+  // });
+
+  // 与EllipsoidSurfaceAppearance效果一致
+  const appearance = new Cesium.MaterialAppearance({
+    material: material1
   });
 
   // 4 创建图元，即物体

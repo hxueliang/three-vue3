@@ -105,6 +105,22 @@ onMounted(async () => {
   // 5 添加到viewer的场景中
   viewer.scene.primitives.add(primitive);
 
+  // 拾取
+  // new Cesium.ScreenSpaceEventHandler(element),处理用户输入事件。可以添加自定义函数，以便在用户输入时执行。
+  const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+  handler.setInputAction(movement => {
+    // viewer.scene.pick,选中物体
+    const pickedObject = viewer.scene.pick(movement.position);
+    if (!Cesium.defined(pickedObject)) { return; }
+    if (typeof pickedObject.id === 'string') {
+      const attributes = primitive.getGeometryInstanceAttributes(pickedObject.id);
+      attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(
+        Cesium.Color.fromRandom({ // 改为随机颜色
+          alpha: 0.5
+        })
+      );
+    }
+  }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 })
 
 </script>

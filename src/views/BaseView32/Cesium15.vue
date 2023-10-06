@@ -33,6 +33,38 @@ onMounted(async () => {
     infoBox: false,
   });
 
+  // 创建颜色材质
+  // const material = new Cesium.ColorMaterialProperty(
+  //   new Cesium.Color(1.0, 1.0, 1.0, 0.9)
+  // );
+
+  // 创建图片材质
+  // const material = './imgs/cesium/ldq.jpeg';
+
+  // 创建棋盘材质
+  // const material = new Cesium.CheckerboardMaterialProperty({
+  //   evenColor: Cesium.Color.WHITE,
+  //   oddColor: Cesium.Color.BLACK,
+  //   repeat: new Cesium.Cartesian2(4, 4),
+  // });
+
+  // 创建条纹材质
+  // const material = new Cesium.StripeMaterialProperty({
+  //   evenColor: Cesium.Color.WHITE,
+  //   oddColor: Cesium.Color.BLACK,
+  //   repeat: 8,
+  // });
+
+  // 创建网格材质
+  const material = new Cesium.GridMaterialProperty({
+    color: Cesium.Color.YELLOW,
+    cellAlpha: 0.2,
+    lineCount: new Cesium.Cartesian2(8, 8),
+    lineThickness: new Cesium.Cartesian2(2.0, 2.0),
+  });
+
+
+
   // 使用entities创建矩形
   const rectangle = viewer.entities.add({
     rectangle: {
@@ -42,7 +74,7 @@ onMounted(async () => {
         110, // 东边经度
         30 // 北边维度
       ),
-      material: Cesium.Color.RED.withAlpha(0.5),
+      material,
     }
   });
 

@@ -91,8 +91,38 @@ onMounted(async () => {
     }
   });
 
+  // 使用fabric选项Color类型
+  // const material1 = new Cesium.Material({
+  //   fabric: {
+  //     type: 'Color',
+  //     uniforms: {
+  //       color: new Cesium.Color(1.0, 0.0, 0.0, 0.5)
+  //     }
+  //   }
+  // });
 
+  // 使用fabric选项Image类型
+  // const material1 = new Cesium.Material({
+  //   fabric: {
+  //     type: 'Image',
+  //     uniforms: {
+  //       image: './imgs/cesium/ldq.jpeg',
+  //       repeat: new Cesium.Cartesian2(1.0, 1.0)
+  //     }
+  //   }
+  // });
+  // 使用fabric选项编写着色器材质
   const material1 = new Cesium.Material({
+    fabric: {
+      uniforms: {},
+      source: `
+        czm_material czm_getMaterial(czm_materialInput materialInput) {
+          czm_material material = czm_getDefaultMaterial(materialInput);
+          material.diffuse = vec3(1.0, 0.0, 0.0);
+          return material;
+        }
+      `,
+    }
   });
 
   // 3 设置外观，即材质

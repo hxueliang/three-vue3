@@ -30,6 +30,27 @@ Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
 onMounted(async () => {
   const viewer = new Cesium.Viewer('container', {
   });
+
+  // 在阿里地理数据可视化平台
+  // https://datav.aliyun.com/portal/school/atlas/area_selector
+  // 获取.json地址
+  const dataGeo = Cesium.GeoJsonDataSource.load('https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json', {
+    stroke: Cesium.Color.RED,
+    fill: Cesium.Color.PINK.withAlpha(0.4),
+    strokeWidth: 3,
+    markerSymbol: '?'
+  });
+  /*
+  // 地理信息添加到地图，方法一：
+  console.log(dataGeo);
+  viewer.dataSources.add(dataGeo);
+  */
+
+  // 地理信息添加到地图，方法二：
+  dataGeo.then(dataSources => {
+    console.log(dataSources);
+    viewer.dataSources.add(dataSources);
+  });
 })
 
 </script>

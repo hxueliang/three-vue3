@@ -1,4 +1,7 @@
 <!-- Cs20.cesium着色器自带函数与变量 -->
+<!-- 旧版本的文档才能查找 -->
+<!-- https://cesium.com/downloads/cesiumjs/releases/b28/Documentation/ -->
+<!-- 点击glsl搜索czm_materialInput、czm_getDefaultMaterial、czm_material等 -->
 <template>
   <div id="container" ref="container"></div>
 </template>
@@ -6,6 +9,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import * as Cesium from 'cesium';
+import gsap from 'gsap';
 
 import 'cesium/Build/Cesium/Widgets/widgets.css';
 
@@ -95,15 +99,41 @@ onMounted(async () => {
   const material1 = new Cesium.Material({
     fabric: {
       uniforms: {
+        uTime: 0.0,
       },
       source: `
+        /*
+        czm_materialInput:用作每个材质的czm_getMaterial函数的输入
+        czm_getDefaultMaterial:具有默认值的czm_material。每个材质的czm_getMaterial都应该使用这个默认材质作为它返回的材质的基础。
+        czm_material:保存可用于照明的材料信息。由所有czm_getMaterial函数返回。
+        */
         czm_material czm_getMaterial(czm_materialInput materialInput) {
           czm_material material = czm_getDefaultMaterial(materialInput);
-          material.diffuse = vec3(1.0, 0.0, 0.0);
+        
+          // 设置渐变效果
+          // material.diffuse = vec3(materialInput.s, 0.0, 0.0);
+          // material.diffuse = vec3(materialInput.st, 0.0); // st为uv
+          // material.diffuse = vec3(materialInput.str);
+
+          // 设置条纹效果
+          // float strength = mod(materialInput.s * 10.0, 1.0);
+          // material.diffuse = vec3(strength, 0.0, 0.0);
+
+          // 使用uniform参数
+          float strength = mod((materialInput.s - uTime) * 10.0, 1.0);
+          material.diffuse = vec3(strength, 0.0, 0.0);
+
           return material;
         }
       `,
     }
+  });
+
+  gsap.to(material1.uniforms, {
+    uTime: 1,
+    duration: 2,
+    repeat: -1,
+    ease: 'linear',
   });
 
   // 3 设置外观，即材质

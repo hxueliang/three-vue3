@@ -6,6 +6,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import * as Cesium from 'cesium';
+import gsap from 'gsap';
 
 import 'cesium/Build/Cesium/Widgets/widgets.css';
 
@@ -91,14 +92,41 @@ onMounted(async () => {
     }
   });
 
-  const material1 = new Cesium.Material.fromType('Color', {
-    color: Cesium.Color.AQUA.withAlpha(0.5)
-  });
-
   // 3 设置外观，即材质
   const appearance = new Cesium.EllipsoidSurfaceAppearance({
-    material: material1,
+    // uniform传值不能在uniforms选传
+    // uniforms: {
+    //   uTime: 0.0,
+    // },
+
+    fragmentShaderSource: `
+      in vec3 v_positionMC;
+      in vec3 v_positionEC;
+      in vec2 v_st;
+      uniform float uTime;
+
+      void main() {
+        czm_materialInput materialInput;
+        out_FragColor = vec4(v_st, uTime, 1.0);
+      }`
   });
+
+  // uniform传值在这里传
+  appearance.uniforms = {
+    uTime: 0
+  };
+
+  gsap.to(appearance.uniforms, {
+    uTime: 1,
+    duration: 2,
+    repeat: -1,
+    yoyo: true,
+    ease: 'linear',
+  });
+
+
+  console.log(appearance._vertexShaderSource);
+  console.log(appearance._fragmentShaderSource);
 
   // 4 创建图元，即物体
   const primitive = new Cesium.Primitive({

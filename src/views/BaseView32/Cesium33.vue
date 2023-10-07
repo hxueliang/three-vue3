@@ -24,8 +24,15 @@ onMounted(async () => {
   let viewer;
   try {
     viewer = new Cesium.Viewer('container', {
-      infoBox: false,
+      // infoBox: false,
     });
+
+    // setTimeout(() => {
+    //   // 处理老版本注释掉infoBox: false,后控制台报错
+    //   const iframe = document.getElementsByClassName('cesium-infobox-iframe')[0];
+    //   iframe?.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-prpups allow-forms');
+    //   iframe?.setAttribute('src', '');
+    // }, 5000);
 
     // 添加3d建筑
     const tiles3d = await Cesium.createOsmBuildingsAsync();
@@ -40,13 +47,18 @@ onMounted(async () => {
 
     // 条件判断
     tiles3d.style = new Cesium.Cesium3DTileStyle({
+      defines: {
+        distance111: 'distance(vec2(${feature["cesium#longitude"]}, ${feature["cesium#latitude"]}), vec2(113.3191, 23.109))'
+      },
       color: {
         conditions: [
-          ['${feature["building"]} === "apartments"', 'color("rgba(60, 255, 0, 0.5)")'],
+          ['${distance111} < 0.005', 'color("rgba(0, 0, 255, 0.5)")'],
+          ['${distance111} < 0.02', 'color("rgba(100, 100, 255, 0.5)")'],
+          ['${distance111} < 0.035', 'color("rgba(160, 160, 255, 0.5)")'],
           ['true', 'color("white")']
         ]
       },
-      show: true,
+      show: '${distance111} < 0.05',
     });
 
 

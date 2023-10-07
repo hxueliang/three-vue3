@@ -50,6 +50,20 @@ onMounted(async () => {
   dataGeo.then(dataSources => {
     console.log(dataSources);
     viewer.dataSources.add(dataSources);
+    const { values: entities } = dataSources.entities;
+    entities.forEach((entity, i) => {
+      // 设置随机颜色
+      entity.polygon.material = new Cesium.ColorMaterialProperty(
+        Cesium.Color.fromRandom({
+          alpha: 1,
+        })
+      );
+      // 取消边框
+      entity.polygon.outline = false;
+      // 挤出随机高度
+      const randomNum = parseInt(Math.random() * 5);
+      entity.polygon.extrudedHeight = 100000 * randomNum;
+    });
   });
 })
 

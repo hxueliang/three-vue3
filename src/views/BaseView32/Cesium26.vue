@@ -30,6 +30,14 @@ Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
 onMounted(async () => {
   const viewer = new Cesium.Viewer('container', {
   });
+
+  // 加载kmz数据
+  const kmlUrl = './Assets/gdpPerCapita2008.kmz';
+  const kmlDataPromise = Cesium.KmlDataSource.load(kmlUrl);
+  kmlDataPromise.then(function (dataSource) {
+    console.log(dataSource);
+    viewer.dataSources.add(dataSource);
+  });
 })
 
 </script>

@@ -1,4 +1,5 @@
 <!-- Cs31.3DTiles与性能监控 -->
+<!-- https://github.com/CesiumGS/3d-tiles/tree/main/specification -->
 <template>
   <div id="container" ref="container"></div>
 </template>
@@ -26,6 +27,20 @@ onMounted(async () => {
     viewer = new Cesium.Viewer('container', {
       infoBox: false,
     });
+
+    // 复制/Cesium-1.109/Specs/Data/Cesium3DTiles/Tilesets/Tileset
+    // 所以资到/public/Assets
+    const tileset = await Cesium.Cesium3DTileset.fromUrl(
+      "./Assets/tileset.json"
+    );
+    console.log(tileset);
+
+    viewer.scene.primitives.add(tileset);
+
+    viewer.zoomTo(tileset);
+
+    // 添加3DTiles调试面板，通过*Loggin*Performance查看内存
+    viewer.extend(Cesium.viewerCesium3DTilesInspectorMixin);
   } catch (err) {
     console.log(err);
   }

@@ -30,6 +30,22 @@ Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
 onMounted(async () => {
   const viewer = new Cesium.Viewer('container', {
   });
+
+  // 加载kml数据
+  // 将Cesium-1.109/Apps/SampleData/kml/facilities
+  // 下相应的静态资源
+  // 复制到/public/Assets
+  const kmlUrl = './Assets/facilities.kml';
+  const kmlDataPromise = Cesium.KmlDataSource.load(kmlUrl, {
+    camera: viewer.scene.camera,
+    canvas: viewer.scene.canvas,
+    screenOverlayContainer: viewer.container,
+    screenOverlayContainer: viewer.container,
+  });
+  kmlDataPromise.then(function (dataSource) {
+    console.log(dataSource);
+    viewer.dataSources.add(dataSource);
+  });
 })
 
 </script>

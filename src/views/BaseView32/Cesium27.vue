@@ -1,4 +1,6 @@
 <!-- Cs27.初识CZML数据与应用 -->
+<!-- 说明文档 https://github.com/AnalyticalGraphicsInc/czml-writer/wiki/CZML-Guide -->
+<!-- 案例 http://localhost:8080/Apps/Sandcastle/index.html 搜索czml -->
 <template>
   <div id="container" ref="container"></div>
 </template>
@@ -30,6 +32,43 @@ Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
 onMounted(async () => {
   const viewer = new Cesium.Viewer('container', {
   });
+
+  // 定义czml数据
+  const czml = [
+    {
+      id: "document",
+      name: "box",
+      version: "1.0",
+    },
+    {
+      id: "shape1",
+      name: "Blue box",
+      position: {
+        cartographicDegrees: [-114.0, 40.0, 300000.0],
+      },
+      box: {
+        dimensions: {
+          cartesian: [400000.0, 300000.0, 500000.0],
+        },
+        material: {
+          solidColor: {
+            color: {
+              rgba: [0, 0, 255, 255],
+            },
+          },
+        },
+      },
+    },
+  ];
+
+  // console.log(JSON.stringify(czml)); // 组Cs28.加载czml格式数据用
+
+  // 加载czml数据
+  const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
+  dataSourcePromise.then(dataSources => {
+    viewer.dataSources.add(dataSources);
+  });
+  viewer.zoomTo(dataSourcePromise);
 })
 
 </script>

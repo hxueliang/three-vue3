@@ -45,7 +45,7 @@ const router = createRouter({
     {
       path: '/cesium',
       name: 'cesium',
-      component: () => import('../views/BaseView32/Cesium31.vue')
+      component: () => import('../views/BaseView32/Cesium32.vue')
     },
   ]
 });

@@ -30,6 +30,14 @@ Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
 onMounted(async () => {
   const viewer = new Cesium.Viewer('container', {
   });
+
+  // 加载czml数据
+  const czmlUrl = './Assets/box.czml';
+  const dataSourcePromise = Cesium.CzmlDataSource.load(czmlUrl);
+  dataSourcePromise.then(dataSources => {
+    viewer.dataSources.add(dataSources);
+  });
+  viewer.zoomTo(dataSourcePromise);
 })
 
 </script>

@@ -8,9 +8,13 @@ import { onMounted } from 'vue';
 import * as Cesium from 'cesium';
 
 import initViewer from './cesium/initViewer';
+import MousePosition from './cesium/MousePosition';
 
-onMounted(() => {
-  const viewer = initViewer();
+onMounted(async () => {
+  const viewer = await initViewer();
+
+  // 根据鼠标位置生成经纬度值
+  const ousePosition = new MousePosition(viewer);
 })
 
 </script>

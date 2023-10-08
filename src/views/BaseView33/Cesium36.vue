@@ -10,6 +10,7 @@ import CesiumNavigation from 'cesium-navigation-es6';
 
 import initViewer from './cesium/initViewer';
 import MousePosition from './cesium/MousePosition';
+import modifyMap from './cesium/modifyMap';
 
 onMounted(async () => {
   const viewer = await initViewer();
@@ -24,6 +25,9 @@ onMounted(async () => {
     enableDistanceLegend: true, // 启用距离图例
     enableCompassOuterRing: true, // 启用指南针外环
   });
+
+  // 修改地图的底色
+  modifyMap(viewer);
 })
 
 </script>

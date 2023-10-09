@@ -33,10 +33,6 @@ export default async function initViewer() {
     // 隐藏cesium的logo
     viewer.cesiumWidget.creditContainer.style.display = 'none';
 
-    // 添加3d建筑
-    const tiles3d = await Cesium.createOsmBuildingsAsync();
-    const osmBuildings = viewer.scene.primitives.add(tiles3d);
-
     // 广州塔
     const position = Cesium.Cartesian3.fromDegrees(113.3191, 23.109, 1000);
 

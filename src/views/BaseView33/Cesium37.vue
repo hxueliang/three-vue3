@@ -11,6 +11,7 @@ import CesiumNavigation from 'cesium-navigation-es6';
 import initViewer from './cesium/initViewer';
 import MousePosition from './cesium/MousePosition';
 import modifyMap from './cesium/modifyMap';
+import modifyBuild from './cesium/modifyBuild';
 
 onMounted(async () => {
   const viewer = await initViewer();
@@ -28,6 +29,9 @@ onMounted(async () => {
 
   // 修改地图的底色
   modifyMap(viewer);
+
+  // 修改建筑物颜色
+  modifyBuild(viewer);
 })
 
 </script>

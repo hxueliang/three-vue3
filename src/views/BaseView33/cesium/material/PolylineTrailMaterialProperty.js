@@ -2,7 +2,10 @@ import * as Cesium from 'cesium';
 import gsap from "gsap";
 
 export default class PolylineTrailMaterialProperty {
-  constructor(typeName = 'PolylineTrailMaterial') {
+  constructor(
+    typeName = 'PolylineTrailMaterial',
+    color = new Cesium.Color(0.7, 0.7, 1.0, 1.0),
+  ) {
     this.definitionChanged = new Cesium.Event();
     this.typeName = typeName;
 
@@ -11,6 +14,7 @@ export default class PolylineTrailMaterialProperty {
         type: this.typeName,
         uniforms: {
           uTime: 0,
+          color: color,
         },
         source: `
           czm_material czm_getMaterial(czm_materialInput materialInput) {
@@ -31,7 +35,7 @@ export default class PolylineTrailMaterialProperty {
             float alpha = smoothstep(time - 0.15, time, st.s) * step(-time, -st.s);
             alpha += 0.1;
             material.alpha = alpha;
-            material.diffuse = vec3(0.7, 0.7, 1.0);
+            material.diffuse = color.rgb;
             return material;
           }
         `,

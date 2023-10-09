@@ -1,5 +1,6 @@
 <!-- Cs40.地理小工具生成道路汽车行驶轨迹线文件 -->
 <!-- https://datav.aliyun.com/portal/school/atlas/area_generator -->
+<!-- Cs40.2.着色器编写流光四溢轨迹线 -->
 <template>
   <div id="container" ref="container"></div>
 </template>
@@ -15,6 +16,7 @@ import modifyMap from './cesium/modifyMap';
 import modifyBuild from './cesium/modifyBuild';
 import LightCone from './cesium/LightCone';
 import RectFlyLight from './cesium/RectFlyLight';
+import RoadLightLine from './cesium/RoadLightLine';
 
 onMounted(async () => {
   const viewer = await initViewer();
@@ -41,6 +43,9 @@ onMounted(async () => {
 
   // 添加区域上升流光飞线
   const rectFlyLight = new RectFlyLight(viewer);
+
+  // 添加路径流光线
+  const roadLightLine = new RoadLightLine(viewer);
 })
 
 </script>

@@ -1,4 +1,5 @@
-<!-- Cs40.地理小工具生成道路汽车行驶轨迹线 -->
+<!-- Cs40.地理小工具生成道路汽车行驶轨迹线文件 -->
+<!-- https://datav.aliyun.com/portal/school/atlas/area_generator -->
 <template>
   <div id="container" ref="container"></div>
 </template>

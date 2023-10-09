@@ -34,7 +34,7 @@ export default async function initViewer() {
     viewer.cesiumWidget.creditContainer.style.display = 'none';
 
     // 广州塔
-    const position = Cesium.Cartesian3.fromDegrees(113.3191, 23.109, 1000);
+    const position = Cesium.Cartesian3.fromDegrees(113.3191, 23.109, 2500);
 
     viewer.camera.flyTo({
       destination: position,

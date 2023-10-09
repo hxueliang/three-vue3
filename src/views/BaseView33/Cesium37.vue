@@ -1,4 +1,5 @@
 <!-- Cs37.编写着色器实现建筑物渐变特效 -->
+<!-- Cs37.2.编写着色器实现滚动光环特效 -->
 <template>
   <div id="container" ref="container"></div>
 </template>

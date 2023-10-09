@@ -12,6 +12,7 @@ import initViewer from './cesium/initViewer';
 import MousePosition from './cesium/MousePosition';
 import modifyMap from './cesium/modifyMap';
 import modifyBuild from './cesium/modifyBuild';
+import LightCone from './cesium/LightCone';
 
 onMounted(async () => {
   const viewer = await initViewer();
@@ -33,6 +34,8 @@ onMounted(async () => {
   // 修改建筑物颜色
   modifyBuild(viewer);
 
+  // 添加动态的光锥特效
+  const lightCone = new LightCone(viewer);
 })
 
 </script>

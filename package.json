@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@turf/turf": "^6.5.0",
     "@types/three": "^0.155.0",
     "axios": "^1.4.0",
     "cannon-es": "^0.20.0",

@@ -13,6 +13,7 @@ import MousePosition from './cesium/MousePosition';
 import modifyMap from './cesium/modifyMap';
 import modifyBuild from './cesium/modifyBuild';
 import LightCone from './cesium/LightCone';
+import RectFlyLight from './cesium/RectFlyLight';
 
 onMounted(async () => {
   const viewer = await initViewer();
@@ -36,6 +37,9 @@ onMounted(async () => {
 
   // 添加动态的光锥特效
   const lightCone = new LightCone(viewer);
+
+  // 添加区域上升流光飞线
+  const rectFlyLight = new RectFlyLight(viewer);
 })
 
 </script>

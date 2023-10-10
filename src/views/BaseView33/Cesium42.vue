@@ -16,6 +16,7 @@ import LightCone from './cesium/LightCone';
 import RectFlyLight from './cesium/RectFlyLight';
 import RoadLightLine from './cesium/RoadLightLine';
 import RadarLight from './cesium/RadarLight';
+import LightSpread from './cesium/LightSpread';
 
 onMounted(async () => {
   const viewer = await initViewer();
@@ -48,6 +49,9 @@ onMounted(async () => {
 
   // 添加雷达
   const radarLight = new RadarLight(viewer);
+
+  // 添加六边形光波扩散
+  const lightSpread = new LightSpread(viewer);
 })
 
 </script>

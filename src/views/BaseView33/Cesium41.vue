@@ -15,6 +15,7 @@ import modifyBuild from './cesium/modifyBuild';
 import LightCone from './cesium/LightCone';
 import RectFlyLight from './cesium/RectFlyLight';
 import RoadLightLine from './cesium/RoadLightLine';
+import RadarLight from './cesium/RadarLight';
 
 onMounted(async () => {
   const viewer = await initViewer();
@@ -44,6 +45,9 @@ onMounted(async () => {
 
   // 添加路径流光线
   const roadLightLine = new RoadLightLine(viewer);
+
+  // 添加雷达
+  const radarLight = new RadarLight(viewer);
 })
 
 </script>

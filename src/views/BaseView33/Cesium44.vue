@@ -1,4 +1,6 @@
 <!-- Cs44.粒子实现广州塔小蛮腰烟花特效 -->
+<!-- http://localhost:8080/Build/Documentation/ParticleSystem.html?classFilter=ParticleSystem -->
+<!-- https://cesium.com/learn/cesiumjs-learn/cesiumjs-particle-systems/ -->
 <template>
   <div id="container" ref="container"></div>
 </template>
@@ -18,6 +20,7 @@ import RoadLightLine from './cesium/RoadLightLine';
 import RadarLight from './cesium/RadarLight';
 import LightSpread from './cesium/LightSpread';
 import LightWall from './cesium/LightWall';
+import ParticleLight from './cesium/ParticleLight';
 
 onMounted(async () => {
   const viewer = await initViewer();
@@ -56,6 +59,9 @@ onMounted(async () => {
 
   // 添加光墙
   const lightWall = new LightWall(viewer);
+
+  // 添加烟花粒子
+  const particleLight = new ParticleLight(viewer);
 })
 
 </script>

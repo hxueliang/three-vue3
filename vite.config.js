@@ -2,7 +2,7 @@ import { fileURLToPath, URL } from 'node:url';
 
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
-import glsl from 'vite-plugin-glsl';
+import glsl from 'vite-plugin-glsl'; // https://www.npmjs.com/package/vite-plugin-glsl
 import requireTransform from 'vite-plugin-require-transform';
 
 // https://vitejs.dev/config/

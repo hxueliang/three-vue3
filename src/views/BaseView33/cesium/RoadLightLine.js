@@ -17,8 +17,8 @@ export default class RoadLightLine {
       const entities = dataSource.entities.values;
       entities.forEach(item => {
         const { polyline } = item;
-        polyline.material = polylineTrailMaterialProperty;
-        // polyline.material = spritelineMaterialProperty; // 着色器代码报错，未解决
+        // polyline.material = polylineTrailMaterialProperty;
+        polyline.material = spritelineMaterialProperty; // 着色器代码报错，未解决
       });
     });
   }

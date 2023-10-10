@@ -19,8 +19,8 @@ export default class SpritelineMaterialProperty {
             // 获取st
             vec2 st = materialInput.st;
             // 根据uv采样颜色
-            vec4 color = texture2D(image, st); // 报错
-            vec4 color = texture2D(image, vec2(fract(st.s-uTime) , st.t)); // 报错
+            // vec4 color = texture(image, st);
+            vec4 color = texture(image, vec2(fract(st.s-uTime) , st.t));
             
             material.alpha = color.a;
             material.diffuse = color.rgb;
@@ -34,9 +34,9 @@ export default class SpritelineMaterialProperty {
     this.params = { uTime: 0 };
     gsap.to(this.params, {
       uTime: 1,
-      duration: 1,
+      duration: 2,
       repeat: -1,
-      yoyo: true,
+      // yoyo: true,
       ease: 'linear',
     });
   }

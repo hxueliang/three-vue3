@@ -26,10 +26,10 @@ export default class LightSpread {
     });
 
     gsap.to(this.params, {
-      minlot: 113.304 - 0.05,
-      minLat: 23.101 - 0.05,
-      maxlot: 113.3095 + 0.05,
-      maxLat: 23.106 + 0.05,
+      minlot: 113.304 - 0.5,
+      minLat: 23.101 - 0.5,
+      maxlot: 113.3095 + 0.5,
+      maxLat: 23.106 + 0.5,
       duration: 5,
       repeat: -1,
       // yoyo: true,

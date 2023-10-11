@@ -55,11 +55,14 @@ function init() {
 
 // 业务代码
 function createCode() {
+  const bumpMap = new THREE.TextureLoader().load('./case/LeePerrySmith/Infinite-Level_02_Disp_NoSmoothUV-4096.jpg');
 
   const material = new THREE.MeshPhongMaterial({
     color: 0x9c6e49,
     specular: 0x666666,
     shininess: 25,
+    bumpMap,
+    bumpScale: 0.1
   });
 
   gltfLoader.load('./case/LeePerrySmith/LeePerrySmith.glb', function (gltf) {

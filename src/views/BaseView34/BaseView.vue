@@ -571,9 +571,9 @@ function createDirLight(x = 0, y = 0, z = 10, strength = 1, color = '#ffffff', c
   scene.add(dirLight);
 }
 
-// 添加环境光
-function createHemisphereLight(strength = 1, color = '#ffffff') {
-  const hemisphereLight = new THREE.HemisphereLight(color, strength);
+// 添加半球光
+function createHemisphereLight(strength = 1, skyColor = '#ffffff', groundColor = '#B97A20') {
+  const hemisphereLight = new THREE.HemisphereLight(skyColor, groundColor, strength);
   scene.add(hemisphereLight);
 }
 

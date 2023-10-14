@@ -46,7 +46,7 @@ function init() {
   createRenderer();
   createAxes();
   // createAmbientTexture();
-  // createAmbientLight();
+  createAmbientLight();
   // createDirLight();
   // createPointLight();
   // createSpotLight();
@@ -58,7 +58,7 @@ function createCode() {
   // 地面
   const planeSize = 40;
   const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
-  const planeMat = new THREE.MeshBasicMaterial({
+  const planeMat = new THREE.MeshStandardMaterial({
     color: 0xcccccc,
     side: THREE.DoubleSide,
   });
@@ -83,7 +83,146 @@ function createCode() {
   const sphere = new THREE.Mesh(sphereGeo, sphereMat);
   sphere.position.set(-sphereRadius - 1, sphereRadius + 2, 0);
   scene.add(sphere);
+
+  // 控制颜色属性gui
+  class ColorGUIHelper {
+    constructor(object, prop) {
+      this.object = object;
+      this.prop = prop;
+    }
+    get value() {
+      return `#${this.object[this.prop].getHexString()}`;
+    }
+    set value(hexString) {
+      this.object[this.prop].set(hexString);
+    }
+  }
+
+  // 控制角度属性
+  class DegRadHelper {
+    constructor(obj, prop) {
+      this.obj = obj;
+      this.prop = prop;
+    }
+    get value() {
+      return THREE.MathUtils.radToDeg(this.obj[this.prop]);
+    }
+    set value(v) {
+      this.obj[this.prop] = THREE.MathUtils.degToRad(v);
+    }
+  }
+
+  // 创建gui组
+  function makeXYZGUI(gui, vector3, name, onChangeFn) {
+    const folder = gui.addFolder(name);
+    folder.add(vector3, 'x', -10, 10).onChange(onChangeFn);
+    folder.add(vector3, 'y', -10, 10).onChange(onChangeFn);
+    folder.add(vector3, 'z', -10, 10).onChange(onChangeFn);
+    folder.open();
+  }
+
+  // 更新光线对象和辅助对象
+  function updateLight() {
+    light.target.updateMatrixWorld();
+    helper.update();
+  }
+
+  /*
+  // 环境光
+  const color = 0xFFFFFF;
+  const intensity = 1;
+  const light = new THREE.AmbientLight(color, intensity);
+  scene.add(light);
+  // gui
+  gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
+  gui.add(light, 'intensity', 0, 2, 0.01);
+  // */
+
+
+  /*
+  // 半球光
+  const skyColor = 0xB1E1FF;  // light blue
+  const groundColor = 0xB97A20;  // brownish orange
+  const intensity = 1;
+  const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
+  scene.add(light);
+  // gui
+  gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('skyColor');
+  gui.addColor(new ColorGUIHelper(light, 'groundColor'), 'value').name('groundColor');
+  gui.add(light, 'intensity', 0, 2, 0.01);
+  // */
+
+
+  /*
+  // 方向光
+  const color = 0xFFFFFF;
+  const intensity = 1;
+  const light = new THREE.DirectionalLight(color, intensity);
+  light.position.set(0, 10, 0);
+  light.target.position.set(-5, 0, 0);
+  scene.add(light);
+  scene.add(light.target);
+  // // gui
+  // 创建无辅助对象的gui
+  // gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
+  // gui.add(light, 'intensity', 0, 2, 0.01);
+  // gui.add(light.target.position, 'x', -10, 10);
+  // gui.add(light.target.position, 'z', -10, 10);
+  // gui.add(light.target.position, 'y', 0, 10);
+  // 创建有辅助对象的gui
+  // 方向光辅助对象
+  const helper = new THREE.DirectionalLightHelper(light);
+  scene.add(helper);
+  // gui
+  gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
+  gui.add(light, 'intensity', 0, 2, 0.01);
+  makeXYZGUI(gui, light.position, 'position', updateLight);
+  makeXYZGUI(gui, light.target.position, 'target', updateLight);
+  // */
+
+
+  /*
+  // 点光源
+  const color = 0xFFFFFF;
+  const intensity = 10;
+  const light = new THREE.PointLight(color, intensity);
+  light.position.set(0, 10, 0);
+  scene.add(light);
+  // 点光源辅助对象
+  const helper = new THREE.PointLightHelper(light);
+  scene.add(helper);
+  // gui
+  gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
+  gui.add(light, 'intensity', 0, 100, 1);
+  gui.add(light, 'distance', 0, 40).onChange(updateLight);
+  makeXYZGUI(gui, light.position, 'position', updateLight);
+  // */
+
+
+  // /*
+  // 聚光灯
+  const color = 0xffffff;
+  const intensity = 10;
+  const light = new THREE.SpotLight(color, intensity);
+  light.position.set(0, 10, 0);
+  scene.add(light);
+  scene.add(light.target);
+  // helper
+  const helper = new THREE.SpotLightHelper(light);
+  scene.add(helper);
+  // gui
+  gui.add(light, 'penumbra', 0, 1, 0.01);
+  gui.add(light, 'distance', 0, 40).onChange(updateLight);
+  gui.add(light, 'intensity', 0, 1000, 1);
+  gui.add(new DegRadHelper(light, 'angle'), 'value', 0, 90)
+    .name('angle')
+    .onChange(updateLight);
+  // */
+
+
+  // todo: 矩形区域光
 }
+
 
 // 创建场景
 function createScene() {

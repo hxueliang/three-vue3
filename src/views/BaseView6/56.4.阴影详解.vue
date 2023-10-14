@@ -63,6 +63,7 @@ function createCode() {
     side: THREE.DoubleSide,
   });
   const floor = new THREE.Mesh(planeGeo, planeMat);
+  floor.receiveShadow = true;
   floor.rotation.x = Math.PI * -.5;
   scene.add(floor);
 
@@ -71,6 +72,8 @@ function createCode() {
   const cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
   const cubeMat = new THREE.MeshPhongMaterial({ color: '#8AC' });
   const cube = new THREE.Mesh(cubeGeo, cubeMat);
+  cube.castShadow = true;
+  cube.receiveShadow = true;
   cube.position.set(cubeSize + 1, cubeSize / 2, 0);
   scene.add(cube);
 
@@ -81,6 +84,8 @@ function createCode() {
   const sphereGeo = new THREE.SphereGeometry(sphereRadius, sphereWidthDivisions, sphereHeightDivisions);
   const sphereMat = new THREE.MeshPhongMaterial({ color: '#CA8' });
   const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+  sphere.castShadow = true;
+  sphere.receiveShadow = true;
   sphere.position.set(-sphereRadius - 1, sphereRadius + 2, 0);
   scene.add(sphere);
 
@@ -127,6 +132,47 @@ function createCode() {
     helper.update();
   }
 
+  // gui helper
+  class DimensionGUIHelper {
+    constructor(obj, minProp, maxProp) {
+      this.obj = obj;
+      this.minProp = minProp;
+      this.maxProp = maxProp;
+    }
+    get value() {
+      return this.obj[this.maxProp] * 2;
+    }
+    set value(v) {
+      this.obj[this.maxProp] = v / 2;
+      this.obj[this.minProp] = v / -2;
+    }
+  }
+
+  // MinMaxGUIHelper来调整near，far的设置
+  class MinMaxGUIHelper {
+    constructor(obj, minProp, maxProp, minDif) {
+      this.obj = obj;
+      this.minProp = minProp;
+      this.maxProp = maxProp;
+      this.minDif = minDif;
+    }
+    get min() {
+      return this.obj[this.minProp];
+    }
+    set min(v) {
+      this.obj[this.minProp] = v;
+      this.obj[this.maxProp] = Math.max(this.obj[this.maxProp], v + this.minDif);
+    }
+    get max() {
+      return this.obj[this.maxProp];
+    }
+    set max(v) {
+      this.obj[this.maxProp] = v;
+      this.min = this.min;  // 这将调用min的setter
+    }
+  }
+
+
   /*
   // 环境光
   const color = 0xFFFFFF;
@@ -153,11 +199,12 @@ function createCode() {
   // */
 
 
-  /*
+  // /*
   // 方向光
   const color = 0xFFFFFF;
   const intensity = 1;
   const light = new THREE.DirectionalLight(color, intensity);
+  light.castShadow = true;
   light.position.set(0, 10, 0);
   light.target.position.set(-5, 0, 0);
   scene.add(light);
@@ -178,6 +225,30 @@ function createCode() {
   gui.add(light, 'intensity', 0, 2, 0.01);
   makeXYZGUI(gui, light.position, 'position', updateLight);
   makeXYZGUI(gui, light.target.position, 'target', updateLight);
+  // gui
+  {
+    const folder = gui.addFolder('Shadow Camera');
+    folder.open();
+    folder.add(new DimensionGUIHelper(light.shadow.camera, 'left', 'right'), 'value', 1, 100)
+      .name('width')
+      .onChange(updateCamera);
+    folder.add(new DimensionGUIHelper(light.shadow.camera, 'bottom', 'top'), 'value', 1, 100)
+      .name('height')
+      .onChange(updateCamera);
+    const minMaxGUIHelper = new MinMaxGUIHelper(light.shadow.camera, 'near', 'far', 0.1);
+    folder.add(minMaxGUIHelper, 'min', 0.1, 50, 0.1).name('near').onChange(updateCamera);
+    folder.add(minMaxGUIHelper, 'max', 0.1, 50, 0.1).name('far').onChange(updateCamera);
+    folder.add(light.shadow.camera, 'zoom', 0.01, 1.5, 0.01).onChange(updateCamera);
+  }
+  function updateCamera() {
+    // 更新light目标的matrixWorld，因为辅助函数需要它
+    light.target.updateMatrixWorld();
+    helper.update();
+    // 更新光源阴影相机的投影矩阵
+    light.shadow.camera.updateProjectionMatrix();
+    // 现在更新我们用来显示光线的阴影相机的相机助手
+    cameraHelper.update();
+  }
   // */
 
 
@@ -199,11 +270,12 @@ function createCode() {
   // */
 
 
-  // /*
+  /*
   // 聚光灯
   const color = 0xffffff;
   const intensity = 10;
   const light = new THREE.SpotLight(color, intensity);
+  light.castShadow = true;
   light.position.set(0, 10, 0);
   scene.add(light);
   scene.add(light.target);
@@ -217,10 +289,17 @@ function createCode() {
   gui.add(new DegRadHelper(light, 'angle'), 'value', 0, 90)
     .name('angle')
     .onChange(updateLight);
+
+  makeXYZGUI(gui, light.position, 'position', updateLight);
   // */
 
 
   // todo: 矩形区域光
+
+
+  // cameraHelper
+  const cameraHelper = new THREE.CameraHelper(light.shadow.camera);
+  scene.add(cameraHelper);
 }
 
 
@@ -241,6 +320,7 @@ function createCamera(x = 0, y = 0, z = 10) {
 function createRenderer() {
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(innerWidth, innerHeight);
+  renderer.shadowMap.enabled = true;
 }
 
 // 创建渲染函数

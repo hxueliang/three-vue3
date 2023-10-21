@@ -68,7 +68,33 @@ function createCode() {
     // 打印模型结构
     // console.log(dumpObject(root).join('\n'));
 
-    cars = root.getObjectByName('Cars');
+    // 获取Cars
+    const loadedCars = root.getObjectByName('Cars');
+    // 为不同类型的汽车添加不同的矫正量
+    const fixes = [
+      { prefix: 'Car_08', rot: [Math.PI * .5, 0, Math.PI * .5], },
+      { prefix: 'CAR_03', rot: [0, Math.PI, 0], },
+      { prefix: 'Car_04', rot: [0, Math.PI, 0], },
+    ];
+    // 更新物体及其后代的全局变换
+    root.updateMatrixWorld();
+    for (const car of loadedCars.children.slice()) {
+      car.scale.set(scale, scale, scale);
+      const fix = fixes.find(fix => car.name.startsWith(fix.prefix));
+      // 通过创建包包裹对象obj，用于矫正坐标
+      const obj = new THREE.Object3D();
+      // 结果将被复制到这个obj.position
+      car.getWorldPosition(obj.position);
+      // 重置position
+      car.position.set(0, 0, 0);
+      // 重置rotation
+      car.rotation.set(...fix.rot);
+      obj.add(car);
+      scene.add(obj);
+      cars.push(obj);
+    }
+
+    // cars = root.getObjectByName('Cars');
     console.log(cars);
   });
 }
@@ -96,8 +122,8 @@ function createRenderer() {
 function render(time) {
   time *= 0.001;
 
-  if (cars?.children?.length) {
-    for (const car of cars.children) {
+  if (cars?.length) {
+    for (const car of cars) {
       car.rotation.y = time;
     }
   }

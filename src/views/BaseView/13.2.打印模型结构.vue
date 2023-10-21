@@ -23,6 +23,7 @@ import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
 import dumpObject from '@/utils/dump-object.js';
+import dumpObjectVec3 from '@/utils/dump-object-vec3.js';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -67,6 +68,8 @@ function createCode() {
 
     // 打印模型结构
     console.log(dumpObject(root).join('\n'));
+    // 打印模型结构-3元素
+    console.log(dumpObjectVec3(root).join('\n'));
   });
 }
 

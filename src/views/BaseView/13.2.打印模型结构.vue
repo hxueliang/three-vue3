@@ -22,6 +22,8 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
+import dumpObject from '@/utils/dump-object.js';
+
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
 const container = ref(null);
@@ -62,6 +64,9 @@ function createCode() {
     const root = gltf.scene;
     root.scale.set(scale, scale, scale);
     scene.add(root);
+
+    // 打印模型结构
+    console.log(dumpObject(root).join('\n'));
   });
 }
 

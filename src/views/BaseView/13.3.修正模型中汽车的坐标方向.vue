@@ -39,6 +39,8 @@ gltfLoader.setDRACOLoader(dracoLoader);
 
 let scene, camera, renderer, controls;
 
+let cars = [];
+
 init();
 
 // 初始化
@@ -65,6 +67,9 @@ function createCode() {
 
     // 打印模型结构
     // console.log(dumpObject(root).join('\n'));
+
+    cars = root.getObjectByName('Cars');
+    console.log(cars);
   });
 }
 
@@ -90,6 +95,12 @@ function createRenderer() {
 // 创建渲染函数
 function render(time) {
   time *= 0.001;
+
+  if (cars?.children?.length) {
+    for (const car of cars.children) {
+      car.rotation.y = time;
+    }
+  }
 
   controls && controls.update();
   renderer.render(scene, camera);

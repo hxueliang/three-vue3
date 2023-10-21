@@ -41,6 +41,13 @@ let scene, camera, renderer, controls;
 
 let cars = [];
 
+// 曲线
+let curve, curveObject;
+
+// 创建两个向量用于路径计算 
+const carPosition = new THREE.Vector3();
+const carTarget = new THREE.Vector3();
+
 init();
 
 // 初始化
@@ -59,11 +66,48 @@ function init() {
 
 // 业务代码
 function createCode() {
-  gltfLoader.load('./model/other/cartoon_lowpoly_small_city_free_pack/scene.gltf', gltf => {
+  gltfLoader.load('./model/other/cartoon_lowpoly_small_city_free_pack/scene3.gltf', gltf => {
     const scale = 0.005;
     const root = gltf.scene;
     root.scale.set(scale, scale, scale);
     scene.add(root);
+
+    // 汽车轨迹线
+    root.traverse(child => {
+      if (child.name === '汽车轨迹线') {
+        const line = child;
+        line.visible = false;
+        const points = [];
+        const { position } = line.geometry.attributes;
+        for (let i = position.count - 1; i >= 0; i--) {
+          points.push(new THREE.Vector3(
+            position.getX(i),
+            position.getY(i),
+            position.getZ(i)
+          ));
+        }
+
+        // 创建曲线
+        curve = new THREE.CatmullRomCurve3(points);
+
+        {
+          const points = curve.getPoints(50);
+          const geometry = new THREE.BufferGeometry().setFromPoints(points);
+          const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+          curveObject = new THREE.Line(geometry, material);
+
+          // 本案例特有代码
+          const lineScale = 0.0092;
+          curveObject.scale.set(lineScale, lineScale, lineScale);
+          curveObject.position.set(-6.15, -0.3, 2.15);
+
+          curveObject.visible = false;
+          material.depthTest = false;
+          curveObject.renderOrder = 1;
+          scene.add(curveObject);
+        }
+      }
+    });
 
     // 打印模型结构
     // console.log(dumpObject(root).join('\n'));
@@ -120,13 +164,30 @@ function createRenderer() {
 
 // 创建渲染函数
 function render(time) {
-  time *= 0.001;
+  if (cars?.length && curve) {
+    const pathTime = time * 0.00001;
+    const targetOffset = 0.001;
+    cars.forEach((car, ndx) => {
+      // 一个介于 0 和 1 之间的数字，用于均匀间隔汽车
+      const u = pathTime + ndx / cars.length;
 
-  // if (cars?.length) {
-  //   for (const car of cars) {
-  //     car.rotation.y = time;
-  //   }
-  // }
+      // 获取第一个点
+      curve.getPointAt(u % 1, carPosition);
+      carPosition.applyMatrix4(curveObject.matrixWorld);
+
+      // 曲线再远点获取第二个点 
+      curve.getPointAt((u + targetOffset) % 1, carTarget);
+      carTarget.applyMatrix4(curveObject.matrixWorld);
+
+      // // 把汽车放置在第一个点 （暂时的）
+      car.position.copy(carPosition);
+      // // 汽车的第二个点
+      car.lookAt(carTarget.x, carTarget.y, carTarget.z);
+
+      // // 放置小车在两个点中间
+      car.position.lerpVectors(carPosition, carTarget, 0.5);
+    });
+  }
 
   controls && controls.update();
   renderer.render(scene, camera);

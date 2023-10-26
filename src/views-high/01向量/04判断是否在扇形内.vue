@@ -81,6 +81,51 @@ function createCode() {
   // 扇形范围
   const R = 6; // 人前方扇形半径
   const angle = 60; // 人前方扇形角度
+
+  // 创建b向量：一个人指向物体的向量，用物体坐标减去人坐标
+  const b = mesh.position.clone().sub(person.position);
+
+  // 创建辅助箭头，方便直观理解
+  const arrowA = new THREE.ArrowHelper(a.clone().normalize(), person.position, a.length(), 0x00ff00);
+  const arrowB = new THREE.ArrowHelper(b.clone().normalize(), person.position, b.length(), 0xff0000);
+  scene.add(arrowA, arrowB);
+  // 创建辅助扇形，方便直观理解
+  const circle = new THREE.Mesh(
+    new THREE.CircleGeometry(
+      R,
+      12,
+      THREE.MathUtils.degToRad((180 - angle) / 2), // 第一个分段的起始角度
+      THREE.MathUtils.degToRad(angle) // 圆形扇区的中心角
+    ),
+    new THREE.MeshBasicMaterial({ color: 0x00ff00, side: DoubleSide, wireframe: true })
+  );
+  circle.rotation.x = -Math.PI / 2;
+  circle.position.copy(person.position);
+  scene.add(circle);
+
+  const res = getInOutCircle(a, b, R, angle);
+  console.log(res);
+}
+
+function getInOutCircle(a, b, R, angle) {
+  // 物体与人的距离
+  const L = b.length();
+  if (L > R) {
+    return 'out';
+  }
+
+  // 向量a和b夹角余弦值
+  const cos = a.clone().normalize().dot(b.clone().normalize());
+  // 角度转弧度
+  const rad = THREE.MathUtils.degToRad(angle);
+  // 扇形角度一半的余弦值
+  const rangeCos = Math.cos(rad / 2);
+  // 比较向量a、b夹角余弦值cos和扇形角度一半的余弦值rangeCos大小，判断物体是否在扇形内
+  if (cos > rangeCos) { // 物体在人前方扇形里面
+    return 'in';
+  } else {
+    return 'out';
+  }
 }
 
 // 创建场景

@@ -85,6 +85,22 @@ function createCode() {
   const arrowA = new THREE.ArrowHelper(a.clone().normalize(), person.position, a.length(), 0xff0000);
   const arrowB = new THREE.ArrowHelper(b.clone().normalize(), person.position, b.length(), 0x00ff00);
   scene.add(arrowA, arrowB);
+
+  // a叉乘b
+  const c = a.clone().cross(b);
+  c.normalize();
+
+  // 可视化向量c方向
+  const arrowC = new THREE.ArrowHelper(c, person.position, 2.5, 0x0000ff);
+  scene.add(arrowC);
+
+  // 通过右手螺旋定则
+  // 根据向量c方向，判断物体在人的左侧还是右侧。
+  if (c.y < 0) {
+    console.log('物体在人右侧');
+  } else if (c.y > 0) {
+    console.log('物体在人左侧');
+  }
 }
 
 // 创建场景

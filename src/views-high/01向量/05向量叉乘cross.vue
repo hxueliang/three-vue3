@@ -67,6 +67,33 @@ function createCode() {
   const arrowA = new THREE.ArrowHelper(a.clone().normalize(), O, a.length(), 0xff0000);
   const arrowB = new THREE.ArrowHelper(b.clone().normalize(), O, b.length(), 0x00ff00);
   scene.add(arrowA, arrowB);
+
+  // 创建一个向量c，用来保存叉乘结果
+  const c = new THREE.Vector3();
+  //向量a叉乘b，结果保存在向量c
+  c.crossVectors(a, b);
+  console.log('叉乘结果', c);
+
+  // 可视化向量a和b叉乘结果：向量c
+  const arrowC = new THREE.ArrowHelper(c.clone().normalize(), O, c.length(), 0x0000ff);
+  scene.add(arrowC);
+
+  /**
+   * 叉乘结果向量c几何含义
+   * 1、向量方向：向量c垂直于向量a和b构成的平面，或者说向量c同时垂直于向量a、向量b
+   * 2、向量长度：c的长度 = a的长度 * b的长度 * ab夹角正弦值
+   */
+
+  /**
+   * 叉乘不满足交换律
+   */
+
+  /**
+   * 叉乘方向(右手螺旋定则判断)
+   * 4指：指向a向量方向
+   * 掌心：朝向b向量方向
+   * 大母指：指向的方向为c向量的方向
+   */
 }
 
 // 创建场景

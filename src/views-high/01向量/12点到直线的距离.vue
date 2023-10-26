@@ -62,6 +62,22 @@ function createCode() {
   const B = new THREE.Vector3(10, 0, 0);
   // 直线外一点p
   const p = new THREE.Vector3(5, 0, 3);
+
+  // ApB构建一个三角形，其中两条边构建向量a、向量b
+  const a = A.clone().sub(p);
+  const b = B.clone().sub(p);
+  const c = a.clone().cross(b);
+  const S = 0.5 * c.length(); // 叉乘结果长度一半是三角形ApB的面积
+
+  // 计算三角形ApB底边AB的长度
+  const AB = B.clone().sub(A);
+  const long = AB.length(); // AB两点距离
+
+  // 因为 S = long * h * 0.5
+  // 所以 h = S / long * 2
+  const h = S / long * 2;
+  console.log('高为', h);
+  console.log('即点到直线的距离为', h);
 }
 
 

@@ -72,6 +72,28 @@ function createCode() {
   person.position.set(0, 0, 2);
   // 物体位置
   mesh.position.set(2, 0, -3);
+  // mesh.position.set(2, 0, 3);
+
+  // 创建a向量：人的正前方沿着z轴负半轴
+  const a = new THREE.Vector3(0, 0, -1);
+
+  // 创建b向量：一个人指向物体的向量，用物体坐标减去人坐标
+  const b = mesh.position.clone().sub(person.position);
+
+  // 创建辅助箭头，方便直观理解
+  const arrowA = new THREE.ArrowHelper(a.clone().normalize(), person.position, a.length(), 0x00ff00);
+  const arrowB = new THREE.ArrowHelper(b.clone().normalize(), person.position, b.length(), 0xff0000);
+  scene.add(arrowA, arrowB);
+
+  // 向量b与向量a的夹角处于0~180度之间
+  // 0~90度，余弦值大于0
+  // 90~180度，余弦值小于0
+  const dot = a.clone().dot(b);//向量a和b点乘
+  if (dot > 0) {
+    console.log('物体在人前面');
+  } else if (dot < 0) {
+    console.log('物体在人后面');
+  }
 }
 
 // 创建场景

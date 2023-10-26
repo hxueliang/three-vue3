@@ -69,6 +69,17 @@ function createCode() {
   const arrowC = new THREE.ArrowHelper(c.clone().normalize(), O, c.length(), 0x0000ff);
   scene.add(arrowA, arrowB, arrowC);
 
+  // a、b向量归一化后点乘
+  // const cos = a.normalize().dot(b.normalize());
+  const cos = a.normalize().dot(c.normalize());
+
+  // 注意判断的前提是，两个向量是平行的，余弦值要么1，要么-1
+  if (cos > 0) {
+    console.log('方向相同');
+  } else {
+    console.log('方向相反');
+  }
+
 }
 
 // 创建场景

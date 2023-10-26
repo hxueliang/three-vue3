@@ -45,7 +45,7 @@ const router = createRouter({
     {
       path: '/high',
       name: 'high',
-      component: () => import('../views-high/01向量/07点乘判断平行向量方向异同.vue')
+      component: () => import('../views-high/01向量/08判断两个点是否在线段同一侧.vue')
     },
     {
       path: '/cesium',

@@ -80,6 +80,17 @@ function createCode() {
     new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true })
   );
   scene.add(mesh);
+
+  // 三个顶点构建两个向量，按照三角形顶点的顺序，构建1指向2的向量，2指向3的向量
+  const a = p2.clone().sub(p1);
+  const b = p3.clone().sub(p2);
+
+  const c = a.clone().cross(b);
+  c.normalize();//向量c归一化表示三角形法线方向
+
+  // 可视化向量a和b叉乘结果：向量c
+  const arrow = new THREE.ArrowHelper(c, p3, 50, 0xff0000);
+  mesh.add(arrow);
 }
 
 // 创建场景

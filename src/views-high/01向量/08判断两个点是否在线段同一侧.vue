@@ -65,6 +65,72 @@ function createCode() {
   const p1 = new THREE.Vector3(2, 0, 4);
   // const p2 = new THREE.Vector3(8, 0, 4); // 与p1同侧
   const p2 = new THREE.Vector3(8, 0, -4); // 与p1异侧
+
+  // 小球可视化四个坐标点
+  const group = new THREE.Group();
+  scene.add(group);
+  const R = 0.2;
+  const AMesh = createSphereMesh(0xffff00, R);
+  AMesh.position.copy(A);
+  const BMesh = createSphereMesh(0xffff00, R);
+  BMesh.position.copy(B);
+  const p1Mesh = createSphereMesh(0xff0000, R);
+  p1Mesh.position.copy(p1);
+  const p2Mesh = createSphereMesh(0xff0000, R);
+  p2Mesh.position.copy(p2);
+  group.add(AMesh, BMesh, p1Mesh, p2Mesh);
+
+  // Line可视化线段AB
+  const geometry = new THREE.BufferGeometry();
+  const vertices = new Float32Array([
+    A.x, A.y, A.z,
+    B.x, B.y, B.z,
+  ]);
+  geometry.attributes.position = new THREE.BufferAttribute(vertices, 3);
+  const material = new THREE.LineBasicMaterial({ color: 0xffff00 });
+  const line = new THREE.LineLoop(geometry, material);
+  group.add(line);
+
+  /**
+   * p1分别向线段AB两点创建两条向量a1、b1
+   * p2分别向线段AB两点创建两条向量a2、b2
+   * 你会发现，p1、p2同侧时候，a1转向b1与a2转向b2方向一致，如果是异侧，方向不一致。
+   * 换句话说，a1叉乘b1得到向量c1，与a2叉乘b2得到向量c2，如果p1、p2同侧，那么c1和c2方向一样，否则方向不同。
+   */
+
+  // p1分别向线段AB两点创建两条向量a1、b1
+  const a1 = A.clone().sub(p1);
+  const b1 = B.clone().sub(p1);
+  // p2分别向线段AB两点创建两条向量a2、b2
+  const a2 = A.clone().sub(p2);
+  const b2 = B.clone().sub(p2);
+
+  // 通过c1、c2方向是否相同来推断两点是否位于线段同一侧
+  const c1 = a1.clone().cross(b1);
+  const c2 = a2.clone().cross(b2);
+
+  // 可视化所有向量，辅助判断
+  group.add(new THREE.ArrowHelper(a1.clone().normalize(), p1, a1.length(), 0xff0000));
+  group.add(new THREE.ArrowHelper(b1.clone().normalize(), p1, b1.length(), 0x00ff00));
+  group.add(new THREE.ArrowHelper(a2.clone().normalize(), p2, a2.length(), 0xff0000));
+  group.add(new THREE.ArrowHelper(b2.clone().normalize(), p2, b2.length(), 0x00ff00));
+  group.add(new THREE.ArrowHelper(c1.clone().normalize(), p1, 5, 0x0000ff));
+  group.add(new THREE.ArrowHelper(c2.clone().normalize(), p2, 5, 0x0000ff));
+
+  // 向量c1与c2夹角余弦值：用来推断向量c1与c2方向是否相同
+  const cos = c1.normalize().dot(c2.normalize());
+  if (cos > 0) { // 方向相同时候，余弦值1>0
+    console.log('方向相同，两点在线段同侧');
+  } else { // 方向相反时候，余弦值-1<0
+    console.log('方向相反，两点在线段异侧');
+  }
+}
+
+function createSphereMesh(color, R) {
+  const geometry = new THREE.SphereGeometry(R);
+  const material = new THREE.MeshBasicMaterial({ color });
+  const mesh = new THREE.Mesh(geometry, material);
+  return mesh;
 }
 
 // 创建场景

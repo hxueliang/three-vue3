@@ -55,6 +55,29 @@ function init() {
 
 // 业务代码
 function createCode() {
+  // 三角形的三个点坐标p1，p2，p3
+  const p1 = new THREE.Vector3(0, 0, 0); // 点1坐标
+  const p2 = new THREE.Vector3(2, 0, 0); // 点2坐标
+  const p3 = new THREE.Vector3(1, 1, 0); // 点3坐标
+
+  // 目标是计算p1点对应的角度值
+  // 所以使用另外两点p2、p3分别与点p1构建向量
+  // p1，p3两个点确定一个向量
+  const a = p3.clone().sub(p1);
+  // p1，p2两个点确定一个向量
+  const b = p2.clone().sub(p1);
+
+  // 计算其中一个顶点p1对应角度余弦值
+  // a、b向量归一化后点乘
+  const cos = a.normalize().dot(b.normalize());
+  console.log('p1角的余弦值', cos);
+
+  // 反余弦计算向量夹角弧度
+  const rad = Math.acos(cos);
+
+  // 弧度转角度
+  const angle = THREE.MathUtils.radToDeg(rad);
+  console.log('向量夹角角度值', angle);
 }
 
 // 创建场景

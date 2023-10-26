@@ -80,6 +80,35 @@ function createCode() {
     new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true })
   );
   scene.add(mesh);
+
+  /**
+   * 三角形两条边与夹角正弦值相乘的几何含义
+   * L1 * L2 * sin（θ）= 
+   * L1 * L2 * (h / L1) = 
+   * L2 * h = 
+   * 三角形面积2倍
+   */
+
+  /**
+   * 这提醒我们，
+   * 可以用三角形的两条边构建两个向量进行叉乘，
+   * 叉乘的结果c的长度就表示三角形面积的2倍
+   */
+
+  /**
+   * 叉乘.cross()和.length()计算三角形面积公式
+   */
+
+  // 三角形两条边构建两个向量
+  const a = p2.clone().sub(p1);
+  const b = p3.clone().sub(p1);
+
+  // 两个向量叉乘结果c的几何含义：a.length()*b.length()*sin(θ)
+  const c = a.clone().cross(b);
+
+  // 三角形面积计算
+  const S = 0.5 * c.length();
+  console.log('面积是', S);
 }
 
 // 创建场景

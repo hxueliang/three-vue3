@@ -45,7 +45,7 @@ const router = createRouter({
     {
       path: '/high',
       name: 'high',
-      component: () => import('../views-high/01向量/02计算三角形夹角.vue')
+      component: () => import('../views-high/01向量/03判断物体在人前或人后.vue')
     },
     {
       path: '/cesium',

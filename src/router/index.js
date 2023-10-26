@@ -45,7 +45,7 @@ const router = createRouter({
     {
       path: '/high',
       name: 'high',
-      component: () => import('../views-high/01向量/11计算物体的表面积.vue')
+      component: () => import('../views-high/01向量/12点到直线的距离.vue')
     },
     {
       path: '/cesium',

@@ -55,6 +55,38 @@ function init() {
 
 // 业务代码
 function createCode() {
+  /**
+   * 1、点乘.dot()几何含义
+   * 是向量a在向量b上投影长度与向量b相乘
+   * 或者说向量a长度 * 向量b长度 * cos(ab夹角)
+   */
+
+  // 已知两个向量a和b，默认夹角是45度
+  const a = new THREE.Vector3(2, 2, 0);
+  const b = new THREE.Vector3(3, 0, 0);
+
+  // 向量a与向量b点乘，返回结果是一个数字
+  const dot = a.dot(b);
+  console.log('点乘结果', dot); // 点乘结果 6
+
+
+  /**
+   * 2、单位向量点乘含义
+   * 2.1、计算向量夹角余弦值
+   */
+
+  // a、b向量归一化后点乘
+  // const cos = a.normalize().dot(b.normalize());
+  const cos = a.clone().normalize().dot(b.clone().normalize());
+  console.log('向量夹角余弦值', cos);
+
+  // 夹角余弦值转角度值，使用反余弦计算向量夹角弧度
+  const rad = Math.acos(cos);
+  console.log('向量夹角弧度', rad);
+
+  // 弧度转角度
+  const angle = THREE.MathUtils.radToDeg(rad);
+  console.log('向量夹角角度值', angle);
 }
 
 // 创建场景

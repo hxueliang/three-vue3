@@ -38,9 +38,14 @@ const router = createRouter({
       component: () => import('../views/CarView.vue')
     },
     {
-      path: '/baseView',
-      name: 'baseView',
-      component: () => import('../views/BaseView43/BaseView201.vue')
+      path: '/base',
+      name: 'base',
+      component: () => import('../views/BaseView/13.2.打印模型结构.vue')
+    },
+    {
+      path: '/high',
+      name: 'high',
+      component: () => import('../views-high/01向量/01向量点乘.vue')
     },
     {
       path: '/cesium',

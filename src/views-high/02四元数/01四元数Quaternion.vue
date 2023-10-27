@@ -65,6 +65,8 @@ function createCode() {
     fly.position.set(1, 1, 0); // 相对世界坐标系坐标原点偏移
     const axesHelper = new THREE.AxesHelper(5 / scale);
     fly.add(axesHelper); // 用一个坐标轴可视化模型的局部坐标系(本地坐标系)
+
+    fly.quaternion.setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI / 4);
   });
 
 }

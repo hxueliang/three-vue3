@@ -65,6 +65,21 @@ function createCode() {
     fly.position.set(1, 1, 0); // 相对世界坐标系坐标原点偏移
     const axesHelper = new THREE.AxesHelper(5 / scale);
     fly.add(axesHelper); // 用一个坐标轴可视化模型的局部坐标系(本地坐标系)
+
+    // 在物体原来姿态基础上，进行旋转
+    const q1 = new THREE.Quaternion();
+    q1.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2);
+    fly.quaternion.multiply(q1);
+
+    // 在物体上次旋转基础上，进行旋转
+    const q2 = new THREE.Quaternion();
+    q2.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+    fly.quaternion.multiply(q2);
+
+    // 在物体上次旋转基础上，进行旋转
+    const q3 = new THREE.Quaternion();
+    q3.setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI / 2);
+    fly.quaternion.multiply(q3);
   });
 
 }

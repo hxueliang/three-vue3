@@ -45,7 +45,7 @@ const router = createRouter({
     {
       path: '/high',
       name: 'high',
-      component: () => import('../views-high/02四元数/02四元数乘法运算.vue')
+      component: () => import('../views-high/02四元数/03四元数表示两个向量旋转.vue')
     },
     {
       path: '/cesium',

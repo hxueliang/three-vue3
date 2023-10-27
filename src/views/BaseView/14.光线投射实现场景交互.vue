@@ -52,6 +52,11 @@ document.addEventListener('click', event => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   // console.log(mouse.x, mouse.y);
+  /**
+   * 非全屏画布转换屏幕坐标通用公式
+   * mouse.x = ((event.clientX – container.getBoundingClientRect().left) / container.getBoundingClientRect().width) * 2 – 1;
+   * mouse.y = – ((event.clientY – container.getBoundingClientRect().top) / container.getBoundingClientRect().height) * 2 + 1;
+   */
   // 14.4.2 通过摄像机和鼠标位置更新射线
   raycaster.setFromCamera(mouse, camera);
   // 14.4.3 检测射线有没与物体相交

@@ -72,6 +72,15 @@ onMounted(() => {
     })
   });
 
+  // 添加高德矢量图
+  let atLayer = new Cesium.UrlTemplateImageryProvider({
+    // url: "http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+    url: "http://webst03.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&style=7",
+    minimumLevel: 3,
+    maximumLevel: 18,
+  });
+  viwer.imageryLayers.addImageryProvider(atLayer);
+
   // 隐藏cesium的logo
   viwer.cesiumWidget.creditContainer.style.display = 'none';
 })

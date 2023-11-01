@@ -72,6 +72,8 @@ function createCode() {
     alphaMap,
     transparent: true,
     side: THREE.DoubleSide,
+    alphaTest: 0.5, // 透明度大于0.5才产生阴影
+    // shadowSide: THREE.BackSide, // 减弱摩尔纹
   });
   const cube = new THREE.Mesh(geometry, material);
   cube.position.y = 2;
@@ -82,6 +84,9 @@ function createCode() {
   const pointLight = new THREE.PointLight(0xffffff, 400);
   pointLight.position.set(9, 10, -2);
   pointLight.castShadow = true;
+  pointLight.shadow.mapSize.width = 2048; // 减弱阴影锯齿
+  pointLight.shadow.mapSize.height = 2048; // 减弱阴影锯齿
+  // pointLight.shadow.bias = -0.001; // 减弱物体摩尔纹
   scene.add(pointLight);
 }
 

@@ -89,6 +89,10 @@ lightBall.position.set(2, 2, 2);
 pointLight.shadow.radius = 20;
 pointLight.shadow.mapSize.set(4096, 4096);
 
+// 58.5 添加点光源辅助器
+const pointLightHelper = new THREE.PointLightHelper(pointLight);
+scene.add(pointLightHelper);
+
 // 58.4 gui
 gui.add(lightBall.position, 'x').min(-5).max(5).step(0.1);
 

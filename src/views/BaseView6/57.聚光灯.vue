@@ -91,6 +91,10 @@ spotLight.penumbra = 0;
 // 57.6 沿着光照距离的衰减量
 spotLight.decay = 0;
 
+// 57.9 聚光灯辅助器
+const spotLightHelper = new THREE.SpotLightHelper(spotLight);
+scene.add(spotLightHelper);
+
 // 57.8 添加gui
 gui.add(sphere.position, 'x').min(-5).max(5).step(0.1);
 gui.add(spotLight, 'angle').min(0).max(Math.PI / 2).step(0.01);

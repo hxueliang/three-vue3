@@ -23,6 +23,25 @@ import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 import { DoubleSide } from 'three';
 
+import { CSM } from 'three/addons/csm/CSM.js';
+
+const params = {
+  orthographic: false,
+  fade: false,
+  far: 1000,
+  mode: 'practical',
+  margin: 100,
+  lightFar: 5000,
+  lightNear: 1,
+  lightX: -1,
+  lightY: 1,
+  lightZ: 1,
+  autoUpdateHelper: true,
+  updateHelper: function () {
+    csmHelper.update();
+  }
+};
+
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
 const container = ref(null);
@@ -37,6 +56,8 @@ dracoLoader.setDecoderPath("./draco/");
 gltfLoader.setDRACOLoader(dracoLoader);
 
 let scene, camera, renderer, controls;
+
+let csm;
 
 init();
 
@@ -58,27 +79,40 @@ function init() {
 function createCode() {
   // 添加平行光
   const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
-  directionalLight.position.set(-1, 1, 1);
+  directionalLight.position.set(params.lightX, params.lightY, params.lightZ).normalize().multiplyScalar(25);
   directionalLight.target.position.set(0, 0, -6);
-  directionalLight.castShadow = true;
+  // directionalLight.castShadow = true; 不需要投射阴影了，交给csm级联阴影处理
   // 产生阴影相机
-  directionalLight.shadow.camera.near = 5; // 产生阴影的最近距离
-  directionalLight.shadow.camera.far = 60; // 产生阴影的最远距离
-  directionalLight.shadow.camera.left = -30; // 产生阴影距离位置的最左边位置
-  directionalLight.shadow.camera.right = 30; // 最右边
-  directionalLight.shadow.camera.top = 30; // 最上边
-  directionalLight.shadow.camera.bottom = -30; // 最下面
+  // directionalLight.shadow.camera.near = 5; // 产生阴影的最近距离
+  // directionalLight.shadow.camera.far = 60; // 产生阴影的最远距离
+  // directionalLight.shadow.camera.left = -30; // 产生阴影距离位置的最左边位置
+  // directionalLight.shadow.camera.right = 30; // 最右边
+  // directionalLight.shadow.camera.top = 30; // 最上边
+  // directionalLight.shadow.camera.bottom = -30; // 最下面
   // 阴影分辨率
-  directionalLight.shadow.mapSize.width = 1024 * 8;
-  directionalLight.shadow.mapSize.height = 1024 * 8;
+  // directionalLight.shadow.mapSize.width = 1024 * 8;
+  // directionalLight.shadow.mapSize.height = 1024 * 8;
   scene.add(directionalLight);
   // 平行光helper
-  const cameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
-  scene.add(cameraHelper);
+  // const cameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
+  // scene.add(cameraHelper);
+
+  csm = new CSM({
+    maxFar: params.far,
+    cascades: 4,
+    // mode: params.mode,
+    parent: scene,
+    shadowMapSize: 1024 * 2,
+    lightDirection: new THREE.Vector3(-params.lightX, -params.lightY, -params.lightZ).normalize(),
+    camera: camera
+  });
+  csm.fade = true;
+  csm.updateFrustums();
 
   // 平面
   const planeGeo = new THREE.PlaneGeometry(20, 100);
   const planeMat = new THREE.MeshPhongMaterial({ color: '#999' });
+  csm.setupMaterial(planeMat);
   const plane = new THREE.Mesh(planeGeo, planeMat);
   plane.rotation.x = -Math.PI / 2;
   plane.receiveShadow = true;
@@ -87,6 +121,8 @@ function createCode() {
   // 立文体
   const material1 = new THREE.MeshPhongMaterial({ color: '#08d9d6' });
   const material2 = new THREE.MeshPhongMaterial({ color: '#ff2e63' });
+  csm.setupMaterial(material1);
+  csm.setupMaterial(material2);
   const geometry = new THREE.BoxGeometry(1, 3, 1);
   for (let i = 0; i < 16; i++) {
     const cube1 = new THREE.Mesh(geometry, i % 2 === 0 ? material1 : material2);
@@ -123,11 +159,15 @@ function createRenderer() {
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(innerWidth, innerHeight);
   renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 }
 
 // 创建渲染函数
 function render() {
   const elapsed = clock.getElapsedTime();
+
+  camera && camera.updateMatrixWorld();
+  csm && csm.update();
 
   controls && controls.update();
   renderer.render(scene, camera);

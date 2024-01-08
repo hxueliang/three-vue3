@@ -85,11 +85,11 @@ geometry.translate(4, 0, 0);
 // 18.2 旋转（修改：Mesh.geometry.attributes.position.y）// 对比旋转物体（修改：Mesh.rotation.x）
 // geometry.rotateX(Math.PI / 2);
 // 18.3 缩放（修改：Mesh.geometry.attributes.position.x）// 对比缩放物体（修改：Mesh.scale.x）
+// geometry.scale(3, 1, 1);
 // 总结：
 // 1.对顶点的操作直接修改顶点数据，不如直接对物体操作修改物体的属性直观。
 // 2.所以大部分情况都使用对物体操作，不使用对顶点操作
 // 3.除非后端返回的顶点数据不便于使用，才会使用对顶点操作，使用顶点回到好操作的位置，再使用对物体操作
-// geometry.scale(3, 1, 1);
 const material = new THREE.MeshBasicMaterial({ map: uvTexture });
 const cube = new THREE.Mesh(geometry, material);
 // cube.position.x = 2;

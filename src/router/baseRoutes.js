@@ -10,6 +10,11 @@ export default [
     component: () => import('../views-base/03Geometry/24.模型里所有的物体都转为线框.vue')
   },
   {
+    path: '/base4',
+    name: 'base4',
+    component: () => import('../views-base/04纹理与材质/26.Lambert材质.vue')
+  },
+  {
     path: '/cesium',
     name: 'cesium',
     component: () => import('../views-base/BaseView33/Cesium44.vue')

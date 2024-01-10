@@ -32,6 +32,8 @@ const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 10
 camera.position.set(1, 2, 3);
 scene.add(camera);
 
+const gui = new GUI();
+
 // 28.1 加载环境贴图 【10.1 创建RGBELoader】
 const rgbeLoader = new RGBELoader();
 rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
@@ -42,25 +44,18 @@ rgbeLoader.load('./texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
 
   // 28.2 加载物体模型
   const gltfLoader = new GLTFLoader();
-  gltfLoader.load('./model/Duck.glb', gltf => {
+  gltfLoader.load('./model/sword/scene-export.gltf', gltf => {
     scene.add(gltf.scene);
-    // 28.2.4 添加环境光
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
-    scene.add(ambientLight);
-
-    const duckMesh = gltf.scene.getObjectByName('LOD3spShape');
-    const sourceMaterial = duckMesh.material;
-    duckMesh.material = new THREE.MeshPhongMaterial({
-      color: 0xffffff,
-      // 28.2.6 设置原来的贴图
-      map: sourceMaterial.map,
-      // 28.2.1 折射率，不应超过1，默认值为0.98
-      refractionRatio: 0.6,
-      // 28.2.2 环境贴图对表面的影响程度，默认值为1，介于0（无反射）和1（完全反射）之间
-      reflectivity: 0.99,
-      // 28.2.3 设置环境贴图
-      envMap: envMap,
-    });
+    const mesh = gltf.scene.getObjectByName('Pommeau_Plane001');
+    // 29.1 更换环境遮蔽贴图
+    const aoMap = mesh.material.aoMap;
+    gui.add(mesh.material, 'aoMap', {
+      '有': aoMap,
+      '无': undefined,
+    }).name('环境遮蔽贴图')
+      .onChange(() => {
+        mesh.material.needsUpdate = true;
+      });
   });
 });
 

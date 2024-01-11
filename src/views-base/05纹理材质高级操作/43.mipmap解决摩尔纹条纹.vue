@@ -1,4 +1,4 @@
-<!-- 44. -->
+<!-- 43.mipmap解决摩尔纹条纹 -->
 <template>
   <div class="container" ref="container"></div>
 </template>

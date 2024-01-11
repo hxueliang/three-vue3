@@ -35,10 +35,14 @@ const gltfLoader = new GLTFLoader();
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('./draco/');
 gltfLoader.setDRACOLoader(dracoLoader);
-gltfLoader.load('./model/livingroom.glb', gltf => {
+gltfLoader.load('./model/livingroom/livingroom-export.glb', gltf => {
   gltf.scene.rotation.set(0, Math.PI, 0);
   scene.add(gltf.scene);
 });
+
+// 创建光源
+const ambientLight = new THREE.AmbientLight('#cccccc', 5);
+scene.add(ambientLight);
 
 // 31.3 设置gui
 const gui = new GUI();

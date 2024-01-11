@@ -12,7 +12,7 @@ export default [
   {
     path: '/base4',
     name: 'base4',
-    component: () => import('../views-base/04纹理与材质/26.Lambert材质.vue')
+    component: () => import('../views-base/04纹理与材质/39.限制控制器位移_旋转角度.vue')
   },
   {
     path: '/cesium',

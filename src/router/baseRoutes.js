@@ -15,6 +15,11 @@ export default [
     component: () => import('../views-base/04纹理与材质/39.限制控制器位移_旋转角度.vue')
   },
   {
+    path: '/base5',
+    name: 'base5',
+    component: () => import('../views-base/05纹理材质高级操作/54.模板渲染实现金属剖切面.vue')
+  },
+  {
     path: '/cesium',
     name: 'cesium',
     component: () => import('../views-base/BaseView33/Cesium44.vue')

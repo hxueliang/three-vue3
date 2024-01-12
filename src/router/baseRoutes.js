@@ -20,6 +20,11 @@ export default [
     component: () => import('../views-base/05纹理材质高级操作/54.模板渲染实现金属剖切面.vue')
   },
   {
+    path: '/base6',
+    name: 'base6',
+    component: () => import('../views-base/06灯光与阴影/59.让点光源小球动起来.vue')
+  },
+  {
     path: '/cesium',
     name: 'cesium',
     component: () => import('../views-base/BaseView33/Cesium44.vue')

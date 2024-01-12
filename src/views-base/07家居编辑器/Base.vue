@@ -40,6 +40,13 @@ gltfLoader.setDRACOLoader(dracoLoader);
 
 let scene, camera, renderer, controls;
 
+let basicScene;
+
+const eventObj = {
+  // 添加户型基础模型
+  addScene: () => { scene.add(basicScene); },
+};
+
 init();
 
 // 初始化
@@ -59,6 +66,17 @@ function init() {
 
 // 业务代码
 function createCode() {
+  addBasicScene();
+}
+
+// 添加基础场景
+function addBasicScene() {
+  gltfLoader.load('./model/house/house-scene-min.glb', gltf => {
+    basicScene = gltf.scene;
+  });
+
+  // 添加户型基础模型
+  gui.add(eventObj, 'addScene').name('添加户型基础模型');
 }
 
 // 创建场景

@@ -3,6 +3,7 @@
   01.添加户型基础模型
   02.添加物体列表
   03.使用变换控制器操作物体
+  04.切换家居
 -->
 <template>
   <div class="container" ref="container"></div>
@@ -96,6 +97,8 @@ function addMeshList(mesh) {
   // 场景的物体列表
   const sceneMesList = [];
   const folderAddMesh = gui.addFolder('添加物体');
+  const folderMesh = gui.addFolder('家居列表');
+  const meshNum = {}; // 记录每个物体添加的数量
 
   // 遍历物体列表，添加到 sceneMesList 和 folder
   meshList.forEach(item => {
@@ -108,6 +111,15 @@ function addMeshList(mesh) {
         });
         scene.add(mesh);
         selectMesh(mesh);
+
+        // 切换家居
+        const meshOpt = {
+          toggleMesh: () => {
+            selectMesh(mesh);
+          },
+        };
+        meshNum[item.name] = meshNum[item.name] ? meshNum[item.name] + 1 : 1;
+        folderMesh.add(meshOpt, 'toggleMesh').name(item.name + meshNum[item.name]);
       });
     };
     folderAddMesh.add(item, 'addMesh').name(item.name);

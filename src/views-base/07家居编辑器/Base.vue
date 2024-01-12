@@ -1,6 +1,7 @@
 <!-- 07家居编辑器 -->
 <!-- 
   01.添加户型基础模型
+  02.添加物体列表
 -->
 <template>
   <div class="container" ref="container"></div>
@@ -67,6 +68,7 @@ function init() {
 // 业务代码
 function createCode() {
   addBasicScene();
+  addMeshList();
 }
 
 // 添加基础场景
@@ -77,6 +79,34 @@ function addBasicScene() {
 
   // 添加户型基础模型
   gui.add(eventObj, 'addScene').name('添加户型基础模型');
+}
+
+// 添加物体列表
+function addMeshList(mesh) {
+  // 添加物体目录
+  const meshList = [
+    { name: '盆栽', path: './model/house/plants-min.glb' },
+    { name: '沙发', path: './model/house/sofa_chair_min.glb' },
+  ];
+
+  // 场景的物体列表
+  const sceneMesList = [];
+  const folderAddMesh = gui.addFolder('添加物体');
+
+  // 遍历物体列表，添加到 sceneMesList 和 folder
+  meshList.forEach(item => {
+    item.addMesh = () => {
+      gltfLoader.load(item.path, gltf => {
+        const mesh = gltf.scene;
+        sceneMesList.push({
+          ...item,
+          object3D: mesh,
+        });
+        scene.add(mesh);
+      });
+    };
+    folderAddMesh.add(item, 'addMesh').name(item.name);
+  });
 }
 
 // 创建场景

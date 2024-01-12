@@ -2,6 +2,7 @@
 <!-- 
   01.添加户型基础模型
   02.添加物体列表
+  03.使用变换控制器操作物体
 -->
 <template>
   <div class="container" ref="container"></div>
@@ -15,6 +16,8 @@ import * as CANNON from 'cannon-es';
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+// 导入变换控制器
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -41,7 +44,7 @@ gltfLoader.setDRACOLoader(dracoLoader);
 
 let scene, camera, renderer, controls;
 
-let basicScene;
+let basicScene, transformControls;
 
 const eventObj = {
   // 添加户型基础模型
@@ -69,6 +72,7 @@ function init() {
 function createCode() {
   addBasicScene();
   addMeshList();
+  createTransformControls();
 }
 
 // 添加基础场景
@@ -103,10 +107,26 @@ function addMeshList(mesh) {
           object3D: mesh,
         });
         scene.add(mesh);
+        selectMesh(mesh);
       });
     };
     folderAddMesh.add(item, 'addMesh').name(item.name);
   });
+}
+
+// 选中物体
+function selectMesh(mesh) {
+  transformControls.attach(mesh);
+}
+
+// 创建变换控制器
+function createTransformControls() {
+  transformControls = new TransformControls(camera, container.value);
+  transformControls.addEventListener('change', render);
+  transformControls.addEventListener('dragging-changed', function (event) {
+    controls.enabled = !event.value;
+  });
+  scene.add(transformControls);
 }
 
 // 创建场景

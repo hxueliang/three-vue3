@@ -96,7 +96,8 @@ function createCode() {
   // 球阴影
   const planeSize = 1;
   const shadowGeo = new THREE.PlaneGeometry(planeSize, planeSize);
-  // const shadowTexture = loader.load("./images/roundshadow.png");
+  const loader = new THREE.TextureLoader();
+  const shadowTexture = loader.load('./imgs/shadow/roundshadow.png');
   const numSpheres = 15;
   for (let i = 0; i < numSpheres; ++i) {
     // 为阴影和球体创建一个基底
@@ -109,8 +110,7 @@ function createCode() {
     // 所以我们可以设置球体的材质透明度
     // 分别。
     const shadowMat = new THREE.MeshBasicMaterial({
-      color: 0x666666,
-      // map: shadowTexture, // todo
+      map: shadowTexture,
       transparent: true, // 这样我们就能看到地面了
       depthWrite: false, // 我们不需要排序
     });

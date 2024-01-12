@@ -25,6 +25,11 @@ export default [
     component: () => import('../views-base/06灯光与阴影/59.让点光源小球动起来.vue')
   },
   {
+    path: '/base7',
+    name: 'base7',
+    component: () => import('../views-base/07家居编辑器/Base.vue')
+  },
+  {
     path: '/cesium',
     name: 'cesium',
     component: () => import('../views-base/BaseView33/Cesium44.vue')

@@ -1,4 +1,7 @@
-<!-- 114.使用css2d渲染器 -->
+<!-- 07家居编辑器 -->
+<!-- 
+  01.添加户型基础模型
+-->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -42,11 +45,11 @@ init();
 // 初始化
 function init() {
   createScene();
-  createCamera();
+  createCamera(3, 2.5, 8, 0, 1.2, 0);
   createRenderer();
-  createAxes();
-  // createGrid();
-  // createAmbientTexture();
+  createAxes(1);
+  createGrid(50, 50);
+  createAmbientTexture();
   // createAmbientLight();
   // createDirLight();
   // createPointLight();
@@ -56,10 +59,6 @@ function init() {
 
 // 业务代码
 function createCode() {
-  const geometry = new THREE.PlaneGeometry(1, 1);
-  const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-  const plane = new THREE.Mesh(geometry, material);
-  scene.add(plane);
 }
 
 // 创建场景
@@ -117,7 +116,7 @@ function createAmbientTexture() {
   const rgbeLoader = new RGBELoader();
   rgbeLoader.load('./hdr/noon_grass_1k.hdr', texture => {
     texture.mapping = THREE.EquirectangularReflectionMapping;
-    scene.background = texture;
+    scene.background = new THREE.Color(0xcccccc);
     scene.environment = texture;
   });
 }
@@ -182,6 +181,6 @@ onMounted(() => {
 </style>
 <style>
 body {
-  background-color: #1e1a20;
+  background-color: #CCC;
 }
 </style>

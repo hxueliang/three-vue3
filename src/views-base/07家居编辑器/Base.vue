@@ -4,6 +4,7 @@
   02.添加物体列表
   03.使用变换控制器操作物体
   04.切换家居
+  05.控制家居位称旋转缩放
 -->
 <template>
   <div class="container" ref="container"></div>
@@ -50,6 +51,12 @@ let basicScene, transformControls;
 const eventObj = {
   // 添加户型基础模型
   addScene: () => { scene.add(basicScene); },
+  // 设置位移
+  setTranslate: () => { transformControls.setMode("translate"); },
+  // 设置旋转
+  setRotate: () => { transformControls.setMode("rotate"); },
+  // 设置缩放
+  setScale: () => { transformControls.setMode("scale"); },
 };
 
 init();
@@ -72,6 +79,7 @@ function init() {
 // 业务代码
 function createCode() {
   addBasicScene();
+  setMode();
   addMeshList();
   createTransformControls();
 }
@@ -84,6 +92,27 @@ function addBasicScene() {
 
   // 添加户型基础模型
   gui.add(eventObj, 'addScene').name('添加户型基础模型');
+}
+
+// 设置变换类型
+function setMode() {
+  // 定义枚举对象
+  const Mode = {
+    t: { fn: 'setTranslate', name: '位移模式', },
+    r: { fn: 'setRotate', name: '旋转模式', },
+    s: { fn: 'setScale', name: '缩放模式', }
+  };
+  Object.keys(Mode).forEach(key => {
+    gui.add(eventObj, Mode[key].fn).name(`${Mode[key].name}(${key})`);
+  });
+  // 监听鼠标按键
+  window.addEventListener('keydown', (event) => {
+    const key = event.key.toLowerCase();
+    console.log(key);
+    if (key in Mode) {
+      eventObj[Mode[key].fn]();
+    }
+  });
 }
 
 // 添加物体列表

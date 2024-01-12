@@ -5,6 +5,7 @@
   03.使用变换控制器操作物体
   04.切换家居
   05.控制家居位称旋转缩放
+  06.切换坐标空间
 -->
 <template>
   <div class="container" ref="container"></div>
@@ -57,6 +58,10 @@ const eventObj = {
   setRotate: () => { transformControls.setMode("rotate"); },
   // 设置缩放
   setScale: () => { transformControls.setMode("scale"); },
+  // 本地空间/世界空间切换
+  toggleSpace: () => { transformControls.setSpace(transformControls.space === "local" ? "world" : "local"); },
+  // 取消物体选中
+  detachMesh: () => { transformControls.detach(); },
 };
 
 init();
@@ -80,6 +85,8 @@ function init() {
 function createCode() {
   addBasicScene();
   setMode();
+  setSpace();
+  detachMesh();
   addMeshList();
   createTransformControls();
 }
@@ -113,6 +120,16 @@ function setMode() {
       eventObj[Mode[key].fn]();
     }
   });
+}
+
+// 切换坐标空间
+function setSpace() {
+  gui.add(eventObj, 'toggleSpace').name('切换坐标空间');
+}
+
+// 取消选择物体
+function detachMesh() {
+  gui.add(eventObj, 'detachMesh',).name('取消选择');
 }
 
 // 添加物体列表

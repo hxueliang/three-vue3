@@ -21,6 +21,7 @@ import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
+import { RectAreaLightHelper } from 'three/addons/helpers/RectAreaLightHelper.js';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -199,7 +200,7 @@ function createCode() {
   // */
 
 
-  // /*
+  /*
   // 聚光灯
   const color = 0xffffff;
   const intensity = 10;
@@ -219,8 +220,24 @@ function createCode() {
     .onChange(updateLight);
   // */
 
-
-  // todo: 矩形区域光
+  // /*
+  // 矩形区域光
+  const width = 10;
+  const height = 10;
+  const intensity = 2;
+  const rectLight = new THREE.RectAreaLight(0xffffff, intensity, width, height);
+  rectLight.position.set(7, 7, 0);
+  rectLight.lookAt(0, 0, 0);
+  scene.add(rectLight);
+  // helper
+  const rectLightHelper = new RectAreaLightHelper(rectLight);
+  scene.add(rectLightHelper);
+  // gui
+  gui.add(rectLight, 'intensity', 0, 10, 0.01);
+  gui.add(rectLight.position, 'x', -20, 20);
+  gui.add(rectLight.position, 'y', -20, 20);
+  gui.add(rectLight.position, 'z', -20, 20);
+  // */
 }
 
 

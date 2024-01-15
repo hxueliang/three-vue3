@@ -7,6 +7,7 @@
   05.控制家居位称旋转缩放
   06.切换坐标空间
   07.固定变换步长
+  08.是否吸附到地面
 -->
 <template>
   <div class="container" ref="container"></div>
@@ -66,6 +67,7 @@ const eventObj = {
   translateStepNum: null,
   rotateStepNum: 0,
   scaleStepNum: 0,
+  isClampGroup: false,
 };
 
 init();
@@ -94,6 +96,7 @@ function createCode() {
   addMeshList();
   createTransformControls();
   setStep();
+  setClampGroup();
 }
 
 // 添加基础场景
@@ -235,7 +238,19 @@ function createTransformControls() {
   transformControls.addEventListener('dragging-changed', function (event) {
     controls.enabled = !event.value;
   });
+  transformControls.addEventListener('change', () => {
+    if (eventObj.isClampGroup) {
+      transformControls.object.position.y = 0;
+    }
+  });
   scene.add(transformControls);
+}
+
+// 是否吸附到地面
+function setClampGroup(isClampGroup) {
+  gui
+    .add(eventObj, 'isClampGroup')
+    .name('是否吸附到地面');
 }
 
 // 创建场景

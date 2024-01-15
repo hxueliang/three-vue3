@@ -6,6 +6,7 @@
   04.切换家居
   05.控制家居位称旋转缩放
   06.切换坐标空间
+  07.固定变换步长
 -->
 <template>
   <div class="container" ref="container"></div>
@@ -62,6 +63,9 @@ const eventObj = {
   toggleSpace: () => { transformControls.setSpace(transformControls.space === "local" ? "world" : "local"); },
   // 取消物体选中
   detachMesh: () => { transformControls.detach(); },
+  translateStepNum: null,
+  rotateStepNum: 0,
+  scaleStepNum: 0,
 };
 
 init();
@@ -89,6 +93,7 @@ function createCode() {
   detachMesh();
   addMeshList();
   createTransformControls();
+  setStep();
 }
 
 // 添加基础场景
@@ -170,6 +175,52 @@ function addMeshList(mesh) {
     };
     folderAddMesh.add(item, 'addMesh').name(item.name);
   });
+}
+
+// 设置步长
+function setStep() {
+  const FolderStep = gui.addFolder('固定位移步长');
+  setTranslateStep(FolderStep);
+  setRotateStep(FolderStep);
+  setScaleStep(FolderStep);
+}
+
+// 设置位移步长
+function setTranslateStep(FolderStep) {
+  FolderStep
+    .add(eventObj, 'translateStepNum', {
+      '不固定': null,
+      0.1: 0.1,
+      1: 1,
+      10: 10,
+    })
+    .name('位移步长')
+    .onChange(() => {
+      transformControls
+        .setTranslationSnap(eventObj.translateStepNum);
+    });
+}
+
+// 设置旋转步长
+function setRotateStep(FolderStep) {
+  FolderStep
+    .add(eventObj, 'rotateStepNum', 0, 1)
+    .step(0.01)
+    .name('旋转步长')
+    .onChange(() => {
+      transformControls.setRotationSnap(eventObj.rotateStepNum * Math.PI * 2);
+    });
+}
+
+// 设置缩放步长
+function setScaleStep(FolderStep) {
+  FolderStep
+    .add(eventObj, 'scaleStepNum', 0, 2)
+    .step(0.1)
+    .name('缩放步长')
+    .onChange(() => {
+      transformControls.setScaleSnap(eventObj.scaleStepNum);
+    });
 }
 
 // 选中物体

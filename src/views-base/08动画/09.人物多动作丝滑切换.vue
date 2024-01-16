@@ -58,15 +58,66 @@ function init() {
 }
 // 业务代码
 function createCode() {
+  let walkAction, runAction, posAction, greetAction, idleAction;
+  let currentAction;
   gltfLoader.load('./model/animate/hilda_regular_00.glb', (gltf) => {
+    console.log(gltf.animations);
     scene.add(gltf.scene);
     // 创建动画混合器
     mixer = new THREE.AnimationMixer(gltf.scene);
+    console.log(mixer);
     // 获取动画
-    const animationAction = mixer.clipAction(gltf.animations[0]);
-    // 播放动画
-    animationAction.play();
+    walkAction = mixer.clipAction(gltf.animations[37]);
+    runAction = mixer.clipAction(gltf.animations[27]);
+    posAction = mixer.clipAction(gltf.animations[23]);
+    greetAction = mixer.clipAction(gltf.animations[0]);
+    idleAction = mixer.clipAction(gltf.animations[6]);
+    idleAction.play();
+    currentAction = idleAction;
   });
+
+  const playAction = (action) => {
+    action.enabled = true;
+    action.setEffectiveTimeScale(1);
+    action.setEffectiveWeight(1);
+    action.play();
+    currentAction.crossFadeTo(action, 0.5, true);
+    currentAction = action;
+  };
+
+  const eventObject = {
+    stopAll() {
+      mixer.stopAllAction();
+    },
+    play() {
+      mixer._actions.forEach(action => {
+        action.play();
+      });
+    },
+    playWalk() {
+      playAction(walkAction);
+    },
+    playRun() {
+      playAction(runAction);
+    },
+    playPos() {
+      playAction(posAction);
+    },
+    playGreet() {
+      playAction(greetAction);
+    },
+    playIdle() {
+      playAction(idleAction);
+    },
+  };
+
+  gui.add(eventObject, 'stopAll');
+  gui.add(eventObject, 'play');
+  gui.add(eventObject, 'playWalk');
+  gui.add(eventObject, 'playRun');
+  gui.add(eventObject, 'playPos');
+  gui.add(eventObject, 'playGreet');
+  gui.add(eventObject, 'playIdle');
 }
 
 // 创建场景

@@ -32,7 +32,7 @@ export default [
   {
     path: '/base8',
     name: 'base8',
-    component: () => import('../views-base/08动画/01.模型加载与播放动画.vue')
+    component: () => import('../views-base/08动画/02.设置keyframe关键帧实现动画.vue')
   },
   {
     path: '/cesium',

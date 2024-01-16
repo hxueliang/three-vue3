@@ -38,6 +38,8 @@ gltfLoader.setDRACOLoader(dracoLoader);
 
 let scene, camera, renderer, controls;
 
+let mixer;
+
 init();
 
 // 初始化
@@ -57,6 +59,43 @@ function init() {
 
 // 业务代码
 function createCode() {
+  // 创建立方体
+  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  const material = new THREE.MeshStandardMaterial({
+    color: 0xff33ff,
+  });
+  const cube = new THREE.Mesh(geometry, material);
+  cube.name = 'cube1';
+  scene.add(cube);
+
+  // 创建位移动画
+  const positionKF = createPositionAnimation();
+
+  // 创建混合器
+  mixer = new THREE.AnimationMixer(cube);
+  // 创建动画剪辑
+  const clip = new THREE.AnimationClip('move', 2, [
+    positionKF,
+  ]);
+  // 创建动画动作
+  const animationAction = mixer.clipAction(clip);
+  // 播放动画
+  animationAction.play();
+}
+
+// 创建位移动画
+function createPositionAnimation() {
+  return new THREE.VectorKeyframeTrack(
+    'cube1.position',
+    [0, 0.5, 1, 1.5, 2], // 时间点
+    [
+      0, 0, 0,
+      2, 0, 0,
+      2, 0, 2,
+      0, 0, 2,
+      0, 0, 0,
+    ], // 位置数组
+  );
 }
 
 // 创建场景
@@ -82,6 +121,8 @@ function createRenderer() {
 // 创建渲染函数
 function render() {
   const delta = clock.getDelta();
+
+  mixer?.update(delta);
 
   controls && controls.update();
   renderer.render(scene, camera);

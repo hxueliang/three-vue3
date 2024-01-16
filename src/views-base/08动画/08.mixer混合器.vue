@@ -119,6 +119,26 @@ function createCode() {
     // 播放动画
     animationAction.play();
   });
+
+  // gui
+  addGui(animationAction);
+}
+
+// 添加gui
+function addGui(action) {
+  const eventObject = {
+    stopAll() {
+      mixer.stopAllAction();
+      // mixer2.stopAllAction();
+    },
+    play() {
+      action.play();
+      mixer.setTime(1); // 从1秒时播放
+    }
+  };
+  gui.add(eventObject, 'stopAll');
+  gui.add(eventObject, 'play');
+  gui.add(mixer, 'timeScale', -10, 10).step(1);
 }
 
 // 创建位移关键帧

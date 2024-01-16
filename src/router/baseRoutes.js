@@ -30,6 +30,11 @@ export default [
     component: () => import('../views-base/07家居编辑器/Base.vue')
   },
   {
+    path: '/base8',
+    name: 'base8',
+    component: () => import('../views-base/08动画/01.模型加载与播放动画.vue')
+  },
+  {
     path: '/cesium',
     name: 'cesium',
     component: () => import('../views-base/BaseView33/Cesium44.vue')

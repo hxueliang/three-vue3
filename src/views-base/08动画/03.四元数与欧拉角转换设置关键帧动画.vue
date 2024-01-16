@@ -71,12 +71,18 @@ function createCode() {
 
   // 创建位移动画
   const positionKF = createPositionAnimation();
+  // 创建旋转动画1
+  const rotationKF1 = createRotationAnimation1();
+  // 创建旋转动画2
+  const rotationKF2 = createRotationAnimation2();
 
   // 创建混合器
   mixer = new THREE.AnimationMixer(cube);
   // 创建动画剪辑
   const clip = new THREE.AnimationClip('move', 2, [
     positionKF,
+    rotationKF1,
+    rotationKF2,
   ]);
   // 创建动画动作
   const animationAction = mixer.clipAction(clip);
@@ -96,6 +102,62 @@ function createPositionAnimation() {
       0, 0, 2,
       0, 0, 0,
     ], // 位置数组
+  );
+}
+
+// 创建旋转动画
+function createRotationAnimation1() {
+  // 创建3个四元数
+  // 表示初始旋转状态
+  const quaternion1 = new THREE.Quaternion();
+  quaternion1.setFromAxisAngle(new THREE.Vector3(1, 0, 0), 0);
+  // 表示中间旋转状态
+  const quaternion2 = new THREE.Quaternion();
+  quaternion2.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI);
+  // 表示最终旋转状态
+  const quaternion3 = new THREE.Quaternion();
+  quaternion3.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI * 2);
+  // 转为数组
+  const finQ = [
+    ...quaternion1.toArray(),
+    ...quaternion2.toArray(),
+    ...quaternion3.toArray(),
+  ];
+  console.log(quaternion1, quaternion2, quaternion3, finQ);
+
+  // 创建旋转动画
+  return new THREE.QuaternionKeyframeTrack(
+    'cube1.quaternion',
+    [0, 1, 2], // 时间点
+    finQ, // 四元数数组
+  );
+}
+
+// 创建旋转动画2
+function createRotationAnimation2() {
+  // 创建3个四元数
+  // 表示初始旋转状态
+  const quaternion1 = new THREE.Quaternion();
+  quaternion1.setFromEuler(new THREE.Euler(0, 0, 0));
+  // 表示中间旋转状态
+  const quaternion2 = new THREE.Quaternion();
+  quaternion2.setFromEuler(new THREE.Euler(0, Math.PI, 0));
+  // 表示最终旋转状态
+  const quaternion3 = new THREE.Quaternion();
+  quaternion3.setFromEuler(new THREE.Euler(0, Math.PI * 2, 0));
+  // 转为数组
+  const finQ = [
+    ...quaternion1.toArray(),
+    ...quaternion2.toArray(),
+    ...quaternion3.toArray(),
+  ];
+  console.log(quaternion1, quaternion2, quaternion3, finQ);
+
+  // 创建旋转动画
+  return new THREE.QuaternionKeyframeTrack(
+    'cube1.quaternion',
+    [0, 1, 2], // 时间点
+    finQ, // 四元数数组
   );
 }
 

@@ -38,6 +38,8 @@ gltfLoader.setDRACOLoader(dracoLoader);
 
 let scene, camera, renderer, controls;
 
+let mixer;
+
 init();
 
 // 初始化
@@ -56,6 +58,15 @@ function init() {
 }
 // 业务代码
 function createCode() {
+  gltfLoader.load('./model/animate/huawei.glb', (gltf) => {
+    scene.add(gltf.scene);
+    // 创建动画混合器
+    mixer = new THREE.AnimationMixer(gltf.scene);
+    // 获取动画
+    const animationAction = mixer.clipAction(gltf.animations[0]);
+    // 播放动画
+    animationAction.play();
+  });
 }
 
 // 创建场景
@@ -80,7 +91,9 @@ function createRenderer() {
 
 // 创建渲染函数
 function render() {
-  const elapsed = clock.getElapsedTime();
+  const delta = clock.getDelta();
+
+  mixer?.update(delta);
 
   controls && controls.update();
   renderer.render(scene, camera);

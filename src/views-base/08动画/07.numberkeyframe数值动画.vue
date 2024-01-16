@@ -102,13 +102,16 @@ function createCode() {
     moon.position.set(-2, 0, 0);
     scene.add(moon);
 
+    const moonMesh = gltf.scene.getObjectByName('defaultMaterial');
+    moonMesh.material.transparent = true;
+
     // 创建混合器
     mixer2 = new THREE.AnimationMixer(moon);
-    // 创建布尔关键帧
-    const boolKF = createBooleanKF('Sketchfab_Scene.visible');
+    // 创建数值关键帧（注意：此mesh的名称是defaultMaterial）
+    const numberKF1 = createNumberKF('defaultMaterial.material.opacity');
     // 创建动画剪辑
     const clip = new THREE.AnimationClip('bool', 2, [
-      boolKF,
+      numberKF1,
     ]);
     // 创建动画动作
     const animationAction = mixer2.clipAction(clip);
@@ -192,6 +195,15 @@ function createBooleanKF(key = 'cube1.visible') {
     key,
     [0, 0.65, 0.85, 1.75, 1.85], // 时间点
     [true, false, true, false, true], // 布尔值数组
+  );
+}
+
+// 创建数值关键帧
+function createNumberKF(key, timeArr = [0, 1, 2], dataArr = [1, 0, 1]) {
+  return new THREE.NumberKeyframeTrack(
+    key,
+    timeArr, // 时间点
+    dataArr, // 数值数组
   );
 }
 

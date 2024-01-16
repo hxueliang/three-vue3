@@ -79,6 +79,8 @@ function createCode() {
   const rotationKF2 = createRotationKF2();
   // 创建布尔关键帧
   const boolKF = createBooleanKF();
+  // 创建颜色关键帧
+  const colorKF = createColorKF();
 
   // 创建混合器
   mixer = new THREE.AnimationMixer(cube);
@@ -88,6 +90,7 @@ function createCode() {
     rotationKF1,
     rotationKF2,
     // boolKF,
+    colorKF,
   ]);
   // 创建动画动作
   const animationAction = mixer.clipAction(clip);
@@ -170,6 +173,19 @@ function createBooleanKF() {
     'cube1.visible',
     [0, 0.65, 0.85, 1.75, 1.85], // 时间点
     [true, false, true, false, true], // 布尔值数组
+  );
+}
+
+// 创建颜色关键帧
+function createColorKF() {
+  return new THREE.ColorKeyframeTrack(
+    'cube1.material.color',
+    [0, 1, 2], // 时间点
+    [
+      ...new THREE.Color(0xff0000).toArray(),
+      ...new THREE.Color(0xffff00).toArray(),
+      ...new THREE.Color(0xff0000).toArray(),
+    ], // 颜色值数组
   );
 }
 

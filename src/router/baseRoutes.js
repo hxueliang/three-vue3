@@ -32,7 +32,7 @@ export default [
   {
     path: '/base8',
     name: 'base8',
-    component: () => import('../views-base/08动画/06.颜色关键帧实现各种材质颜色动画.vue')
+    component: () => import('../views-base/08动画/07.numberkeyframe数值动画.vue')
   },
   {
     path: '/cesium',

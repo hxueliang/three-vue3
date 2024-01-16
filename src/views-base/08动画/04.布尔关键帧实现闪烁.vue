@@ -76,6 +76,8 @@ function createCode() {
   const rotationKF1 = createRotationKF1();
   // 创建旋转关键帧2
   const rotationKF2 = createRotationKF2();
+  // 创建布尔关键帧
+  const boolKF = createBooleanKF();
 
   // 创建混合器
   mixer = new THREE.AnimationMixer(cube);
@@ -84,6 +86,7 @@ function createCode() {
     positionKF,
     rotationKF1,
     rotationKF2,
+    boolKF,
   ]);
   // 创建动画动作
   const animationAction = mixer.clipAction(clip);
@@ -157,6 +160,15 @@ function createRotationKF2() {
     'cube1.quaternion',
     [0, 1, 2], // 时间点
     finQ, // 四元数数组
+  );
+}
+
+// 创建布尔关键帧
+function createBooleanKF() {
+  return new THREE.BooleanKeyframeTrack(
+    'cube1.visible',
+    [0, 0.65, 0.85, 1.75, 1.85], // 时间点
+    [true, false, true, false, true], // 布尔值数组
   );
 }
 

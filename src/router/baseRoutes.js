@@ -32,7 +32,7 @@ export default [
   {
     path: '/base8',
     name: 'base8',
-    component: () => import('../views-base/08动画/08.mixer混合器.vue')
+    component: () => import('../views-base/08动画/09.人物多动作丝滑切换.vue')
   },
   {
     path: '/cesium',

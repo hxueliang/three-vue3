@@ -32,7 +32,7 @@ export default [
   {
     path: '/base8',
     name: 'base8',
-    component: () => import('../views-base/08动画/04.布尔关键帧实现闪烁.vue')
+    component: () => import('../views-base/08动画/05.布尔关键帧实现闪烁的星球.vue')
   },
   {
     path: '/cesium',

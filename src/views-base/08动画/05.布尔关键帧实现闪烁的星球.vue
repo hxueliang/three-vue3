@@ -42,6 +42,7 @@ gltfLoader.setDRACOLoader(dracoLoader);
 let scene, camera, renderer, controls;
 
 let mixer;
+let mixer2;
 
 init();
 
@@ -93,6 +94,26 @@ function createCode() {
   const animationAction = mixer.clipAction(clip);
   // 播放动画
   animationAction.play();
+
+  // 加载星球
+  gltfLoader.load('./model/animate/moon.glb', gltf => {
+    const moon = gltf.scene;
+    moon.position.set(-2, 0, 0);
+    scene.add(moon);
+
+    // 创建混合器
+    mixer2 = new THREE.AnimationMixer(moon);
+    // 创建布尔关键帧
+    const boolKF = createBooleanKF('Sketchfab_Scene.visible');
+    // 创建动画剪辑
+    const clip = new THREE.AnimationClip('bool', 2, [
+      boolKF,
+    ]);
+    // 创建动画动作
+    const animationAction = mixer2.clipAction(clip);
+    // 播放动画
+    animationAction.play();
+  });
 }
 
 // 创建位移关键帧
@@ -165,9 +186,9 @@ function createRotationKF2() {
 }
 
 // 创建布尔关键帧
-function createBooleanKF() {
+function createBooleanKF(key = 'cube1.visible') {
   return new THREE.BooleanKeyframeTrack(
-    'cube1.visible',
+    key,
     [0, 0.65, 0.85, 1.75, 1.85], // 时间点
     [true, false, true, false, true], // 布尔值数组
   );
@@ -198,6 +219,7 @@ function render() {
   const delta = clock.getDelta();
 
   mixer?.update(delta);
+  mixer2?.update(delta);
 
   controls && controls.update();
   renderer.render(scene, camera);

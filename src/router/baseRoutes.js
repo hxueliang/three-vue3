@@ -35,6 +35,11 @@ export default [
     component: () => import('../views-base/08动画/09.人物多动作丝滑切换.vue')
   },
   {
+    path: '/base9',
+    name: 'base9',
+    component: () => import('../views-base/09粒子特效/67.颜色收敛_旋臂渐变.vue')
+  },
+  {
     path: '/cesium',
     name: 'cesium',
     component: () => import('../views-base/BaseView33/Cesium44.vue')

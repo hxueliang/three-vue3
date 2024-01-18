@@ -65,7 +65,7 @@ function createGalaxy() {
     // 65.3.1 修改x值
     positions[current] = Math.cos(barnchAngle) * r;
     positions[current + 1] = 0;
-    // 65.3.2 修改y值
+    // 65.3.2 修改z值
     positions[current + 2] = Math.sin(barnchAngle) * r;
   }
   particlesGeometry.setAttribute(

@@ -40,6 +40,16 @@ export default [
     component: () => import('../views-base/09粒子特效/67.颜色收敛_旋臂渐变.vue')
   },
   {
+    path: '/base10',
+    name: 'base10',
+    component: () => import('../views-base/10光线投射/68.光线投射_物体交互.vue')
+  },
+  {
+    path: '/base11',
+    name: 'base11',
+    component: () => import('../views-base/11全屏滚动官网/74.鼠标控制相机摇晃特效.vue')
+  },
+  {
     path: '/cesium',
     name: 'cesium',
     component: () => import('../views-base/BaseView33/Cesium44.vue')

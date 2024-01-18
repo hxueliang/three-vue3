@@ -1,4 +1,4 @@
-<!-- 70.3D全屏滚动_同步滚屏与相机位置_第二个页面 -->
+<!-- 73.切屏文字动画 -->
 <template>
   <!-- 69.0.1 添加三个页面 -->
   <div class="page page1">
@@ -99,6 +99,45 @@ for (let i = 0; i < 50; i++) {
 sjxGroup.position.y = -30;
 scene.add(sjxGroup);
 
+// 71.1 弹跳小球
+const sphereGeometry = new THREE.SphereGeometry(1, 20, 20);
+const sphereMaterial = new THREE.MeshStandardMaterial();
+const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+// 71.3.1 创建小球组
+const sphereGroup = new THREE.Group();
+// 56.5 开启物体投射阴影
+sphere.castShadow = true;
+sphereGroup.add(sphere);
+// 56.2 添加平面
+const planeGeometry = new THREE.PlaneGeometry(20, 20);
+const plane = new THREE.Mesh(planeGeometry, sphereMaterial);
+plane.position.y = -1;
+plane.rotation.x = -Math.PI / 2;
+// 56.6 开启物体接收阴影
+plane.receiveShadow = true;
+sphereGroup.add(plane);
+// 58.0 添加 环境光
+const light = new THREE.AmbientLight(0xffffff, 0.5);
+sphereGroup.add(light);
+// 58.1 添加 点光源
+const pointLight = new THREE.PointLight(0xff0000, 20);
+pointLight.castShadow = true;
+// 58.2 创建小球
+const lightBall = new THREE.Mesh(
+  new THREE.SphereGeometry(0.1, 20, 20),
+  new THREE.MeshBasicMaterial({ color: 0xff0000 }),
+);
+sphereGroup.add(lightBall);
+// 58.3 将点光源添加到小球上
+lightBall.add(pointLight);
+lightBall.position.set(2, 2, 2);
+// 58.0 模糊阴影的边缘
+pointLight.shadow.radius = 20;
+pointLight.shadow.mapSize.set(4096, 4096);
+// 71.3.2 添加小球组进场景
+sphereGroup.position.y = -60;
+scene.add(sphereGroup);
+
 // 68.2 创建投射光线
 const raycaster = new THREE.Raycaster();
 // 68.3 创建鼠标位置
@@ -133,19 +172,42 @@ scene.add(axesHelper);
 // 设置时钟
 const clock = new THREE.Clock();
 
+// 72.4 gsap改造动画效果
+gsap.to(cubeGroup.rotation, {
+  x: '+=' + Math.PI,
+  y: '+=' + Math.PI,
+  duration: 5,
+  repeat: -1
+});
+gsap.to(sjxGroup.rotation, {
+  x: '+=' + Math.PI,
+  y: '-=' + Math.PI,
+  duration: 5,
+  repeat: -1
+});
+
 // 1.5 创建渲染函数
 function render() {
   const time = clock.getElapsedTime();
 
   // 69.2.4 设置级旋转
-  cubeGroup.rotation.x = time * 0.5;
-  cubeGroup.rotation.y = time * 0.5;
+  // cubeGroup.rotation.x = time * 0.5;
+  // cubeGroup.rotation.y = time * 0.5;
 
   // 70.2.2 根据当前滚动的位置scrollY，设置相机位置
   camera.position.y = -(window.scrollY / window.innerHeight) * 30;
   // 70.3 让三角形组旋转
-  sjxGroup.rotation.x = time * 0.4;
-  sjxGroup.rotation.y = time * 0.3;
+  // sjxGroup.rotation.x = time * 0.4;
+  // sjxGroup.rotation.y = time * 0.3;
+
+  // 71.2 设置小球动起来
+  lightBall.position.x = Math.sin(time * 2) * 3;
+  lightBall.position.z = Math.cos(time * 2) * 3;
+  lightBall.position.y = 2 + Math.sin(time * 10) / 3;
+  // 71.4 让小球组旋转
+  sphereGroup.rotation.x = Math.sin(time) * 0.04;
+  // 72.3 与72.2的gsap动画冲突，先取消，有需要可以用gsap写重写动画
+  // sphereGroup.rotation.z = Math.sin(time) * 0.04;
 
   cantrols && cantrols.update();
   renderer.render(scene, camera);
@@ -164,6 +226,9 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
 });
 
+// 72.1 创建组数组
+const groupArr = [cubeGroup, sjxGroup, sphereGroup];
+
 // 70.2.1 监听滚动事件
 let currentPage = 0;
 window.addEventListener('scroll', () => {
@@ -171,6 +236,26 @@ window.addEventListener('scroll', () => {
   if (currentPage !== newPage) {
     currentPage = newPage;
     console.log(currentPage);
+    // 72.2 让当前页面下的3d物体转360度
+    gsap.to(groupArr[currentPage].rotation, {
+      z: '+=' + 2 * Math.PI,
+    });
+    // 73.1 用gsap和css选择器，使元素旋转
+    // gsap.to(`.page${currentPage + 1} h1`, {
+    //   rotate: '+=360',
+    //   duration: 2
+    // });
+    // 73.2 用gsap和css选择器，使元素飞入
+    // gsap.fromTo(`.page${currentPage + 1} h1`, { x: -500 }, {
+    //   x: 0,
+    //   duration: 1
+    // });
+    // 73.3 用gsap和css选择器，使元素旋转飞入
+    gsap.fromTo(`.page${currentPage + 1} h1`, { x: -500, rotate: 90 }, {
+      x: 0,
+      rotate: '+=270',
+      duration: 2
+    });
   }
 });
 

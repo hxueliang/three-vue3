@@ -172,7 +172,7 @@ scene.add(axesHelper);
 // 设置时钟
 const clock = new THREE.Clock();
 
-// 72.4 gsap改造动画效果
+// 72.4 gsap替代render函数，实现动画效果
 gsap.to(cubeGroup.rotation, {
   x: '+=' + Math.PI,
   y: '+=' + Math.PI,

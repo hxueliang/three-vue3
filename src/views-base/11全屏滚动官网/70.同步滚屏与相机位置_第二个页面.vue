@@ -95,7 +95,7 @@ for (let i = 0; i < 50; i++) {
   const mesh = new THREE.Mesh(geometry, material);
   sjxGroup.add(mesh);
 }
-// 70.1 把所有三角形y轴往下移30
+// 70.1 把所有三角形y轴往下移30，使其在页第二的位置显示
 sjxGroup.position.y = -30;
 scene.add(sjxGroup);
 
@@ -141,7 +141,7 @@ function render() {
   cubeGroup.rotation.x = time * 0.5;
   cubeGroup.rotation.y = time * 0.5;
 
-  // 70.2.2 根据当前滚动的位置scrollY，设置相机位置
+  // 70.2.2 根据当前滚动的位置scrollY，设置相机位置，使渲染的3D物体，和页面一起滚动
   camera.position.y = -(window.scrollY / window.innerHeight) * 30;
   // 70.3 让三角形组旋转
   sjxGroup.rotation.x = time * 0.4;

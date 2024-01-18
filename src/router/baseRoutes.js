@@ -50,6 +50,11 @@ export default [
     component: () => import('../views-base/11全屏滚动官网/74.鼠标控制相机摇晃特效.vue')
   },
   {
+    path: '/base12',
+    name: 'base12',
+    component: () => import('../views-base/12物理引擎/80.给物体施加作用力.vue')
+  },
+  {
     path: '/cesium',
     name: 'cesium',
     component: () => import('../views-base/BaseView33/Cesium44.vue')

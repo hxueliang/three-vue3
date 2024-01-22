@@ -99,7 +99,7 @@ function createCube() {
   cubeBody.addEventListener('collide', e => {
     // 77.2 获取碰撞强度
     const impactStrength = e.contact.getImpactVelocityAlongNormal();
-    // 79.6.2 记录碰撞强度的最大值，用与得到音量0-1之间的数值
+    // 79.6.2 记录碰撞强度的最大值，用于得到音量0-1之间的数值
     console.log(impactStrength);
     window.impactStrengthMax = Math.max(window.impactStrengthMax || 0, impactStrength);
     console.log(impactStrength, window.impactStrengthMax);

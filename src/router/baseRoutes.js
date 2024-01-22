@@ -55,6 +55,16 @@ export default [
     component: () => import('../views-base/12物理引擎/80.给物体施加作用力.vue')
   },
   {
+    path: '/base13',
+    name: 'base13',
+    component: () => import('../views-base/13WebGL与GPU渲染原理/81.WebGL绘制三角形.vue')
+  },
+  {
+    path: '/base14',
+    name: 'base14',
+    component: () => import('../views-base/14着色器/89.漫天飞舞孔明灯.vue')
+  },
+  {
     path: '/cesium',
     name: 'cesium',
     component: () => import('../views-base/BaseView33/Cesium44.vue')

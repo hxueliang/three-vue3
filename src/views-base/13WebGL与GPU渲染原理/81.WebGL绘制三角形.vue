@@ -1,4 +1,4 @@
-<!-- 80.给物体施加作用力 -->
+<!-- 81.WebGL绘制三角形 -->
 <template>
   <canvas id="canvas"></canvas>
 </template>
@@ -11,8 +11,10 @@ onMounted(() => {
   const canvasEl = document.querySelector("#canvas");
   canvasEl.width = document.body.clientWidth; // 设置 canvas 画布的宽度
   canvasEl.height = document.body.clientHeight; // 设置 canvas 画布的高度
-
-  const gl = canvasEl.getContext("webgl"); // 获取 WebGL 上下文
+  // 获取 WebGL 上下文
+  const gl = canvasEl.getContext("webgl");
+  // 第一次创建webgl绘图上下广文，需要设置视口大小
+  gl.viewport(0, 0, canvasEl.width, canvasEl.height);
 
   // 创建顶点着色器 
   // 语法 gl.createShader(type) 
@@ -34,20 +36,23 @@ onMounted(() => {
       }
     `
   );
-  gl.compileShader(vShader); // 编译着色器代码
-
+  // 编译着色器代码
+  gl.compileShader(vShader);
+  // 编写片元着色器代码
   const fShader = gl.createShader(gl.FRAGMENT_SHADER);
   gl.shaderSource(
     fShader,
     `
       precision mediump float;
       uniform vec4 f_color;
+
       void main() {
         gl_FragColor = f_color; // 设置片元颜色
       }
     `
-  ); // 编写片元着色器代码
-  gl.compileShader(fShader); // 编译着色器代码
+  );
+  // 编译着色器代码
+  gl.compileShader(fShader);
 
   // 创建一个程序用于连接顶点着色器和片元着色器
   const program = gl.createProgram();
@@ -57,7 +62,7 @@ onMounted(() => {
 
   gl.useProgram(program); // 告诉 WebGL 用这个 program 进行渲染
 
-  //   用于指定uniform变量在 GPU 内存中的位置
+  // 用于指定uniform变量在 GPU 内存中的位置
   const color = gl.getUniformLocation(program, "f_color");
   // 获取 f_color 变量位置
   gl.uniform4f(color, 0, 0, 1, 0.5); // 设置它的值

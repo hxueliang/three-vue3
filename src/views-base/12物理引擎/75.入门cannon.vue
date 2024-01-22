@@ -43,9 +43,8 @@ const gui = new GUI();
 const sphereGeometry = new THREE.SphereGeometry(1, 20, 20);
 const sphereMaterial = new THREE.MeshStandardMaterial();
 const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-// 75.2.3 开启投射阴影
-sphere.castShadow = true;
 scene.add(sphere);
+
 // 75.1.2 创建平面
 const floor = new THREE.Mesh(
   new THREE.PlaneGeometry(20, 20),
@@ -53,16 +52,20 @@ const floor = new THREE.Mesh(
 );
 floor.position.y = -5;
 floor.rotation.x = -Math.PI / 2;
-// 75.2.4 设置接收阴影
-floor.receiveShadow = true;
 scene.add(floor);
+
 // 75.1.3 设置灯光
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
 const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
-// 75.2.1 开启灯光投射阴影
-dirLight.castShadow = true;
 scene.add(ambientLight);
 scene.add(dirLight);
+
+// 75.2.1 灯光投射阴影
+dirLight.castShadow = true;
+// 75.2.3 小球投射阴影
+sphere.castShadow = true;
+// 75.2.4 地板接收阴影
+floor.receiveShadow = true;
 
 // 75.3 创建物理世界
 const world = new CANNON.World();
@@ -88,6 +91,7 @@ world.addBody(sphereBody);
 const renderer = new THREE.WebGLRenderer();
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.setSize(innerWidth, innerHeight);
+
 // 75.2.2 允许在场景中使用阴影贴图
 renderer.shadowMap.enabled = true;
 

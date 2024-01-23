@@ -103,7 +103,7 @@ function toPosition(obj, defaultN = 10, randomN = 20, defaultTime = 5, randomTim
 // 1.4 创建渲染器
 const renderer = new THREE.WebGLRenderer({ alpha: true });
 renderer.outputColorSpace = THREE.SRGBColorSpace;
-// 89.1.1 色调映射
+// 89.2.1 色调映射
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 // 89.2.2 色调映射的曝光级别
 renderer.toneMappingExposure = 0.2;

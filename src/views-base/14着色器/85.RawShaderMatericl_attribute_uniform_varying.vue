@@ -1,4 +1,7 @@
 <!-- 85.RawShaderMatericl_attribute_uniform_varying -->
+<!-- 85.Attribute：与每个顶点关联的变量，只可以在顶点着色器中访问。如：顶点位置、法线、顶点颜色等 -->
+<!-- 85.Uniforms：所有顶点都具有相同的值的变量，可以通过顶点着色器和片着色器访问。如：灯光、雾、阴影贴图等 -->
+<!-- 85.Varyings：从顶点着色器传递到片元着色器的变量，对于每一个片元，每一个varyings的值将是相邻点的值的平滑插值 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -23,6 +26,7 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
+// 85.0.导入着色器
 import basicVertexShader from "../../shader/raw/vertex.glsl?raw";
 import basicFragmentShader from '../../shader/raw/fragment.glsl?raw';
 
@@ -43,9 +47,9 @@ const gui = new GUI();
 
 // 85.1 创建原始着色器材质【83.2 创建着色器材质】
 const rowShaderMaterial = new THREE.RawShaderMaterial({
-  // 83.2.1 顶点着色器
+  // 85.0 【83.2.1 顶点着色器】
   vertexShader: basicVertexShader,
-  // 83.2.2 片元着色器
+  // 85.0 【83.2.2 片元着色器】
   fragmentShader: basicFragmentShader,
 });
 // 83.1 创建平面

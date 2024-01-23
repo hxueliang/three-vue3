@@ -19,7 +19,7 @@ void main(){
   // 86.3.1 修改为红色，方便查看高矮处，颜色差异
   // gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 
-  // 86.3.4 vElevation传过来的是-0.05 - 0.05，把他转为0.0 - 1.0
+  // 86.3.4 vElevation传过来的是-0.05 ~ +0.05，把他转为0.0 ~ 1.0
   //  float height = vElevation + 0.05 * 10.0;
   //  gl_FragColor = vec4(1.0 * height, 0.0, 0.0, 1.0);
 

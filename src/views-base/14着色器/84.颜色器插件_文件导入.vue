@@ -1,5 +1,5 @@
 <!-- 84.颜色器插件_文件导入 -->
-<!-- 84.1 新建两个glsl文件，并把js的shader代码，移到想应文件 -->
+<!-- 84.1 新建两个glsl文件，并把js的shader代码，移到相应文件 -->
 <!-- 84.2 安装vscode插件：Shader languages support for VS Code -->
 <template>
   <div class="container" ref="container"></div>
@@ -45,9 +45,9 @@ const gui = new GUI();
 
 // 83.2 创建着色器材质
 const shaderMaterial = new THREE.ShaderMaterial({
-  // 83.2.1 顶点着色器
+  // 84.3 【83.2.1 顶点着色器】
   vertexShader: basicVertexShader,
-  // 83.2.2 片元着色器
+  // 84.5【83.2.2 片元着色器】
   fragmentShader: basicFragmentShader,
 });
 // 83.1 创建平面

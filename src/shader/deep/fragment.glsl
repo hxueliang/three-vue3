@@ -85,36 +85,34 @@ float cnoise(vec2 P) {
 
 void main(){
   // 87.1 默认b为0效果
-  // gl_FragColor = vec4(vUv, 0.0, 1);
-  // gl_FragColor = vec4(strength, strength, strength, 1);
+  // gl_FragColor = vec4(vUv, 0.0, 1); // 黑红黄绿
 
   // 87.2 默认b为1效果
-  // gl_FragColor = vec4(vUv, 1, 1);
-  // gl_FragColor = vec4(strength, strength, strength, 1);
+  // gl_FragColor = vec4(vUv, 1, 1); // 蓝紫白青
 
   // 87.3 利用uv实现渐变效果
-  // float strength = vUv.x;
-  // float strength = 1.0 - vUv.x;
-  // float strength = vUv.y;
-  // float strength = 1.0 - vUv.y;
+  // float strength = vUv.x; // 0 ~ 1 左黑右白
+  // float strength = 1.0 - vUv.x; // 1 ~ 0 左白右黑
+  // float strength = vUv.y; // 0 ~ 1 下黑上白
+  // float strength = 1.0 - vUv.y; // 1 ~ 0 下白上黑
   // gl_FragColor = vec4(strength, strength, strength, 1);
 
   // 87.4 变化的剧烈些（乘）
-  // float strength = vUv.x * 10.0;
+  // float strength = vUv.x * 10.0; // 0 ~ 10 左黑右白，1/10开始全白
   // gl_FragColor = vec4(strength, strength, strength, 1);
 
   // 87.5 反复渐变（取模）
-  // float strength = mod(vUv.x * 10.0, 1.0);
+  // float strength = mod(vUv.x * 10.0, 1.0); // 0 ~ 1 左黑右白，重复10次
   // gl_FragColor = vec4(strength, strength, strength, 1);
 
   // 87.6.1 黑白条纹，step(edge, x)，如果 x < edge 返回0.0，否则返回1.0
   // float strength = mod(vUv.x * 10.0, 1.0);
-  // strength = step(0.5, strength);
+  // strength = step(0.5, strength); // 0 or 1 黑白相间，重复10次
   // gl_FragColor = vec4(strength, strength, strength, 1);
 
   // 87.6.2 黑白条纹，修改黑白条纹的占比
   // float strength = mod(vUv.x * 10.0, 1.0);
-  // strength = step(0.4, strength);
+  // strength = step(0.4, strength); // 0 or 1 黑白相间，黑少白金，重复10次
   // gl_FragColor = vec4(strength, strength, strength, 1);
 
   // 87.6.3 黑白条纹，实现黑色小方格子，条纹相加

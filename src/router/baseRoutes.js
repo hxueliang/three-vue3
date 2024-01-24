@@ -65,6 +65,16 @@ export default [
     component: () => import('../views-base/14着色器/89.漫天飞舞孔明灯.vue')
   },
   {
+    path: '/base15',
+    name: 'base15',
+    component: () => import('../views-base/15着色器实现烟雾水云/91.threejs水模型.vue')
+  },
+  {
+    path: '/base16',
+    name: 'base16',
+    component: () => import('../views-base/16着色器设置点材质/97.设置顶点颜色_实现渐变.vue')
+  },
+  {
     path: '/cesium',
     name: 'cesium',
     component: () => import('../views-base/BaseView33/Cesium44.vue')

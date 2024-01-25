@@ -13,7 +13,7 @@ uniform sampler2D uTexture2;
 uniform sampler2D uTexture3;
 
 void main(){
-    // 92.1.1 点材质，一个图形只是一个点，不能用uv坐标，无法用了着色
+    // 92.1.1 点材质，一个图形只是一个点，不能用uv坐标，无法uv
     // gl_FragColor = vec4(vUv, 0.0, 1);
 
     // 92.1.2 可以使用，像素的坐标替代 (y轴方向与uv的y轴方向相反)

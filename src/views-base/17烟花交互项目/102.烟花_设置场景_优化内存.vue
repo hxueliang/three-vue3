@@ -1,4 +1,4 @@
-<!-- 103.烟花_添加音效 -->
+<!-- 102.烟花_设置场景_优化内存 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -27,7 +27,7 @@ import vertexShader from "../../shader/flylight/vertex.glsl?raw";
 import fragmentShader from '../../shader/flylight/fragment.glsl?raw';
 
 // 98.1.2 导入烟花类
-import Firework from './firework';
+import Firework from './102.firework';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;

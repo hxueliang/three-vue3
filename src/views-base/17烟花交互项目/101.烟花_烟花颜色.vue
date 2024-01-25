@@ -1,4 +1,4 @@
-<!-- 99.烟花_让开始点移动并消失 -->
+<!-- 101.烟花_烟花颜色 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -27,7 +27,7 @@ import vertexShader from "../../shader/flylight/vertex.glsl?raw";
 import fragmentShader from '../../shader/flylight/fragment.glsl?raw';
 
 // 98.1.2 导入烟花类
-import Firework from './firework';
+import Firework from './101.firework';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -112,7 +112,7 @@ const createFireworks = () => {
   const color = `hsl(${Math.floor(Math.random() * 360)}, 100%, 80%)`; // hsl(色相,纯度,亮度)
   const position = {
     x: (Math.random() - 0.5) * 40,
-    z: (Math.random() - 0.5) * 40,
+    z: -(Math.random() - 0.5) * 40,
     y: 10 + (Math.random() - 0.5) * 8,
   };
   let firework = new Firework(color, position);

@@ -75,6 +75,16 @@ export default [
     component: () => import('../views-base/16着色器设置点材质/97.设置顶点颜色_实现渐变.vue')
   },
   {
+    path: '/base17',
+    name: 'base17',
+    component: () => import('../views-base/17烟花交互项目/103.烟花_添加音效.vue')
+  },
+  {
+    path: '/base18',
+    name: 'base18',
+    component: () => import('../views-base/18使用着色器加工材质/108.js传参给shader_人物动起来.vue')
+  },
+  {
     path: '/cesium',
     name: 'cesium',
     component: () => import('../views-base/BaseView33/Cesium44.vue')

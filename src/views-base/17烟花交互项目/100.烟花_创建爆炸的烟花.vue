@@ -1,4 +1,4 @@
-<!-- 101.烟花_烟花颜色 -->
+<!-- 100.烟花_创建爆炸的烟花 -->
 <template>
   <div class="container" ref="container"></div>
 </template>
@@ -27,7 +27,7 @@ import vertexShader from "../../shader/flylight/vertex.glsl?raw";
 import fragmentShader from '../../shader/flylight/fragment.glsl?raw';
 
 // 98.1.2 导入烟花类
-import Firework from './firework';
+import Firework from './100.firework';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;

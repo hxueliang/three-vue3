@@ -101,7 +101,7 @@ material.onBeforeCompile = (shader, renderer) => {
     `
     #include <beginnormal_vertex>
 
-    // 107.1 让法向旋转，效果人物光线与阴影
+    // 107.1 让法向旋转，矫正人物光线与阴影
     float angle = position.y * 0.5; // 跟据y坐标设置旋转角度
     mat2 rotateMatrix = rotate2d(angle);
     objectNormal.xz = rotateMatrix * objectNormal.xz;

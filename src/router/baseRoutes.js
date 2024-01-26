@@ -85,6 +85,31 @@ export default [
     component: () => import('../views-base/18使用着色器加工材质/108.js传参给shader_人物动起来.vue')
   },
   {
+    path: '/base19',
+    name: 'base19',
+    component: () => import('../views-base/19效果合成与后期处理/113.使用时间_打造水底波动效果.vue')
+  },
+  {
+    path: '/base20',
+    name: 'base20',
+    component: () => import('../views-base/20HTML混合3D渲染/116.使用css2d渲染器_中国标签隐藏.vue')
+  },
+  {
+    path: '/base21',
+    name: 'base21',
+    component: () => import('../views-base/21曲线应用与轨迹运动/118.物体沿着曲线运动.vue')
+  },
+  {
+    path: '/base22',
+    name: 'base22',
+    component: () => import('../views-base/22形变动画/120.开花形变.vue')
+  },
+  {
+    path: '/base23',
+    name: 'base23',
+    component: () => import('../views-base/23全景看房与科技展馆/126.通过数据生成3d户型.vue')
+  },
+  {
     path: '/cesium',
     name: 'cesium',
     component: () => import('../views-base/BaseView33/Cesium44.vue')

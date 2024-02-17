@@ -110,6 +110,11 @@ export default [
     component: () => import('../views-base/23全景看房与科技展馆/126.通过数据生成3d户型.vue')
   },
   {
+    path: '/base24',
+    name: 'base24',
+    component: () => import('../views-base/24智慧城市/127.智慧城市.vue')
+  },
+  {
     path: '/cesium',
     name: 'cesium',
     component: () => import('../views-base/BaseView33/Cesium44.vue')

@@ -115,8 +115,68 @@ export default [
     component: () => import('../views-base/24智慧城市/127.智慧城市.vue')
   },
   {
-    path: '/cesium',
-    name: 'cesium',
-    component: () => import('../views-base/BaseView33/Cesium44.vue')
+    path: '/base30',
+    name: 'base30',
+    component: () => import('../views-base/30智慧园区/128.智慧园区.vue')
+  },
+  {
+    path: '/base31',
+    name: 'base31',
+    component: () => import('../views-base/31骨骼动画/129.尾巴.vue')
+  },
+  {
+    path: '/base32',
+    name: 'base32',
+    component: () => import('../views-base/32智慧工厂/130.智慧工厂.vue')
+  },
+  {
+    path: '/base33',
+    name: 'base33',
+    component: () => import('../views-base/33地理信息生成3D物体与地图/133.3D地图.vue')
+  },
+  {
+    path: '/cs1',
+    name: 'cs1',
+    component: () => import('../views-base/34Cesium入门/Cs33.3DTiles高级样式设置与条件渲染.vue')
+  },
+  {
+    path: '/cs2',
+    name: 'cs2',
+    component: () => import('../views-base/35Cesium智慧广州项目实战/Cs44.粒子实现广州塔小蛮腰烟花特效.vue')
+  },
+  {
+    path: '/base36',
+    name: 'base36',
+    component: () => import('../views-base/36元宇宙/142.智慧城市.vue')
+  },
+  {
+    path: '/base37',
+    name: 'base37',
+    component: () => import('../views-base/37日夜交替/143.日夜交替洒店.vue')
+  },
+  {
+    path: '/base38',
+    name: 'base38',
+    component: () => import('../views-base/38三维图表/144.3d图表.vue')
+  },
+  {
+    path: '/base39',
+    name: 'base39',
+    component: () => import('../views-base/39物理仿真/166.模拟有悬架的车辆.vue')
+  },
+  {
+    path: '/base40',
+    name: 'base40',
+    component: () => import('../views-base/40AI寻路避障自动导航/183.增加镜面反射.vue')
+  },
+  {
+    path: '/base43',
+    name: 'base43',
+    component: () => import('../views-base/43项目效果提升与高级操作/196.IFC模型转为GLTF模型导出字段串.vue')
+  },
+  {
+    path: '/base45',
+    name: 'base45',
+    component: () => import('../views-base/45程序化节点材质打造逼真科技展馆/201.科技物理世界.vue')
   },
 ];

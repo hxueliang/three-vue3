@@ -4,7 +4,7 @@ import CameraModule from './camera';
 import renderer from './renderer';
 import controlsModule from './controls';
 
-import { updateMesh } from '../three/createMesh';
+import { updateMesh } from './createMesh';
 
 const clock = new THREE.Clock();
 

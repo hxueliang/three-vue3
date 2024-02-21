@@ -63,6 +63,7 @@ function createCode() {
   createLivingroom();
   createKitchen();
   createBalcony();
+  createCorridor();
   loadingManager();
 }
 
@@ -238,12 +239,45 @@ function createBalcony() {
   });
 }
 
+// 124z. 创建走廊
+function createCorridor() {
+  const position = new THREE.Vector3(-10, 0, 0);
+  const euler = new THREE.Euler(0, Math.PI - Math.PI / 6, 0);
+  const room = new Room('走廊', 9, './imgs/corridor/', position, euler);
+  // 创建文字
+  const textPosition = new THREE.Vector3(-4, 0, 0.5);
+  const text = new SpriteText('走廊', textPosition);
+  // 让相机移动到
+  text.onClick(() => {
+    gsap.to(camera.position, {
+      x: position.x,
+      y: position.y,
+      z: position.z,
+      duration: 1,
+    });
+    moveTag('走廊');
+  });
+  // 创建回到客厅
+  const backTextPosition = new THREE.Vector3(-7, 0, 2);
+  const backText = new SpriteText('客厅', backTextPosition);
+  backText.onClick(() => {
+    gsap.to(camera.position, {
+      x: 0,
+      y: 0,
+      z: 0,
+      duration: 1,
+    });
+    moveTag('客厅');
+  });
+}
+
 // 123.1 移动位置的方法
 function moveTag(name) {
   let positionMap = {
     客厅: [100, 115],
     厨房: [185, 170],
     阳台: [66, 64],
+    走廊: [150, 80],
   };
   if (positionMap[name]) {
     gsap.to(tagDiv.value, {

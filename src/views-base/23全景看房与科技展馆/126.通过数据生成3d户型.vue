@@ -26,7 +26,6 @@ import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 import RoomShapeMesh from "./threeMesh/RoomShapeMesh.js";
 import WallShaderMaterial from "./threeMesh/WallShaderMaterial.js";
 import Wall from "./threeMesh/Wall.js";
-import { DoubleSide } from 'three';
 
 innerWidth = window.innerWidth;
 innerHeight = window.innerHeight;
@@ -58,13 +57,14 @@ function createCode() {
   scene.environment = texture;
 
   // 126.2 加载户型数据
-  const BASE_RUL = 'https://test-1251830808.cos.ap-guangzhou.myqcloud.com/three_course/';
+  const BASE_RUL = 'https://test-1251830808.cos.ap-guangzhou.myqcloud.com/three_course';
   // id到全境图的映射
   let idToPanorama = {};
   fetch(`${BASE_RUL}/demo720.json`)
     .then(res => res.json())
     .then(obj => {
       console.log(obj);
+      // obj.objData.roomList[2].areas[2].y += 100;
       const {
         objData: { roomList },
         wallRelation,
@@ -72,7 +72,7 @@ function createCode() {
       roomList.forEach(room => {
         // 创建地面
         let roomMesh = new RoomShapeMesh(room);
-        roomMesh.material.side = DoubleSide;
+        roomMesh.material.side = THREE.DoubleSide;
         let roomMesh2 = new RoomShapeMesh(room, true);
         scene.add(roomMesh, roomMesh2);
         panoramaLocation = obj.panoramaLocation;

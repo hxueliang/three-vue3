@@ -107,7 +107,7 @@ export default [
   {
     path: '/base23',
     name: 'base23',
-    component: () => import('../views-base/23全景看房与科技展馆/124z.全景看房_综合完善.vue')
+    component: () => import('../views-base/23全景看房与科技展馆/126.通过数据生成3d户型.vue')
   },
   {
     path: '/base24',

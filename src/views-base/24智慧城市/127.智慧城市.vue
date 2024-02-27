@@ -2,7 +2,6 @@
 <!-- 下载模型 https://cadmapper.com/pro/home -->
 <!-- window 打开模型 Autodesk 3ds Max -->
 <!-- mac 打开模型 Rhino -->
-<!-- 打开Apifox模拟数据服务器 -->
 <template>
   <Scene :eventList="eventList"></Scene>
   <Screen :dataInfo="dataInfo" :eventList="eventList"></Screen>

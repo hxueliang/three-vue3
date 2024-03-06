@@ -179,4 +179,9 @@ export default [
     name: 'base45',
     component: () => import('../views-base/45程序化节点材质打造逼真科技展馆/201.科技物理世界.vue')
   },
+  {
+    path: '/base48',
+    name: 'base48',
+    component: () => import('../views-base/48粒子动画特效框架Quarks/202.创建粒子动画特效.vue')
+  },
 ];

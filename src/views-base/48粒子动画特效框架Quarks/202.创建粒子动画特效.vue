@@ -92,7 +92,7 @@ function createCode() {
 
   const particles = new ParticleSystem({
     // 粒子动画的时间
-    duration: 5,
+    duration: 2,
     // 粒子是否循环播放
     looping: false,
     // 粒子开始的时间
@@ -124,6 +124,14 @@ function createCode() {
   particles.emitter.name = "particles";
   scene.add(particles.emitter);
   batchRenderer.addSystem(particles);
+
+  let options = {
+    emitParticles: function () {
+      particles.emitEnded = false;
+      particles.time = 0;
+    },
+  };
+  document.addEventListener("click", options.emitParticles);
 }
 
 // 创建场景

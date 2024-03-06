@@ -24,6 +24,26 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import { LogLuvLoader } from 'three/examples/jsm/loaders/LogLuvLoader';
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader';
 
+import {
+  BatchedRenderer,
+  ConstantValue,
+  IntervalValue,
+  PointEmitter,
+  ConstantColor,
+  RenderMode,
+  ParticleSystem,
+  ColorOverLife,
+  ColorRange,
+  SizeOverLife,
+  PiecewiseBezier,
+  Bezier,
+  FrameOverLife,
+  BatchedParticleRenderer,
+  RandomColor,
+  ConeEmitter,
+  RotationOverLife,
+} from "three.quarks";
+
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
 const container = ref(null);
@@ -38,6 +58,9 @@ dracoLoader.setDecoderPath("./draco/");
 gltfLoader.setDRACOLoader(dracoLoader);
 
 let scene, camera, renderer, controls;
+
+// 渲染函数
+let batchRenderer;
 
 init();
 
@@ -58,6 +81,49 @@ function init() {
 
 // 业务代码
 function createCode() {
+  // 创建粒子批量渲染器
+  batchRenderer = new BatchedParticleRenderer();
+  // 添加粒子渲染器
+  scene.add(batchRenderer);
+
+  // 加载粒子的纹理
+  const textureLoader = new THREE.TextureLoader();
+  const texture = textureLoader.load("./texture/quarks/particle_default.png");
+
+  const particles = new ParticleSystem({
+    // 粒子动画的时间
+    duration: 5,
+    // 粒子是否循环播放
+    looping: false,
+    // 粒子开始的时间
+    startLife: new IntervalValue(0, 1),
+    // 粒子开始的速度
+    startSpeed: new IntervalValue(0, 1),
+    // 粒子开始的尺寸
+    startSize: new IntervalValue(0, 0.2),
+    // 粒子开始的颜色
+    startColor: new RandomColor(
+      new THREE.Vector4(1, 0.91, 0.51, 1),
+      new THREE.Vector4(1, 0.44, 0.16, 1)
+    ),
+    worldSpace: true,
+    // 粒子最大的数量
+    maxParticles: 1000,
+    emissionOverTime: new ConstantValue(1000),
+    shape: new PointEmitter(),
+    material: new THREE.MeshBasicMaterial({
+      map: texture,
+      blending: THREE.AdditiveBlending,
+      transparent: true,
+      side: THREE.DoubleSide,
+    }),
+    renderMode: RenderMode.BillBoard,
+    rendererOrder: 1,
+  });
+
+  particles.emitter.name = "particles";
+  scene.add(particles.emitter);
+  batchRenderer.addSystem(particles);
 }
 
 // 创建场景
@@ -82,7 +148,11 @@ function createRenderer() {
 
 // 创建渲染函数
 function render() {
-  const elapsed = clock.getElapsedTime();
+  const delta = clock.getDelta();
+
+  if (batchRenderer) {
+    batchRenderer.update(delta);
+  }
 
   controls && controls.update();
   renderer.render(scene, camera);

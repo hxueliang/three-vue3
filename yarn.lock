@@ -2709,6 +2709,11 @@ three-mesh-bvh@0.5.21:
   resolved "https://registry.npmmirror.com/three-mesh-bvh/-/three-mesh-bvh-0.5.21.tgz#e08f5f3052d624cce36d0975692949c02359832f"
   integrity sha512-TGXPk7YwtlU5rgQJYA25OT6yAdBMeekfC4BTkGNtTWA5glb2rmEpjxvhZncRQSl73QZir2LFOQT0FjfzgG55xw==
 
+three.quarks@^0.11.2:
+  version "0.11.2"
+  resolved "https://registry.npmmirror.com/three.quarks/-/three.quarks-0.11.2.tgz#31eabb4e4f75b073da246e5584b7ac1b49392fe5"
+  integrity sha512-u2VhKFxMx39YFssoRN0S2i82EdA1JTl5XJiF11W80jXNnIuK7IpZKB94g0GTqaYYYa24jJlc7+19lpoOWEwsrA==
+
 three@^0.155.0:
   version "0.155.0"
   resolved "https://registry.npmmirror.com/three/-/three-0.155.0.tgz#cca9b8ad817830c8b4fdd8f0d9a12a2e413a2672"

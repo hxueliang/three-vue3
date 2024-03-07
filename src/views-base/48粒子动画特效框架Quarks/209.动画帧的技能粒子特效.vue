@@ -45,6 +45,7 @@ import {
   ApplyForce,
   ApplyCollision,
 } from "three.quarks";
+import C from '../../../public/Workers/createGeometry';
 
 let innerWidth = window.innerWidth;
 let innerHeight = window.innerHeight;
@@ -90,40 +91,57 @@ function createCode() {
 
   // 加载粒子的纹理
   const textureLoader = new THREE.TextureLoader();
-  const texture = textureLoader.load("./texture/quarks/particle_default.png");
+  // const texture = textureLoader.load("./texture/quarks/particle_default.png");
+  const texture = textureLoader.load("./texture/other/texture2.png");
 
   const particles = new ParticleSystem({
     // 粒子动画的时间
     duration: 2,
     // 粒子是否循环播放
-    looping: false,
+    looping: true,
     // 粒子开始的时间
-    startLife: new IntervalValue(0, 2),
+    startLife: new IntervalValue(0.6, 0.8),
     // 粒子开始的速度
-    startSpeed: new IntervalValue(0, 2),
+    startSpeed: new IntervalValue(0.1, 2),
     // 粒子开始的尺寸
-    startSize: new IntervalValue(0, 0.2),
+    startSize: new IntervalValue(0.75, 1.5),
     // 粒子开始的颜色
     startColor: new RandomColor(
-      new THREE.Vector4(1, 0.91, 0.51, 1),
-      new THREE.Vector4(1, 0.44, 0.16, 1)
+      new THREE.Vector4(0.6, 0.6, 0.51, 0.3),
+      new THREE.Vector4(1, 1, 1, 0.5)
     ),
+    startRotation: new IntervalValue(-Math.PI, Math.PI),
     worldSpace: true,
     // 粒子最大的数量
     maxParticles: 1000,
-    emissionOverTime: new ConstantValue(1000),
-    shape: new PointEmitter(),
+    emissionOverTime: new ConstantValue(0),
+    emissionBursts: [
+      {
+        time: 0,
+        count: new ConstantValue(15),
+        probability: 1,
+      }
+    ],
+    shape: new ConeEmitter({
+      angle: Math.PI / 9,
+      radius: 0.3,
+      thickness: 1,
+      arc: Math.PI * 2,
+    }),
     material: new THREE.MeshBasicMaterial({
       map: texture,
       blending: THREE.AdditiveBlending,
       transparent: true,
       side: THREE.DoubleSide,
     }),
-    renderMode: RenderMode.Trail,
+    renderMode: RenderMode.BillBoard,
     rendererEmitterSettings: {
       startLength: new ConstantValue(20)
     },
     rendererOrder: 1,
+    startTileIndex: new ConstantValue(28),
+    uTileCount: 10,
+    vTileCount: 10,
   });
 
   particles.emitter.name = "particles";
@@ -151,6 +169,30 @@ function createCode() {
         }
       }
     }, 0.6)
+  );
+
+  // 添加粒子动画
+  particles.addBehavior(
+    new FrameOverLife(
+      new PiecewiseBezier(
+        [[new Bezier(28, 29, 30, 31, 32, 33, 34, 35, 36), 0]]
+      )
+    )
+  );
+
+  particles.addBehavior(
+    new RotationOverLife(
+      new IntervalValue(-Math.PI / 4, Math.PI / 4)
+    )
+  );
+
+  particles.addBehavior(
+    new ColorOverLife(
+      new ColorRange(
+        new THREE.Vector4(1, 1, 1, 1),
+        new THREE.Vector4(0.5, 0.5, 0.5, 0.1),
+      )
+    )
   );
 
   let options = {

@@ -29,6 +29,10 @@ import {
   ConstantValue,
   IntervalValue,
   PointEmitter,
+  SphereEmitter,
+  HemisphereEmitter,
+  CircleEmitter,
+  DonutEmitter,
   ConstantColor,
   RenderMode,
   ParticleSystem,
@@ -110,7 +114,46 @@ function createCode() {
     // 粒子最大的数量
     maxParticles: 1000,
     emissionOverTime: new ConstantValue(1000),
-    shape: new PointEmitter(),
+    // 点发射器
+    // shape: new PointEmitter(),
+
+    // 球体发射器
+    // shape: new SphereEmitter({
+    //   radius: 1,
+    //   thickness: 0.1,
+    //   arc: Math.PI * 2,
+    // }),
+
+    // 圆锥体发射器
+    // shape: new ConeEmitter({
+    //   radius: 0.01,
+    //   height: 1,
+    //   arc: Math.PI,
+    //   angle: Math.PI / 9,
+    // }),
+
+    // 半球体发射器
+    // shape: new HemisphereEmitter({
+    //   radius: 1,
+    //   arc: Math.PI * 2,
+    //   thickness: 0.2,
+    // }),
+
+    // 圆发射器
+    // shape: new CircleEmitter({
+    //   radius: 1,
+    //   thickness: 0.2,
+    //   arc: Math.PI * 2,
+    // }),
+
+    // 圆环发射器
+    shape: new DonutEmitter({
+      radius: 2,
+      donutRadius: 0.2,
+      thickness: 0.1,
+      arc: Math.PI * 2,
+    }),
+
     material: new THREE.MeshBasicMaterial({
       map: texture,
       blending: THREE.AdditiveBlending,

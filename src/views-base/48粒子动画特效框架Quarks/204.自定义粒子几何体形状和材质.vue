@@ -73,7 +73,7 @@ function init() {
   createGrid(30, 30);
   // createAmbientTexture();
   // createAmbientLight();
-  // createDirLight();
+  createDirLight(4, 6, 10, 4);
   // createPointLight();
   // createSpotLight();
   window.addEventListener('resize', onWindowResize);
@@ -90,7 +90,17 @@ function createCode() {
   const textureLoader = new THREE.TextureLoader();
   const texture = textureLoader.load("./texture/quarks/particle_default.png");
 
+  // 创建粒子系统几何体
+  const boxGeometery = new THREE.BoxGeometry(1, 1, 1);
+  // 创建粒子系统材质
+  const material = new THREE.MeshStandardMaterial({
+    roughness: 0.5,
+    metalness: 0.5,
+    color: 0xffffff,
+  });
+
   const particles = new ParticleSystem({
+    instancingGeometry: boxGeometery,
     // 粒子动画的时间
     duration: 2,
     // 粒子是否循环播放
@@ -98,7 +108,7 @@ function createCode() {
     // 粒子开始的时间
     startLife: new IntervalValue(0, 1),
     // 粒子开始的速度
-    startSpeed: new IntervalValue(0, 1),
+    startSpeed: new IntervalValue(0, 5),
     // 粒子开始的尺寸
     startSize: new IntervalValue(0, 0.2),
     // 粒子开始的颜色
@@ -111,13 +121,8 @@ function createCode() {
     maxParticles: 1000,
     emissionOverTime: new ConstantValue(1000),
     shape: new PointEmitter(),
-    material: new THREE.MeshBasicMaterial({
-      map: texture,
-      blending: THREE.AdditiveBlending,
-      transparent: true,
-      side: THREE.DoubleSide,
-    }),
-    renderMode: RenderMode.BillBoard,
+    material: material,
+    renderMode: RenderMode.Mesh,
     rendererOrder: 1,
   });
 

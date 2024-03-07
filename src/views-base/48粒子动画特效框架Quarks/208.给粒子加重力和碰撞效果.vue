@@ -42,6 +42,8 @@ import {
   RandomColor,
   ConeEmitter,
   RotationOverLife,
+  ApplyForce,
+  ApplyCollision,
 } from "three.quarks";
 
 let innerWidth = window.innerWidth;
@@ -96,9 +98,9 @@ function createCode() {
     // 粒子是否循环播放
     looping: false,
     // 粒子开始的时间
-    startLife: new IntervalValue(0, 1),
+    startLife: new IntervalValue(0, 2),
     // 粒子开始的速度
-    startSpeed: new IntervalValue(0, 1),
+    startSpeed: new IntervalValue(0, 2),
     // 粒子开始的尺寸
     startSize: new IntervalValue(0, 0.2),
     // 粒子开始的颜色
@@ -117,13 +119,39 @@ function createCode() {
       transparent: true,
       side: THREE.DoubleSide,
     }),
-    renderMode: RenderMode.BillBoard,
+    renderMode: RenderMode.Trail,
+    rendererEmitterSettings: {
+      startLength: new ConstantValue(20)
+    },
     rendererOrder: 1,
   });
 
   particles.emitter.name = "particles";
+  particles.emitter.position.y = 2;
   scene.add(particles.emitter);
   batchRenderer.addSystem(particles);
+
+  // 添加重力
+  particles.addBehavior(
+    new ApplyForce(
+      new THREE.Vector3(0, -1, 0),
+      new ConstantValue(1)
+    )
+  );
+
+  // 添加碰撞反弹
+  particles.addBehavior(
+    new ApplyCollision({
+      resolve: function (pos, normal) {
+        if (pos.y < 0) {
+          normal.set(0, 1, 0);
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }, 0.6)
+  );
 
   let options = {
     emitParticles: function () {

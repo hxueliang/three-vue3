@@ -35,6 +35,7 @@ import {
   ColorOverLife,
   ColorRange,
   SizeOverLife,
+  SpeedOverLife,
   PiecewiseBezier,
   Bezier,
   FrameOverLife,
@@ -98,9 +99,9 @@ function createCode() {
     // 粒子开始的时间
     startLife: new IntervalValue(0, 1),
     // 粒子开始的速度
-    startSpeed: new IntervalValue(0, 1),
+    startSpeed: new IntervalValue(0, 5),
     // 粒子开始的尺寸
-    startSize: new IntervalValue(0, 0.2),
+    startSize: new IntervalValue(0, 0.3),
     // 粒子开始的颜色
     startColor: new RandomColor(
       new THREE.Vector4(1, 0.91, 0.51, 1),
@@ -120,6 +121,34 @@ function createCode() {
     renderMode: RenderMode.BillBoard,
     rendererOrder: 1,
   });
+
+  // 尺寸变化
+  particles.addBehavior(
+    new SizeOverLife(
+      new PiecewiseBezier([
+        [new Bezier(1, 0.95, 0.75, 0), 0],
+      ])
+    )
+  );
+
+  // 颜色变化
+  particles.addBehavior(
+    new ColorOverLife(
+      new ColorRange(
+        new THREE.Vector4(1.0, 0.9, 0.5, 1),
+        new THREE.Vector4(0.8, 0.1, 0.0, 1),
+      )
+    )
+  );
+
+  // 速度变化
+  particles.addBehavior(
+    new SpeedOverLife(
+      new PiecewiseBezier([
+        [new Bezier(1, 0.75, 0.5, 0), 0],
+      ])
+    )
+  );
 
   particles.emitter.name = "particles";
   scene.add(particles.emitter);

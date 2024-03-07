@@ -182,6 +182,6 @@ export default [
   {
     path: '/base48',
     name: 'base48',
-    component: () => import('../views-base/48粒子动画特效框架Quarks/207.噪声函数与网格创建区域不规则运动.vue')
+    component: () => import('../views-base/48粒子动画特效框架Quarks/208.给粒子加重力和碰撞效果.vue')
   },
 ];

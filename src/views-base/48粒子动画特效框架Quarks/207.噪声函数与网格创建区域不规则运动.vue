@@ -29,6 +29,7 @@ import {
   ConstantValue,
   IntervalValue,
   PointEmitter,
+  GridEmitter,
   ConstantColor,
   RenderMode,
   ParticleSystem,
@@ -37,6 +38,7 @@ import {
   SizeOverLife,
   PiecewiseBezier,
   Bezier,
+  Noise,
   FrameOverLife,
   BatchedParticleRenderer,
   RandomColor,
@@ -104,9 +106,9 @@ function createCode() {
       // 粒子是否循环播放
       looping: false,
       // 粒子开始的时间
-      startLife: new IntervalValue(0, 1),
+      startLife: new IntervalValue(0, 3),
       // 粒子开始的速度
-      startSpeed: new IntervalValue(0, 5),
+      startSpeed: new IntervalValue(0, 2),
       // 粒子开始的尺寸
       startSize: new IntervalValue(0, 0.2),
       // 粒子开始的颜色
@@ -119,8 +121,13 @@ function createCode() {
       worldSpace: true,
       // 粒子最大的数量
       maxParticles: 1000,
-      emissionOverTime: new ConstantValue(500),
-      shape: new PointEmitter(),
+      emissionOverTime: new ConstantValue(1000),
+      shape: new GridEmitter({
+        width: 10,
+        height: 10,
+        rows: 10,
+        column: 10,
+      }),
       material: material,
       renderMode: RenderMode.Mesh,
       rendererOrder: 1,
@@ -136,7 +143,18 @@ function createCode() {
       )
     );
 
+    particles.addBehavior(
+      new Noise(
+        new ConstantValue(0.1),
+        new ConstantValue(3),
+      )
+
+    );
+
     particles.emitter.name = "particles";
+    // 旋转粒子系统
+    particles.emitter.rotation.x = Math.PI / 2;
+    particles.emitter.position.y = 3;
     scene.add(particles.emitter);
     batchRenderer.addSystem(particles);
 

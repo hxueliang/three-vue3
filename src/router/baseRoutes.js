@@ -182,6 +182,6 @@ export default [
   {
     path: '/base48',
     name: 'base48',
-    component: () => import('../views-base/48粒子动画特效框架Quarks/202.创建粒子动画特效.vue')
+    component: () => import('../views-base/48粒子动画特效框架Quarks/203.各种形状粒子动画.vue')
   },
 ];

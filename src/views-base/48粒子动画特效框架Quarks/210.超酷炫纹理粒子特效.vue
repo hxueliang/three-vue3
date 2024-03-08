@@ -44,6 +44,9 @@ import {
   RotationOverLife,
   ApplyForce,
   ApplyCollision,
+  GridEmitter,
+  ApplySequences,
+  TextureSequencer,
 } from "three.quarks";
 import C from '../../../public/Workers/createGeometry';
 
@@ -70,7 +73,7 @@ init();
 // 初始化
 function init() {
   createScene();
-  createCamera(12, 10, 20);
+  createCamera(5, 5, 50);
   createRenderer();
   createAxes();
   createGrid(30, 30);
@@ -92,42 +95,44 @@ function createCode() {
   // 加载粒子的纹理
   const textureLoader = new THREE.TextureLoader();
   const texture = textureLoader.load("./texture/other/texture2.png");
+  const textTexture = textureLoader.load("./texture/other/text-texture.png");
+  const logoTexture = textureLoader.load("./texture/other/logo-texture.png");
 
+  // 加载完所有资源后，创建粒子
   THREE.DefaultLoadingManager.onLoad = function () {
 
     const particles = new ParticleSystem({
       // 粒子动画的时间
-      duration: 2,
+      duration: 8,
       // 粒子是否循环播放
       looping: true,
       // 粒子开始的时间
-      startLife: new IntervalValue(0.6, 0.8),
+      startLife: new ConstantValue(7.8),
       // 粒子开始的速度
-      startSpeed: new IntervalValue(0.1, 2),
+      startSpeed: new ConstantValue(0),
       // 粒子开始的尺寸
-      startSize: new IntervalValue(0.75, 1.5),
+      startSize: new IntervalValue(0.05, 0.2),
       // 粒子开始的颜色
       startColor: new RandomColor(
-        new THREE.Vector4(0.6, 0.6, 0.51, 0.3),
-        new THREE.Vector4(1, 1, 1, 0.5)
+        new THREE.Vector4(1, 0.6, 1, 1),
+        new THREE.Vector4(1, 1, 1, 1)
       ),
-      startRotation: new IntervalValue(-Math.PI, Math.PI),
       worldSpace: true,
       // 粒子最大的数量
-      maxParticles: 1000,
+      maxParticles: 1500,
       emissionOverTime: new ConstantValue(0),
       emissionBursts: [
         {
           time: 0,
-          count: new ConstantValue(15),
+          count: new ConstantValue(1500),
           probability: 1,
         }
       ],
-      shape: new ConeEmitter({
-        angle: Math.PI / 9,
-        radius: 0.3,
-        thickness: 1,
-        arc: Math.PI * 2,
+      shape: new GridEmitter({
+        width: 15,
+        height: 15,
+        column: 50,
+        row: 50,
       }),
       material: new THREE.MeshBasicMaterial({
         map: texture,
@@ -136,19 +141,26 @@ function createCode() {
         side: THREE.DoubleSide,
       }),
       renderMode: RenderMode.BillBoard,
-      rendererEmitterSettings: {
-        startLength: new ConstantValue(20)
-      },
-      rendererOrder: 1,
-      startTileIndex: new ConstantValue(28),
+      startTileIndex: new ConstantValue('00'),
       uTileCount: 10,
       vTileCount: 10,
     });
 
     particles.emitter.name = "particles";
-    particles.emitter.position.y = 2;
     scene.add(particles.emitter);
     batchRenderer.addSystem(particles);
+
+    // 文字的纹理序列
+    const seq = new TextureSequencer(0.15, 0.15, new THREE.Vector3(-7.5, 0, 0));
+    seq.fromImage(textTexture.image, 0.3);
+    const seq2 = new TextureSequencer(0.15, 0.15, new THREE.Vector3(-7.5, -2, 0));
+    seq2.fromImage(logoTexture.image, 0.3);
+    // 每个粒子动画移动的间隔
+    const applySeq = new ApplySequences(0.001);
+    applySeq.appendSequencer(new IntervalValue(1.0, 2.0), seq);
+    applySeq.appendSequencer(new IntervalValue(5.0, 6.0), seq2);
+    // 添加行为
+    particles.addBehavior(applySeq);
 
     let options = {
       emitParticles: function () {

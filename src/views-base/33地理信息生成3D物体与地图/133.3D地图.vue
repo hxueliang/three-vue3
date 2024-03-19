@@ -62,7 +62,7 @@ function createCode() {
 }
 
 // 保存上一次选中的物体
-let prevMesh = null;
+let lastMesh = null;
 
 // 鼠标点击事件
 function clickEvent(event) {
@@ -73,15 +73,20 @@ function clickEvent(event) {
   if (intersects.length > 0) {
     const [first] = intersects;
     const { object } = first;
-    if (prevMesh) {
-      prevMesh.material.color.copy(prevMesh.material.srcColor);
+    if (lastMesh) {
+      // 恢复上一次选中的物体的颜色
+      lastMesh.material.color.copy(lastMesh.material.oldColor);
     }
-    prevMesh = object;
-    prevMesh.material.srcColor = prevMesh.material.color.clone();
+    // 选中当前点击的物体
+    lastMesh = object;
+    // 保存当前选中物体的颜色
+    lastMesh.material.oldColor = lastMesh.material.color.clone();
+    // 修改当前选中物体的颜色为白色
     object.material.color.set(0xffffff);
-  } else if (prevMesh) {
-    prevMesh.material.color.copy(prevMesh.material.srcColor);
-    prevMesh = null;
+  } else if (lastMesh) {
+    // 如果没有选中任何物体，恢复上一次选中的物体的颜色
+    lastMesh.material.color.copy(lastMesh.material.oldColor);
+    lastMesh = null;
   }
 
 }
@@ -95,6 +100,7 @@ function operationData(json) {
   features.forEach(feature => {
     // 创建省份mesh
     const province = new THREE.Object3D();
+    // 获取省份名称
     const { name } = feature.properties;
     // 获取经纬度坐标
     const { geometry } = feature;

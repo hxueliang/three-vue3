@@ -1,7 +1,7 @@
 <!-- Cs01.第一个cesium应用 -->
 <!-- 在node_modules/cesium/Build/Cesium目录中 -->
 <!-- 把Assets、ThirdParty、Widgets、Workers，复制到public下 -->
-<!-- 把Widgets，复制到public下 -->
+<!-- 把Widgets，复制到src下 -->
 <template>
   <div id="container" ref="container"></div>
 </template>

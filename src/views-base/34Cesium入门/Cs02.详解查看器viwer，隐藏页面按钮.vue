@@ -29,6 +29,7 @@ Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
 
 onMounted(() => {
   const viwer = new Cesium.Viewer('container', {
+    infoBox: false, // 隐藏信息框 (Blocked script execution in 'about:blank' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.)
     geocoder: false, // 不显示搜索按钮
     homeButton: false, // 不显示home按钮
     sceneModePicker: false, // 不显示场景模式选择按钮

@@ -36,7 +36,7 @@ onMounted(() => {
 
   // 角度转弧度
   const radians = Cesium.Math.toRadians(90);
-  console.log(radians);
+  console.log(radians, radians === Math.PI * 0.5);
 
   // 弧度转角度
   const degrees = Cesium.Math.toDegrees(2 * Math.PI);

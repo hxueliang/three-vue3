@@ -47,6 +47,9 @@ onMounted(() => {
       positiveZ: './textures/city/night_5.jpg',
       negativeZ: './textures/city/night_6.jpg',
     }),
+
+    // 语法一：设置viwer.imageryProvider
+
     /*
     // 设置天地图矢量路径图
     imageryProvider: new Cesium.WebMapTileServiceImageryProvider({
@@ -56,13 +59,16 @@ onMounted(() => {
       format: "image/jpeg",
       tileMatrixSetID: "GoogleMapsCompatible",
     }),
-    */
+    // */
+
     /*
     // OSM地图影像地图
     imageryProvider: new Cesium.OpenStreetMapImageryProvider({
       url: 'https://a.tile.openstreetmap.org/',
     }),
-    */
+    // */
+
+    /*
     // 高德矢量地图
     imageryProvider: new Cesium.UrlTemplateImageryProvider({
       url: `http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style={x}&y={y}&z{z}`,
@@ -71,8 +77,67 @@ onMounted(() => {
       format: "image/jpeg",
       tileMatrixSetID: "GoogleMapsCompatible",
     })
+    // */
   });
 
+
+  // 语法二：设置viwer.imageryLayers.addImageryProvider
+
+  // 设置天地图 参考 https://blog.csdn.net/u012425087/article/details/129909012
+
+  /*
+  // 天地图 矢量底图
+  viwer.imageryLayers.addImageryProvider(new Cesium.WebMapTileServiceImageryProvider({
+    url: `http://t0.tianditu.com/vec_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=vec&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=${TDT_TOKEN}`,
+    layer: 'tdtVecBasicLayer',
+    style: 'default',
+    format: 'image/jpeg',
+    tileMatrixSetID: 'GoogleMapsCompatible',
+  }));
+  // */
+
+  /*
+  // 天地图 矢量注记
+  viwer.imageryLayers.addImageryProvider(new Cesium.WebMapTileServiceImageryProvider({
+    url: `http://t0.tianditu.com/cva_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=cva&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default.jpg&tk=${TDT_TOKEN}`,
+    layer: 'tdtAnnoLayer',
+    style: 'default',
+    format: 'image/jpeg',
+    tileMatrixSetID: 'GoogleMapsCompatible'
+  }));
+  // */
+
+  // /*
+  // 天地图 影像底图
+  viwer.imageryLayers.addImageryProvider(new Cesium.WebMapTileServiceImageryProvider({
+    url: `http://t0.tianditu.com/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=${TDT_TOKEN}`,
+    layer: 'tdtBasicLayer',
+    style: 'default',
+    format: 'image/jpeg',
+    tileMatrixSetID: 'GoogleMapsCompatible',
+  }));
+  // */
+
+  /*
+  // 天地图 影像注记
+  viwer.imageryLayers.addImageryProvider(new Cesium.WebMapTileServiceImageryProvider({
+    url: `http://t0.tianditu.com/cia_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=cia&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default.jpg&tk=${TDT_TOKEN}`,
+    layer: 'tdtAnnoLayer',
+    style: 'default',
+    format: 'image/jpeg',
+    tileMatrixSetID: 'GoogleMapsCompatible',
+  }));
+  // */
+
+  /*
+  // 添加OSM地图影像
+  const osm = new Cesium.OpenStreetMapImageryProvider({
+    url: 'https://a.tile.openstreetmap.org/'
+  });
+  viwer.imageryLayers.addImageryProvider(osm);
+  // */
+
+  /*
   // 添加高德矢量图
   let atLayer = new Cesium.UrlTemplateImageryProvider({
     // url: "http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
@@ -81,6 +146,7 @@ onMounted(() => {
     maximumLevel: 18,
   });
   viwer.imageryLayers.addImageryProvider(atLayer);
+  // */
 
   // 隐藏cesium的logo
   viwer.cesiumWidget.creditContainer.style.display = 'none';

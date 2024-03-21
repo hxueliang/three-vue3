@@ -1,7 +1,8 @@
 <!-- Cs04.坐标系与坐标系值转换 -->
-<!-- 1、屏幕坐标系统，二维的笛卡尔坐标系，Cartesian2类型 -->
-<!-- 2、地理坐标系统，WGS-84坐标系，Cartographic类型，经度，纬度，高度 -->
-<!-- 3、笛卡尔空间直角坐标系，Cartesian3类型 -->
+<!-- Cesium中，有三种坐标系 -->
+<!-- 1、【2维】屏幕坐标系统，二维的笛卡尔坐标系，Cartesian2类型 -->
+<!-- 2、【3维】地理坐标系统，WGS-84坐标系，Cartographic类型，经度，纬度，高度 -->
+<!-- 3、【3维】笛卡尔空间直角坐标系，Cartesian3类型 -->
 <template>
   <div id="container" ref="container"></div>
 </template>
@@ -43,7 +44,7 @@ onMounted(() => {
   console.log(degrees);
 
   /**
-   * 将经纬度转为笛卡尔坐标
+   * 将经纬度转为3维笛卡尔坐标
    * longitude: number, 
    * latitude: number, 
    * height?: number, 
@@ -53,10 +54,9 @@ onMounted(() => {
   const cartesian3 = Cesium.Cartesian3.fromDegrees(89.5, 20.4, 100);
   console.log(cartesian3);
 
-  // 将笛卡尔坐标转为经纬度
+  // 将3维笛卡尔坐标转为经纬度，得到的是弧度，需要转成角度
   const cartographic = Cesium.Cartographic.fromCartesian(cartesian3);
   cartographic.longitude = Cesium.Math.toDegrees(cartographic.longitude);
-
   cartographic.latitude = Cesium.Math.toDegrees(cartographic.latitude);
   console.log(cartographic);
 })

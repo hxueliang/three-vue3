@@ -137,15 +137,19 @@ onMounted(() => {
   viwer.imageryLayers.addImageryProvider(osm);
   // */
 
-  /*
+  // /*
   // 添加高德矢量图
   let atLayer = new Cesium.UrlTemplateImageryProvider({
-    // url: "http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
-    url: "http://webst03.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&style=7",
-    minimumLevel: 3,
-    maximumLevel: 18,
+    url: "http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+    // url: "http://webst03.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&style=7",
+    layer: 'tdtVecBasicLayer',
+    sytle: 'default',
+    format: 'image/png',
+    tileMatrixSetID: 'GoogleMapsCompatible',
   });
-  viwer.imageryLayers.addImageryProvider(atLayer);
+  const layer = viwer.imageryLayers.addImageryProvider(atLayer);
+  // 设置透明度
+  layer.alpha = 0.5;
   // */
 
   // 隐藏cesium的logo

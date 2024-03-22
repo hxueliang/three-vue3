@@ -70,6 +70,16 @@ onMounted(() => {
     h: 'twistRight', // 相机向右顺时针翻滚，视觉效果：画布向左逆时针秋游
   };
 
+  // 自动移动
+  const AUTO_KEY = {
+    ArrowUp: 'moveForward', // 相机向前移动
+    ArrowDown: 'moveBackward', // 相机向后移动
+    ArrowLeft: 'moveLeft', // 相机向左移动
+    ArrowRight: 'moveRight', // 相机向右移动
+  };
+
+  let timer = null;
+
   // 通过按键移动相机
   document.addEventListener('keydown', e => {
     const { key } = e;
@@ -82,6 +92,15 @@ onMounted(() => {
       viewer.camera[LOOK_KEY[key]](Cesium.Math.toRadians(0.1));
     } else if (key in TWIST_KEY) {
       viewer.camera[TWIST_KEY[key]](Cesium.Math.toRadians(0.1));
+    } else if (key in AUTO_KEY) {
+      clearInterval(timer);
+      timer = setInterval(() => {
+        const height = viewer.camera.positionCartographic.height;
+        const moveRate = height / 10;
+        viewer.camera[AUTO_KEY[key]](moveRate);
+      }, 50);
+    } else if (key === 'Escape') {
+      clearInterval(timer);
     }
   });
 })

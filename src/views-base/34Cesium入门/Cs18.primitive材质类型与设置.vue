@@ -108,13 +108,13 @@ onMounted(async () => {
   //   repeat: new Cesium.Cartesian2(1.0, 1.0)
   // });
 
-  // type为DiffuseMap
+  // type为DiffuseMap，漫反射贴图
   // const material1 = new Cesium.Material.fromType('DiffuseMap', {
   //   image: './imgs/cesium/ldq.jpeg',
   //   repeat: new Cesium.Cartesian2(1.0, 1.0)
   // });
 
-  // type为Grid
+  // type为Grid，网格
   // const material1 = new Cesium.Material.fromType('Grid', {
   //   color: Cesium.Color.AQUA.withAlpha(0.5),
   //   cellAlpha: 0.2,
@@ -122,7 +122,7 @@ onMounted(async () => {
   //   lineThickness: new Cesium.Cartesian2(4.0, 4.0),
   // });
 
-  // type为Water
+  // type为Water，水
   const material1 = new Cesium.Material.fromType('Water', {
     baseWaterColor: Cesium.Color.AQUA.withAlpha(0.9),
     normalMap: './Assets/Textures/waterNormals.jpg',
@@ -134,7 +134,7 @@ onMounted(async () => {
     material: material1,
   });
 
-  // 与EllipsoidSurfaceAppearance效果一致
+  // 与EllipsoidSurfaceAppearance效果一致，为了性能更好请用EllipsoidSurfaceAppearance
   // const appearance = new Cesium.MaterialAppearance({
   //   material: material1
   // });

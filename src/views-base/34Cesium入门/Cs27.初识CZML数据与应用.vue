@@ -44,11 +44,16 @@ onMounted(async () => {
       id: "shape1",
       name: "Blue box",
       position: {
-        cartographicDegrees: [-114.0, 40.0, 300000.0],
+        cartographicDegrees: [118.0, 30.0, 300000.0],
       },
       box: {
         dimensions: {
           cartesian: [400000.0, 300000.0, 500000.0],
+        },
+        // fill: false,
+        outline: true,
+        outlineColor: {
+          rgba: [255, 255, 0, 255],
         },
         material: {
           solidColor: {

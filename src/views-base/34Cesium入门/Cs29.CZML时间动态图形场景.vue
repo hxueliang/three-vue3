@@ -32,8 +32,18 @@ onMounted(async () => {
     shouldAnimate: true, // 自动开始动画
   });
 
+  // 4个点的坐标
+  const p1 = [118, 20, 150000];
+  const p2 = [108, 44, 150000];
+  const p3 = [98, 18, 150000];
+  const p4 = [90, 52, 150000];
+
   // 红点起始位置
-  const position = Cesium.Cartesian3.fromDegrees(103, 31, 150000 * 100);
+  const position = Cesium.Cartesian3.fromDegrees(
+    (p2[0] + p3[0]) / 2,
+    (p2[1] + p3[1]) / 2,
+    p2[2] * 100
+  );
 
   // setView瞬间到达指定位置、视角
   viewer.camera.setView({
@@ -66,10 +76,10 @@ onMounted(async () => {
         epoch: "2012-08-04T16:00:00Z",
         // 设置了4个维度，1维是时间(单位:秒)，2维是经度，3维是纬度，4维是高度
         cartographicDegrees: [
-          0, 118, 20, 150000,
-          10, 108, 44, 150000,
-          20, 98, 18, 150000,
-          30, 90, 52, 150000
+          0, ...p1,
+          10, ...p2,
+          20, ...p3,
+          30, ...p4,
         ],
       },
       point: {
@@ -91,6 +101,25 @@ onMounted(async () => {
     viewer.dataSources.add(dataSources);
   });
   // viewer.zoomTo(dataSourcePromise);
+
+  // /*
+  // 绘制折线
+  const color = new Cesium.Color(1.0, 0, 0, 0.4);
+  const material = new Cesium.PolylineArrowMaterialProperty(color);
+  const redLine = viewer.entities.add({
+    polyline: {
+      positions: Cesium.Cartesian3.fromDegreesArray([
+        ...p1.slice(0, 2),
+        ...p2.slice(0, 2),
+        ...p3.slice(0, 2),
+        ...p4.slice(0, 2),
+      ]),
+      width: 10,
+      material,
+    },
+  });
+  viewer.camera.setView(viewer.entities);
+  // */
 })
 
 </script>

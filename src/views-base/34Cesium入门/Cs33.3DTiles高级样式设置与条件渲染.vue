@@ -27,12 +27,13 @@ onMounted(async () => {
       // infoBox: false,
     });
 
-    // setTimeout(() => {
-    //   // 处理老版本注释掉infoBox: false,后控制台报错
-    //   const iframe = document.getElementsByClassName('cesium-infobox-iframe')[0];
-    //   iframe?.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-prpups allow-forms');
-    //   iframe?.setAttribute('src', '');
-    // }, 5000);
+    // 设置iframe沙箱使用js
+    const iframe = document.getElementsByClassName('cesium-infoBox-iframe')[0];
+    iframe?.setAttribute(
+      'sandbox',
+      'allow-same-origin allow-scripts allow-popups allow-forms'
+    );
+    iframe?.setAttribute('src', '');
 
     // 添加3d建筑
     const tiles3d = await Cesium.createOsmBuildingsAsync();

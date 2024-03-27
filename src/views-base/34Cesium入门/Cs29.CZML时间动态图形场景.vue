@@ -32,6 +32,24 @@ onMounted(async () => {
     shouldAnimate: true, // 自动开始动画
   });
 
+  // 红点起始位置
+  const position = Cesium.Cartesian3.fromDegrees(103, 31, 150000 * 100);
+
+  // setView瞬间到达指定位置、视角
+  viewer.camera.setView({
+    // 指定相机位置
+    destination: position,
+    // 指定相机视角
+    orientation: {
+      // 指定相机的朝向，即领航角（类似人左右转头），绕y轴旋转的角度
+      heading: Cesium.Math.toRadians(0),
+      // 指定相机的俯仰角，0竖直向上，-90竖直向下（类似人抬头点头），绕x轴旋转的角度
+      pitch: Cesium.Math.toRadians(-90),
+      // 指定相机的滚转角，即翻滚角（类似人的左右拉伸脖子），绕z轴旋转的角度
+      roll: 0,
+    }
+  });
+
   // 定义czml数据
   const czml = [
     {
@@ -48,10 +66,10 @@ onMounted(async () => {
         epoch: "2012-08-04T16:00:00Z",
         // 设置了4个维度，1维是时间(单位:秒)，2维是经度，3维是纬度，4维是高度
         cartographicDegrees: [
-          0, -70, 20, 150000,
-          100, -80, 44, 150000,
-          200, -90, 18, 150000,
-          300, -98, 52, 150000
+          0, 118, 20, 150000,
+          10, 108, 44, 150000,
+          20, 98, 18, 150000,
+          30, 90, 52, 150000
         ],
       },
       point: {
@@ -72,7 +90,7 @@ onMounted(async () => {
   dataSourcePromise.then(dataSources => {
     viewer.dataSources.add(dataSources);
   });
-  viewer.zoomTo(dataSourcePromise);
+  // viewer.zoomTo(dataSourcePromise);
 })
 
 </script>
